@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STEEP 시나리오 플래닝 워크숍</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --panel: #1a2129;
+    --panel-2: #222b35;
+    --line: #2e3a47;
+    --text: #e6edf3;
+    --muted: #8b97a3;
+    --accent: #4f9cf9;
+    --accent-2: #7c5cff;
+    --ok: #34c77b;
+    --warn: #f0a93b;
+    --danger: #f06363;
+    /* STEEP colors */
+    --c-S: #f06292;
+    --c-T: #4f9cf9;
+    --c-E1: #34c77b; /* Economic */
+    --c-E2: #8bc34a; /* Environmental */
+    --c-P: #f0a93b;
+    --c-U: #8b97a3;  /* 미분류 */
+    --radius: 12px;
+    --shadow: 0 6px 24px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+                 "Malgun Gothic", "Noto Sans KR", sans-serif;
+    background: radial-gradient(1200px 600px at 80% -10%, #1c2733 0%, var(--bg) 55%);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  a { color: var(--accent); }
+  button { font-family: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 18px 18px 80px; }
+
+  /* Header */
+  header.top {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(15,20,25,.85); backdrop-filter: blur(8px);
+  }
+  .logo { font-weight: 800; letter-spacing: .5px; font-size: 18px; }
+  .logo .dot { color: var(--accent); }
+  .top .spacer { flex: 1; }
+  .top .meta { color: var(--muted); font-size: 13px; }
+  .btn {
+    border: 1px solid var(--line); background: var(--panel-2); color: var(--text);
+    padding: 8px 14px; border-radius: 9px; cursor: pointer; font-size: 14px;
+    transition: .15s; white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: linear-gradient(180deg, #4f9cf9, #3d7fd6); border-color: transparent; font-weight: 600; }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.ghost { background: transparent; }
+  .btn.sm { padding: 5px 10px; font-size: 13px; }
+  .btn.danger { color: var(--danger); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  /* Stepper */
+  .stepper { display: flex; gap: 6px; flex-wrap: wrap; margin: 22px 0 24px; }
+  .step {
+    display: flex; align-items: center; gap: 8px; padding: 9px 14px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--panel);
+    color: var(--muted); cursor: pointer; font-size: 13px; transition: .15s;
+  }
+  .step .num {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--panel-2);
+    display: grid; place-items: center; font-size: 12px; font-weight: 700;
+  }
+  .step.active { color: var(--text); border-color: var(--accent); background: #16222f; }
+  .step.active .num { background: var(--accent); color: #fff; }
+  .step.done .num { background: var(--ok); color: #fff; }
+
+  /* Panels */
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .panel + .panel { margin-top: 18px; }
+  h2.title { margin: 0 0 4px; font-size: 22px; }
+  .subtitle { color: var(--muted); margin: 0 0 18px; font-size: 14px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px){ .grid2 { grid-template-columns: 1fr; } .stepper{ font-size:12px } }
+
+  label.fl { display: block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+  input[type=text], input[type=password], input[type=number], textarea, select {
+    width: 100%; background: var(--panel-2); border: 1px solid var(--line);
+    color: var(--text); border-radius: 9px; padding: 10px 12px; font-size: 14px; font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 92px; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+  .field { margin-bottom: 14px; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+  /* Variable list */
+  .var-row { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); margin-bottom: 10px; }
+  .var-row .vtext { flex: 1; }
+  .var-row .vtext .vt-main { font-size: 15px; }
+  .var-row .vtext .vt-sub { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+  .tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; color: #0b0f14; }
+  .pill-S{background:var(--c-S)} .pill-T{background:var(--c-T)} .pill-Ec{background:var(--c-E1)}
+  .pill-En{background:var(--c-E2)} .pill-P{background:var(--c-P)} .pill-U{background:var(--c-U)}
+
+  .chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip-btn { font-size:11.5px; padding:4px 9px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; }
+  .chip-btn.sel { color:#0b0f14; font-weight:700; border-color:transparent; }
+
+  /* STEEP board (columns) */
+  .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  @media (max-width: 900px){ .board { grid-template-columns: 1fr 1fr; } }
+  .col { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; min-height: 120px; padding: 10px; }
+  .col h3 { margin: 0 0 4px; font-size: 14px; display:flex; align-items:center; gap:7px; }
+  .col .cnt { color: var(--muted); font-size: 12px; }
+  .col .desc { color: var(--muted); font-size: 11.5px; margin: 0 0 10px; }
+  .col.dragover { border-color: var(--accent); background: #16222f; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; margin-bottom: 8px; cursor: grab; font-size: 13px; }
+  .card:active { cursor: grabbing; }
+  .card .rat { color: var(--muted); font-size: 11.5px; margin-top: 4px; }
+  .dotbar { height: 4px; border-radius: 4px; margin-top: 7px; background: var(--line); position: relative; overflow:hidden;}
+  .dotbar > i { position:absolute; left:0; top:0; bottom:0; }
+
+  /* Evaluate table */
+  table.eval { width: 100%; border-collapse: collapse; }
+  table.eval th, table.eval td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); font-size: 13.5px; vertical-align: middle; }
+  table.eval th { color: var(--muted); font-weight: 600; font-size: 12.5px; }
+  .scorecell { display:flex; align-items:center; gap:10px; }
+  input[type=range]{ width: 130px; accent-color: var(--accent); }
+  .scoreval { width: 26px; text-align:center; font-weight:700; }
+
+  /* Matrix */
+  .matrix-wrap { display:grid; grid-template-columns: 1.4fr 1fr; gap: 18px; }
+  @media (max-width: 880px){ .matrix-wrap{ grid-template-columns: 1fr; } }
+  svg.matrix { width: 100%; height: auto; background: var(--panel-2); border-radius: 10px; border:1px solid var(--line); }
+  .legend-list { font-size: 13px; }
+  .legend-list .li { display:flex; gap:8px; padding:6px 0; border-bottom:1px dashed var(--line); align-items:center;}
+  .legend-list .num { width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;color:#0b0f14;flex:none;}
+
+  .quad-box { border:1px solid var(--line); border-radius:10px; padding:12px; background:var(--panel-2); }
+  .quad-box h4 { margin:0 0 6px; font-size:13.5px; }
+  .quad-box ul { margin:0; padding-left:18px; font-size:13px; color: var(--muted); }
+
+  /* scenario */
+  .scenario-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+  @media (max-width:720px){ .scenario-grid{ grid-template-columns:1fr; } }
+  .scn { border:1px solid var(--line); border-radius:10px; padding:14px; background:var(--panel-2); }
+  .scn .hd { font-weight:700; margin-bottom:6px; }
+
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-top: 20px; justify-content: space-between; align-items:center; }
+  .toolbar .left, .toolbar .right { display:flex; gap:10px; flex-wrap:wrap; }
+
+  .notice { font-size:13px; padding:10px 12px; border-radius:9px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); margin-bottom:14px;}
+  .notice.warn { border-color:#5a4320; background:#241c0e; color:#f0c98b; }
+  .notice.ok { border-color:#1f4d36; background:#0f241a; color:#9be3bf; }
+
+  .spinner { display:inline-block; width:15px;height:15px;border:2px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px; margin-right:6px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .hidden { display:none !important; }
+  .row-actions { display:flex; gap:6px; }
+  .kbd { font-family: ui-monospace, monospace; background: var(--panel-2); padding: 1px 6px; border-radius: 5px; border:1px solid var(--line); font-size:12px;}
+
+  /* modal */
+  .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.6); display:grid; place-items:center; z-index:100; }
+  .modal { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px; width:min(520px,92vw); box-shadow:var(--shadow);}
+  .modal h3 { margin:0 0 12px; }
+
+  footer.foot { text-align:center; color:var(--muted); font-size:12px; margin-top:30px; }
+  .badge-count { background: var(--accent); color:#fff; border-radius:999px; padding:1px 8px; font-size:12px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">STEEP<span class="dot">.</span> 시나리오 플래닝</div>
+  <div class="spacer"></div>
+  <div class="meta" id="sessionMeta">새 세션</div>
+  <button class="btn sm ghost" id="btnSettings">⚙ AI 설정</button>
+  <button class="btn sm ghost" id="btnImport">불러오기</button>
+  <button class="btn sm ghost" id="btnExportAll">전체 저장(JSON)</button>
+</header>
+
+<div class="wrap">
+  <div class="stepper" id="stepper"></div>
+  <div id="view"></div>
+  <footer class="foot">
+    데이터는 이 브라우저에 자동 저장됩니다 · 단계별로 CSV / 이미지 / JSON 추출 가능 ·
+    조원별 JSON을 <span class="kbd">불러오기 → 병합</span>으로 취합하세요
+  </footer>
+</div>
+
+<!-- file input (hidden) -->
+<input type="file" id="fileInput" accept="application/json" class="hidden" />
+<input type="file" id="mergeInput" accept="application/json" class="hidden" multiple />
+
+<script>
+/* =========================================================================
+   STEEP 시나리오 플래닝 워크숍 도구
+   - 단일 파일, 빌드 불필요, 오프라인 동작 (localStorage 자동 저장)
+   - Claude API 키 입력 시 변수 자동 STEEP 분류
+   ========================================================================= */
+
+const STEEP = {
+  S:  { key:'S',  name:'사회 (Social)',         pill:'pill-S',  color:'var(--c-S)',  hex:'#f06292',
+        desc:'인구·문화·가치관·라이프스타일·소비자 행동' },
+  T:  { key:'T',  name:'기술 (Technological)',  pill:'pill-T',  color:'var(--c-T)',  hex:'#4f9cf9',
+        desc:'기술혁신·R&D·자동화·디지털 전환·특허' },
+  Ec: { key:'Ec', name:'경제 (Economic)',       pill:'pill-Ec', color:'var(--c-E1)', hex:'#34c77b',
+        desc:'경기·금리·환율·물가·고용·산업구조' },
+  En: { key:'En', name:'환경 (Environmental)',  pill:'pill-En', color:'var(--c-E2)', hex:'#8bc34a',
+        desc:'기후·자원·규제·ESG·지속가능성' },
+  P:  { key:'P',  name:'정치 (Political)',       pill:'pill-P',  color:'var(--c-P)',  hex:'#f0a93b',
+        desc:'정책·규제·세제·지정학·정부 안정성' },
+  U:  { key:'U',  name:'미분류',                pill:'pill-U',  color:'var(--c-U)',  hex:'#8b97a3',
+        desc:'아직 분류되지 않음' },
+};
+const STEEP_ORDER = ['S','T','Ec','En','P'];
+
+const DEFAULT_STATE = () => ({
+  v: 3,
+  session: { teamName:'', topic:'', horizon:'', author:'', createdAt: Date.now() },
+  variables: [],   // {id, text, category, aiName, rationale, impact(0|1-5), uncertainty(0|1-5), author}
+  scenario: { axisX:'', axisY:'', xPos:'', xNeg:'', yPos:'', yNeg:'', cells:['','','',''] },
+  settings: { model:'claude-sonnet-4-6' }, // apiKey stored separately (not exported)
+  step: 0,
+});
+
+const STEPS = [
+  { t:'1. 세션 설정', r: renderSetup },
+  { t:'2. 변수 입력', r: renderInput },
+  { t:'3. AI STEEP 분류', r: renderClassify },
+  { t:'4. 영향도·불확실성 평가', r: renderEvaluate },
+  { t:'5. 우선순위 매트릭스', r: renderMatrix },
+  { t:'6. 시나리오 도출', r: renderScenario },
+  { t:'7. 내보내기', r: renderExport },
+];
+
+const LS_KEY = 'steep_scenario_state_v3';
+const LS_APIKEY = 'steep_anthropic_key';
+
+let state = load();
+
+function load(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){ return Object.assign(DEFAULT_STATE(), JSON.parse(raw)); }
+  } catch(e){ console.warn('load failed', e); }
+  return DEFAULT_STATE();
+}
+function save(){
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  updateMeta();
+}
+function getApiKey(){ return localStorage.getItem(LS_APIKEY) || ''; }
+function setApiKey(k){ k ? localStorage.setItem(LS_APIKEY,k) : localStorage.removeItem(LS_APIKEY); }
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function esc(s){ return (s??'').toString().replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ---------- chrome ---------- */
+function updateMeta(){
+  const s = state.session;
+  const n = state.variables.length;
+  document.getElementById('sessionMeta').textContent =
+    (s.teamName ? s.teamName+' · ' : '') + (s.topic || '주제 미설정') + ' · 변수 '+n+'개';
+}
+function renderStepper(){
+  const el = document.getElementById('stepper');
+  el.innerHTML = STEPS.map((s,i)=>{
+    const cls = i===state.step ? 'active' : (i<state.step ? 'done':'');
+    return `<div class="step ${cls}" data-step="${i}"><span class="num">${i<state.step?'✓':i+1}</span>${esc(s.t.replace(/^\d+\.\s/,''))}</div>`;
+  }).join('');
+  el.querySelectorAll('.step').forEach(n=> n.onclick=()=>goto(+n.dataset.step));
+}
+function goto(i){ state.step = Math.max(0, Math.min(STEPS.length-1, i)); save(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function render(){ renderStepper(); document.getElementById('view').innerHTML=''; STEPS[state.step].r(document.getElementById('view')); updateMeta(); }
+
+function navButtons(){
+  const prev = state.step>0 ? `<button class="btn ghost" onclick="goto(${state.step-1})">← 이전</button>`:'<span></span>';
+  const next = state.step<STEPS.length-1 ? `<button class="btn primary" onclick="goto(${state.step+1})">다음 →</button>`:'';
+  return `<div class="toolbar"><div class="left">${prev}</div><div class="right">${next}</div></div>`;
+}
+
+/* =================== STEP 1: SETUP =================== */
+function renderSetup(root){
+  const s = state.session;
+  root.innerHTML = `
+  <div class="panel">
+    <h2 class="title">세션 설정</h2>
+    <p class="subtitle">워크숍의 분석 대상과 시간 지평을 정의합니다. 조 이름과 작성자를 적으면 추후 취합 시 출처를 구분할 수 있어요.</p>
+    <div class="grid2">
+      <div class="field"><label class="fl">조 / 팀 이름</label><input type="text" id="f_team" value="${esc(s.teamName)}" placeholder="예: 1조 - 신사업 TF"></div>
+      <div class="field"><label class="fl">작성자 (선택)</label><input type="text" id="f_author" value="${esc(s.author)}" placeholder="예: 홍길동"></div>
+    </div>
+    <div class="field"><label class="fl">분석 대상 / 핵심 질문 (사업 환경)</label>
+      <input type="text" id="f_topic" value="${esc(s.topic)}" placeholder="예: 2030년 국내 전기차 충전 인프라 사업의 미래"></div>
+    <div class="grid2">
+      <div class="field"><label class="fl">시간 지평 (Time Horizon)</label><input type="text" id="f_hz" value="${esc(s.horizon)}" placeholder="예: 향후 5년 (~2030)"></div>
+    </div>
+    <div class="notice">💡 <b>STEEP</b> = Social(사회) · Technological(기술) · Economic(경제) · Environmental(환경) · Political(정치). 거시 환경을 5개 렌즈로 스캔하는 프레임워크입니다.</div>
+    <div class="toolbar"><div class="left">
+      <button class="btn danger ghost" id="btnReset">세션 초기화</button>
+    </div><div class="right">
+      <button class="btn primary" id="btnSaveSetup">저장하고 시작 →</button>
+    </div></div>
+  </div>`;
+  const sv = ()=>{ s.teamName=val('f_team'); s.author=val('f_author'); s.topic=val('f_topic'); s.horizon=val('f_hz'); save(); };
+  ['f_team','f_author','f_topic','f_hz'].forEach(id=> document.getElementById(id).addEventListener('input', sv));
+  document.getElementById('btnSaveSetup').onclick = ()=>{ sv(); goto(1); };
+  document.getElementById('btnReset').onclick = ()=>{
+    if(confirm('현재 세션의 모든 데이터를 삭제하고 새로 시작할까요?')){ state = DEFAULT_STATE(); save(); render(); }
+  };
+}
+function val(id){ return document.getElementById(id).value.trim(); }
+
+/* =================== STEP 2: INPUT =================== */
+function renderInput(root){
+  root.innerHTML = `
+  <div class="panel">
+    <h2 class="title">변수 입력</h2>
+    <p class="subtitle">사업 환경에 영향을 미칠 것 같은 요인/변수를 자유롭게 적어주세요. 한 줄에 하나씩, 혹은 아래에 여러 줄을 붙여넣어 한 번에 추가할 수 있습니다. (분류는 다음 단계에서 AI가 정리합니다.)</p>
+    <div class="field">
+      <textarea id="bulk" placeholder="예)
+고령화로 인한 노동인구 감소
+생성형 AI의 빠른 보급
+기준금리 인상 기조
+탄소국경세 도입
+미중 무역 갈등 심화"></textarea>
+      <div class="hint">여러 줄을 입력하면 줄 단위로 각각의 변수로 추가됩니다.</div>
+    </div>
+    <div class="toolbar"><div class="left">
+      <button class="btn primary" id="btnAdd">＋ 변수 추가</button>
+      <button class="btn ghost" id="btnSample">예시 채우기</button>
+    </div><div class="right">
+      <span class="meta">총 <span class="badge-count" id="cnt">${state.variables.length}</span> 개</span>
+    </div></div>
+  </div>
+  <div class="panel">
+    <h3 style="margin:0 0 12px">입력된 변수 목록</h3>
+    <div id="varList"></div>
+  </div>
+  ${navButtons()}`;
+
+  document.getElementById('btnAdd').onclick = ()=>{
+    const lines = document.getElementById('bulk').value.split('\n').map(x=>x.trim()).filter(Boolean);
+    if(!lines.length){ return; }
+    lines.forEach(t=> state.variables.push({ id:uid(), text:t, category:'U', aiName:'', rationale:'', impact:0, uncertainty:0, author: state.session.author||'' }));
+    document.getElementById('bulk').value='';
+    save(); renderVarList(); document.getElementById('cnt').textContent = state.variables.length;
+  };
+  document.getElementById('btnSample').onclick = ()=>{
+    document.getElementById('bulk').value = SAMPLE.join('\n');
+  };
+  renderVarList();
+}
+const SAMPLE = ['고령화로 인한 생산가능인구 감소','MZ세대의 가치소비 확산','생성형 AI의 업무 자동화 가속',
+ '배터리 기술 혁신과 가격 하락','기준금리 변동성 확대','글로벌 공급망 재편','탄소국경조정제도(CBAM) 도입',
+ '재생에너지 비중 확대 정책','미중 기술패권 경쟁','국내 규제 샌드박스 확대'];
+
+function renderVarList(){
+  const el = document.getElementById('varList');
+  if(!state.variables.length){ el.innerHTML = `<p class="meta">아직 입력된 변수가 없습니다.</p>`; return; }
+  el.innerHTML = state.variables.map(v=>{
+    const c = STEEP[v.category]||STEEP.U;
+    return `<div class="var-row" data-id="${v.id}">
+      <span class="tag ${c.pill}">${c.name.split(' ')[0]}</span>
+      <div class="vtext">
+        <div class="vt-main" contenteditable="true" data-edit="${v.id}">${esc(v.text)}</div>
+        ${v.author?`<div class="vt-sub">✍ ${esc(v.author)}</div>`:''}
+      </div>
+      <div class="row-actions">
+        <button class="btn sm danger ghost" data-del="${v.id}">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-del]').forEach(b=> b.onclick=()=>{
+    state.variables = state.variables.filter(x=>x.id!==b.dataset.del); save(); renderVarList();
+    const c=document.getElementById('cnt'); if(c) c.textContent=state.variables.length;
+  });
+  el.querySelectorAll('[data-edit]').forEach(d=> d.addEventListener('blur', ()=>{
+    const v = state.variables.find(x=>x.id===d.dataset.edit); if(v){ v.text=d.textContent.trim(); save(); }
+  }));
+}
+
+/* =================== STEP 3: CLASSIFY (AI) =================== */
+function renderClassify(root){
+  const hasKey = !!getApiKey();
+  const unclassified = state.variables.filter(v=>v.category==='U').length;
+  root.innerHTML = `
+  <div class="panel">
+    <h2 class="title">AI STEEP 분류</h2>
+    <p class="subtitle">입력된 변수를 STEEP 5개 카테고리로 정리합니다. Claude가 분류 + 표현 다듬기 + 분류 근거를 제안하면, 카드를 <b>드래그</b>해 사람이 최종 조정할 수 있습니다.</p>
+    ${ hasKey
+        ? `<div class="notice ok">✅ API 키가 설정되어 있습니다. (모델: <span id="modelLbl">${esc(state.settings.model)}</span>)</div>`
+        : `<div class="notice warn">⚠ Claude API 키가 없습니다. 우측 상단 <b>⚙ AI 설정</b>에서 키를 입력하면 자동 분류가 동작합니다. 키 없이도 <b>규칙 기반 자동 분류</b> 및 수동 드래그가 가능합니다.</div>` }
+    <div class="toolbar"><div class="left">
+      <button class="btn primary" id="btnAI" ${state.variables.length?'':'disabled'}>${hasKey?'🤖 Claude로 분류':'🤖 Claude로 분류 (키 필요)'}</button>
+      <button class="btn ghost" id="btnRule" ${state.variables.length?'':'disabled'}>⚡ 규칙 기반 자동분류</button>
+    </div><div class="right">
+      <span class="meta">미분류 <b id="uncnt">${unclassified}</b> / ${state.variables.length}</span>
+    </div></div>
+    <div id="aiStatus"></div>
+  </div>
+  <div class="panel">
+    <div class="board" id="board"></div>
+  </div>
+  ${navButtons()}`;
+
+  document.getElementById('btnAI').onclick = runAIClassify;
+  document.getElementById('btnRule').onclick = ()=>{ ruleClassify(); save(); renderBoard(); };
+  renderBoard();
+}
+
+function renderBoard(){
+  const board = document.getElementById('board'); if(!board) return;
+  board.innerHTML = STEEP_ORDER.map(k=>{
+    const c = STEEP[k];
+    const items = state.variables.filter(v=>v.category===k);
+    return `<div class="col" data-cat="${k}">
+      <h3><span class="tag ${c.pill}">${c.name.split(' ')[0]}</span> <span class="cnt">${items.length}</span></h3>
+      <p class="desc">${c.desc}</p>
+      <div class="col-body">
+        ${items.map(v=>cardHTML(v)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  // also a "미분류" row beneath if any
+  const un = state.variables.filter(v=>v.category==='U');
+  if(un.length){
+    const div = document.createElement('div');
+    div.style.gridColumn = '1 / -1';
+    div.className='col'; div.dataset.cat='U';
+    div.innerHTML = `<h3><span class="tag pill-U">미분류</span> <span class="cnt">${un.length}</span></h3>
+      <p class="desc">아래 카드를 위 카테고리로 드래그하세요</p><div class="col-body">${un.map(v=>cardHTML(v)).join('')}</div>`;
+    board.appendChild(div);
+  }
+  wireDnD();
+  const u=document.getElementById('uncnt'); if(u) u.textContent = un.length;
+}
+function cardHTML(v){
+  const ratio = v.impact? (v.impact/5*100):0;
+  return `<div class="card" draggable="true" data-id="${v.id}">
+    <div>${esc(v.aiName||v.text)}</div>
+    ${v.aiName && v.aiName!==v.text ? `<div class="rat">원문: ${esc(v.text)}</div>`:''}
+    ${v.rationale?`<div class="rat">↳ ${esc(v.rationale)}</div>`:''}
+  </div>`;
+}
+function wireDnD(){
+  let dragId=null;
+  document.querySelectorAll('.card').forEach(c=>{
+    c.addEventListener('dragstart', e=>{ dragId=c.dataset.id; e.dataTransfer.effectAllowed='move'; });
+  });
+  document.querySelectorAll('.col').forEach(col=>{
+    col.addEventListener('dragover', e=>{ e.preventDefault(); col.classList.add('dragover'); });
+    col.addEventListener('dragleave', ()=> col.classList.remove('dragover'));
+    col.addEventListener('drop', e=>{
+      e.preventDefault(); col.classList.remove('dragover');
+      const v = state.variables.find(x=>x.id===dragId);
+      if(v){ v.category = col.dataset.cat; save(); renderBoard(); }
+    });
+  });
+}
+
+/* ----- rule-based fallback classifier ----- */
+const RULES = {
+  S: ['인구','고령','세대','소비자','문화','가치','라이프','웰빙','교육','건강','도시화','노동인구','출산','이민','트렌드','소비'],
+  T: ['기술','ai','인공지능','디지털','자동화','로봇','데이터','특허','혁신','플랫폼','배터리','반도체','클라우드','5g','6g','바이오','r&d'],
+  Ec: ['경제','경기','금리','환율','물가','인플레','고용','임금','소득','투자','산업','시장','공급망','수출','수입','가격','자본','부채','성장률'],
+  En: ['환경','기후','탄소','온실','에너지','재생','자원','오염','esg','지속가능','친환경','폐기물','수자원','생태','날씨','재난'],
+  P: ['정치','정책','규제','법','세제','세금','정부','선거','지정학','무역갈등','제재','관세','외교','전쟁','안보','보조금','샌드박스'],
+};
+function ruleClassify(){
+  state.variables.forEach(v=>{
+    if(v.category!=='U') return;
+    const t = (v.text||'').toLowerCase();
+    let best='U', score=0;
+    for(const k of STEEP_ORDER){
+      const s = RULES[k].reduce((a,w)=> a + (t.includes(w)?1:0), 0);
+      if(s>score){ score=s; best=k; }
+    }
+    if(best!=='U'){ v.category=best; v.rationale = v.rationale||'(규칙 기반 추정)'; }
+  });
+}
+
+/* ----- Claude API classifier ----- */
+async function runAIClassify(){
+  const key = getApiKey();
+  const status = document.getElementById('aiStatus');
+  if(!key){ openSettings(); return; }
+  if(!state.variables.length) return;
+  status.innerHTML = `<div class="notice"><span class="spinner"></span> Claude가 ${state.variables.length}개 변수를 분류 중입니다…</div>`;
+
+  const list = state.variables.map(v=>({id:v.id, text:v.text}));
+  const sys = `당신은 STEEP(거시환경 분석) 전문 퍼실리테이터입니다. 사용자가 사업 환경 변수 목록을 줍니다.
+각 변수를 다음 한 글자 코드로 분류하세요: S(사회), T(기술), Ec(경제), En(환경), P(정치).
+또한 변수 표현을 분석 변수답게 간결히 다듬은 name과, 왜 그 카테고리인지 1문장 rationale을 작성하세요.
+반드시 아래 JSON 스키마만 출력하세요(설명·코드펜스 금지):
+{"items":[{"id":"<원래 id>","category":"S|T|Ec|En|P","name":"다듬은 변수명","rationale":"한 문장 근거"}]}`;
+  const usr = `분석 대상: ${state.session.topic||'(미지정)'} / 시간지평: ${state.session.horizon||'(미지정)'}\n변수 목록(JSON):\n`+JSON.stringify(list);
+
+  try {
+    const data = await callClaude(sys, usr, 4000);
+    const text = (data.content||[]).map(b=>b.text||'').join('');
+    const json = extractJSON(text);
+    if(!json || !json.items) throw new Error('AI 응답 파싱 실패');
+    let applied=0;
+    json.items.forEach(it=>{
+      const v = state.variables.find(x=>x.id===it.id);
+      if(v && STEEP[it.category]){ v.category=it.category; v.aiName=it.name||v.aiName; v.rationale=it.rationale||''; applied++; }
+    });
+    save(); renderBoard();
+    status.innerHTML = `<div class="notice ok">✅ ${applied}개 변수를 분류했습니다. 필요하면 카드를 드래그해 조정하세요.</div>`;
+  } catch(err){
+    console.error(err);
+    status.innerHTML = `<div class="notice warn">⚠ AI 분류 실패: ${esc(err.message)}<br>규칙 기반 분류로 대체할 수 있습니다.</div>`;
+  }
+}
+
+async function callClaude(system, user, maxTokens){
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'x-api-key': getApiKey(),
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+    },
+    body: JSON.stringify({
+      model: state.settings.model || 'claude-sonnet-4-6',
+      max_tokens: maxTokens||2000,
+      system,
+      messages:[{role:'user', content:user}],
+    }),
+  });
+  if(!res.ok){
+    let msg = res.status+' '+res.statusText;
+    try { const e = await res.json(); if(e.error?.message) msg = e.error.message; } catch(_){}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+function extractJSON(text){
+  if(!text) return null;
+  let t = text.trim().replace(/^```(json)?/i,'').replace(/```$/,'').trim();
+  const s = t.indexOf('{'), e = t.lastIndexOf('}');
+  if(s>=0 && e>s) t = t.slice(s, e+1);
+  try { return JSON.parse(t); } catch(_){ return null; }
+}
+
+/* =================== STEP 4: EVALUATE =================== */
+function renderEvaluate(root){
+  root.innerHTML = `
+  <div class="panel">
+    <h2 class="title">영향도 · 불확실성 평가</h2>
+    <p class="subtitle">각 변수가 사업에 미치는 <b>영향도(Impact)</b>와 미래 전개의 <b>불확실성(Uncertainty)</b>을 1~5점으로 평가하세요. 두 값이 모두 높은 변수가 시나리오를 가르는 <b>핵심 불확실성</b>이 됩니다.</p>
+    <div class="notice">📏 <b>영향도</b>: 우리 사업의 성패에 얼마나 큰 영향을 주는가 · <b>불확실성</b>: 앞으로 어떻게 될지 예측하기 얼마나 어려운가</div>
+    ${ state.variables.length ? '' : '<p class="meta">먼저 변수를 입력/분류하세요.</p>' }
+    <div id="evalWrap"></div>
+    <div class="toolbar"><div class="left">
+      <button class="btn ghost" id="btnAISuggest">🤖 AI 평가 제안 (참고용)</button>
+    </div><div class="right"></div></div>
+    <div id="evalAi"></div>
+  </div>
+  ${navButtons()}`;
+  renderEvalTable();
+  document.getElementById('btnAISuggest').onclick = aiSuggestScores;
+}
+function renderEvalTable(){
+  const wrap = document.getElementById('evalWrap'); if(!wrap) return;
+  if(!state.variables.length){ wrap.innerHTML=''; return; }
+  const rows = [...state.variables].sort((a,b)=> STEEP_ORDER.indexOf(a.category)-STEEP_ORDER.indexOf(b.category));
+  wrap.innerHTML = `<table class="eval"><thead><tr>
+    <th style="width:46%">변수</th><th>분류</th><th>영향도</th><th>불확실성</th></tr></thead><tbody>
+    ${rows.map(v=>{
+      const c=STEEP[v.category]||STEEP.U;
+      return `<tr data-id="${v.id}">
+        <td>${esc(v.aiName||v.text)}</td>
+        <td><span class="tag ${c.pill}">${c.name.split(' ')[0]}</span></td>
+        <td><div class="scorecell"><input type="range" min="0" max="5" value="${v.impact||0}" data-imp="${v.id}"><span class="scoreval" id="iv_${v.id}">${v.impact||'-'}</span></div></td>
+        <td><div class="scorecell"><input type="range" min="0" max="5" value="${v.uncertainty||0}" data-unc="${v.id}"><span class="scoreval" id="uv_${v.id}">${v.uncertainty||'-'}</span></div></td>
+      </tr>`;
+    }).join('')}
+  </tbody></table>`;
+  wrap.querySelectorAll('[data-imp]').forEach(r=> r.oninput=()=>{
+    const v=state.variables.find(x=>x.id===r.dataset.imp); v.impact=+r.value;
+    document.getElementById('iv_'+v.id).textContent=v.impact||'-'; save();
+  });
+  wrap.querySelectorAll('[data-unc]').forEach(r=> r.oninput=()=>{
+    const v=state.variables.find(x=>x.id===r.dataset.unc); v.uncertainty=+r.value;
+    document.getElementById('uv_'+v.id).textContent=v.uncertainty||'-'; save();
+  });
+}
+async function aiSuggestScores(){
+  const key=getApiKey(); const out=document.getElementById('evalAi');
+  if(!key){ openSettings(); return; }
+  out.innerHTML=`<div class="notice"><span class="spinner"></span> AI가 영향도/불확실성을 제안 중…</div>`;
+  const list = state.variables.map(v=>({id:v.id, text:v.aiName||v.text, cat:v.category}));
+  const sys=`당신은 시나리오 플래닝 전문가입니다. 각 변수에 대해 사업 영향도(impact)와 미래 불확실성(uncertainty)을 1~5 정수로 제안하세요.
+JSON만 출력: {"items":[{"id":"..","impact":1-5,"uncertainty":1-5}]}`;
+  const usr=`분석 대상: ${state.session.topic||'(미지정)'}\n변수:\n`+JSON.stringify(list);
+  try{
+    const data=await callClaude(sys,usr,2000);
+    const text=(data.content||[]).map(b=>b.text||'').join('');
+    const json=extractJSON(text); if(!json||!json.items) throw new Error('파싱 실패');
+    json.items.forEach(it=>{ const v=state.variables.find(x=>x.id===it.id); if(v){ v.impact=clamp(it.impact); v.uncertainty=clamp(it.uncertainty); }});
+    save(); renderEvalTable();
+    out.innerHTML=`<div class="notice ok">✅ AI 제안값을 채웠습니다. 토론을 거쳐 직접 조정하세요. (AI 값은 참고용)</div>`;
+  }catch(e){ out.innerHTML=`<div class="notice warn">⚠ 실패: ${esc(e.message)}</div>`; }
+}
+function clamp(n){ n=Math.round(+n||0); return Math.max(1,Math.min(5,n)); }
+
+/* =================== STEP 5: MATRIX =================== */
+function renderMatrix(root){
+  root.innerHTML = `
+  <div class="panel">
+    <h2 class="title">영향도–불확실성 매트릭스</h2>
+    <p class="subtitle">우측 상단(영향도↑·불확실성↑)이 <b>핵심 불확실성(Critical Uncertainties)</b>입니다. 이 변수들이 시나리오의 축이 됩니다.</p>
+    <div class="matrix-wrap">
+      <div>
+        <div id="matrixHost"></div>
+        <div class="toolbar"><div class="left">
+          <button class="btn sm ghost" id="btnPng">🖼 이미지(PNG) 저장</button>
+        </div></div>
+      </div>
+      <div>
+        <div class="quad-box" style="margin-bottom:12px">
+          <h4 style="color:var(--accent)">🎯 핵심 불확실성 (시나리오 축 후보)</h4>
+          <ul id="qCritical"></ul>
+        </div>
+        <div class="grid2">
+          <div class="quad-box"><h4>📌 핵심 동인 (영향↑·확실)</h4><ul id="qDriver"></ul></div>
+          <div class="quad-box"><h4>👀 모니터링 (영향↓·불확실)</h4><ul id="qMonitor"></ul></div>
+        </div>
+        <div class="quad-box" style="margin-top:12px"><h4>➖ 부차 요인 (영향↓·확실)</h4><ul id="qLow"></ul></div>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:12px">번호는 변수 식별용이며, 점 색상은 STEEP 카테고리입니다. 평가하지 않은(0점) 변수는 표시되지 않습니다.</p>
+  </div>
+  ${navButtons()}`;
+  drawMatrix();
+  document.getElementById('btnPng').onclick = exportMatrixPNG;
+}
+
+function scoredVars(){ return state.variables.filter(v=>v.impact>0 && v.uncertainty>0); }
+
+function drawMatrix(){
+  const host = document.getElementById('matrixHost'); if(!host) return;
+  const vars = scoredVars();
+  const W=520, H=480, pad=54;
+  const x = u => pad + (u-1)/4*(W-pad*2);          // uncertainty 1..5 -> x
+  const y = i => (H-pad) - (i-1)/4*(H-pad*2);       // impact 1..5 -> y (up)
+  const mid = 3;
+  // jitter overlapping points
+  const seen={};
+  function jit(v){ const k=v.uncertainty+'_'+v.impact; const n=(seen[k]=(seen[k]||0)+1); const ang=n*1.6; return {dx:Math.cos(ang)*7*(n>1?1:0), dy:Math.sin(ang)*7*(n>1?1:0)}; }
+
+  const pts = vars.map((v,idx)=>{
+    const j=jit(v); const c=STEEP[v.category]||STEEP.U;
+    return `<g>
+      <circle cx="${x(v.uncertainty)+j.dx}" cy="${y(v.impact)+j.dy}" r="13" fill="${c.hex}" fill-opacity="0.9" stroke="#0b0f14" stroke-width="1.5"></circle>
+      <text x="${x(v.uncertainty)+j.dx}" y="${y(v.impact)+j.dy+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#0b0f14">${idx+1}</text>
+    </g>`;
+  }).join('');
+
+  const svg = `<svg class="matrix" viewBox="0 0 ${W} ${H}" id="matrixSvg" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="${W}" height="${H}" fill="#222b35"></rect>
+    <!-- quadrant shading -->
+    <rect x="${x(mid)}" y="${pad}" width="${(W-pad)-x(mid)}" height="${y(mid)-pad}" fill="#4f9cf9" fill-opacity="0.08"></rect>
+    <!-- axes -->
+    <line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#5a6675" stroke-width="1.5"></line>
+    <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${H-pad}" stroke="#5a6675" stroke-width="1.5"></line>
+    <line x1="${x(mid)}" y1="${pad}" x2="${x(mid)}" y2="${H-pad}" stroke="#3a4654" stroke-dasharray="5 5"></line>
+    <line x1="${pad}" y1="${y(mid)}" x2="${W-pad}" y2="${y(mid)}" stroke="#3a4654" stroke-dasharray="5 5"></line>
+    <!-- labels -->
+    <text x="${(W)/2}" y="${H-16}" text-anchor="middle" fill="#8b97a3" font-size="13" font-weight="700">불확실성 (Uncertainty) →</text>
+    <text x="18" y="${H/2}" text-anchor="middle" fill="#8b97a3" font-size="13" font-weight="700" transform="rotate(-90 18 ${H/2})">영향도 (Impact) →</text>
+    <text x="${W-pad-6}" y="${pad+16}" text-anchor="end" fill="#4f9cf9" font-size="12" font-weight="700">핵심 불확실성</text>
+    <text x="${pad+6}" y="${pad+16}" fill="#6f7c8a" font-size="11">핵심 동인</text>
+    <text x="${W-pad-6}" y="${H-pad-8}" text-anchor="end" fill="#6f7c8a" font-size="11">모니터링</text>
+    <text x="${pad+6}" y="${H-pad-8}" fill="#6f7c8a" font-size="11">부차 요인</text>
+    ${pts}
+  </svg>`;
+  host.innerHTML = svg;
+
+  // legend + quadrant lists
+  const buckets={crit:[],driver:[],monitor:[],low:[]};
+  vars.forEach((v,idx)=>{
+    const hiI=v.impact>=mid, hiU=v.uncertainty>=mid;
+    const item={...v, n:idx+1};
+    if(hiI&&hiU) buckets.crit.push(item);
+    else if(hiI&&!hiU) buckets.driver.push(item);
+    else if(!hiI&&hiU) buckets.monitor.push(item);
+    else buckets.low.push(item);
+  });
+  const li = arr => arr.length? arr.map(v=>`<li><b>${v.n}.</b> ${esc(v.aiName||v.text)} <span class="meta">(I${v.impact}/U${v.uncertainty})</span></li>`).join('') : '<li class="meta">없음</li>';
+  setHTML('qCritical', buckets.crit.length? buckets.crit.sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty)).map(v=>`<li><b>${v.n}.</b> ${esc(v.aiName||v.text)} <span class="meta">(I${v.impact}/U${v.uncertainty})</span></li>`).join('') : '<li class="meta">아직 없음 — 영향도·불확실성을 평가하세요</li>');
+  setHTML('qDriver', li(buckets.driver));
+  setHTML('qMonitor', li(buckets.monitor));
+  setHTML('qLow', li(buckets.low));
+}
+function setHTML(id,h){ const e=document.getElementById(id); if(e) e.innerHTML=h; }
+
+function exportMatrixPNG(){
+  const svg = document.getElementById('matrixSvg'); if(!svg) return;
+  const xml = new XMLSerializer().serializeToString(svg);
+  const img = new Image();
+  const svg64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(xml)));
+  img.onload = ()=>{
+    const scale=2; const cv=document.createElement('canvas');
+    cv.width = svg.viewBox.baseVal.width*scale; cv.height = svg.viewBox.baseVal.height*scale;
+    const ctx=cv.getContext('2d'); ctx.scale(scale,scale); ctx.drawImage(img,0,0);
+    cv.toBlob(b=> downloadBlob(b, fname('matrix','png')));
+  };
+  img.src = svg64;
+}
+
+/* =================== STEP 6: SCENARIO =================== */
+function renderScenario(root){
+  const crit = scoredVars().filter(v=>v.impact>=3&&v.uncertainty>=3)
+                .sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty));
+  const sc = state.scenario;
+  const opts = crit.map(v=>`<option value="${esc(v.aiName||v.text)}">${esc(v.aiName||v.text)} (I${v.impact}/U${v.uncertainty})</option>`).join('');
+  root.innerHTML = `
+  <div class="panel">
+    <h2 class="title">시나리오 도출</h2>
+    <p class="subtitle">핵심 불확실성 중 가장 중요하고 서로 독립적인 <b>2개</b>를 축으로 골라 2×2 시나리오 매트릭스를 만듭니다. 각 사분면에 어떤 미래가 펼쳐질지 팀이 함께 서술하세요.</p>
+    ${crit.length<2 ? `<div class="notice warn">⚠ 핵심 불확실성(영향도≥3·불확실성≥3)이 2개 이상 필요합니다. 현재 ${crit.length}개. 평가 단계를 보완하세요.</div>`:''}
+    <div class="grid2">
+      <div>
+        <div class="field"><label class="fl">가로축(X) 핵심 불확실성</label>
+          <input list="critList" type="text" id="axisX" value="${esc(sc.axisX)}" placeholder="핵심 불확실성 선택/입력"></div>
+        <div class="grid2">
+          <div class="field"><label class="fl">X − (왼쪽 극단)</label><input type="text" id="xNeg" value="${esc(sc.xNeg)}" placeholder="예: 규제 강화"></div>
+          <div class="field"><label class="fl">X ＋ (오른쪽 극단)</label><input type="text" id="xPos" value="${esc(sc.xPos)}" placeholder="예: 규제 완화"></div>
+        </div>
+      </div>
+      <div>
+        <div class="field"><label class="fl">세로축(Y) 핵심 불확실성</label>
+          <input list="critList" type="text" id="axisY" value="${esc(sc.axisY)}" placeholder="핵심 불확실성 선택/입력"></div>
+        <div class="grid2">
+          <div class="field"><label class="fl">Y − (아래 극단)</label><input type="text" id="yNeg" value="${esc(sc.yNeg)}" placeholder="예: 수요 정체"></div>
+          <div class="field"><label class="fl">Y ＋ (위 극단)</label><input type="text" id="yPos" value="${esc(sc.yPos)}" placeholder="예: 수요 급증"></div>
+        </div>
+      </div>
+    </div>
+    <datalist id="critList">${opts}</datalist>
+
+    <h3 style="margin:18px 0 4px">4개 시나리오</h3>
+    <div class="scenario-grid" id="scnGrid"></div>
+
+    <div class="toolbar"><div class="left">
+      <button class="btn ghost" id="btnGenScn">🤖 AI 시나리오 초안 생성</button>
+    </div><div class="right"></div></div>
+    <div id="scnAi"></div>
+  </div>
+  ${navButtons()}`;
+
+  const bind=(id,key)=>{ const el=document.getElementById(id); el.addEventListener('input',()=>{ sc[key]=el.value; save(); renderScnGrid(); }); };
+  bind('axisX','axisX'); bind('axisY','axisY'); bind('xPos','xPos'); bind('xNeg','xNeg'); bind('yPos','yPos'); bind('yNeg','yNeg');
+  renderScnGrid();
+  document.getElementById('btnGenScn').onclick = aiGenScenarios;
+}
+function renderScnGrid(){
+  const sc=state.scenario; const g=document.getElementById('scnGrid'); if(!g) return;
+  const titles=[
+    `${sc.xNeg||'X−'} ＋ ${sc.yPos||'Y＋'}`,
+    `${sc.xPos||'X＋'} ＋ ${sc.yPos||'Y＋'}`,
+    `${sc.xNeg||'X−'} ＋ ${sc.yNeg||'Y−'}`,
+    `${sc.xPos||'X＋'} ＋ ${sc.yNeg||'Y−'}`,
+  ];
+  g.innerHTML = titles.map((t,i)=>`<div class="scn">
+    <div class="hd">시나리오 ${i+1} · <span style="color:var(--accent)">${esc(t)}</span></div>
+    <textarea data-cell="${i}" placeholder="이 조합에서 펼쳐질 미래 상황, 사업 시사점, 대응 전략을 서술…">${esc(sc.cells[i]||'')}</textarea>
+  </div>`).join('');
+  g.querySelectorAll('[data-cell]').forEach(t=> t.addEventListener('input',()=>{ sc.cells[+t.dataset.cell]=t.value; save(); }));
+}
+async function aiGenScenarios(){
+  const key=getApiKey(); const out=document.getElementById('scnAi'); const sc=state.scenario;
+  if(!key){ openSettings(); return; }
+  if(!sc.axisX||!sc.axisY){ out.innerHTML=`<div class="notice warn">먼저 X·Y 축을 지정하세요.</div>`; return; }
+  out.innerHTML=`<div class="notice"><span class="spinner"></span> AI가 4개 시나리오 초안을 작성 중…</div>`;
+  const sys=`당신은 시나리오 플래닝 전문가입니다. 2개의 핵심 불확실성 축으로 만든 2x2 매트릭스의 4개 사분면에 대해 각각 미래 시나리오를 작성하세요.
+각 시나리오는 (1)임팩트 있는 이름 (2)2~3문장 상황 묘사 (3)사업 시사점/대응 1문장을 포함하고 한국어로 작성.
+JSON만 출력: {"cells":["사분면1 텍스트","사분면2","사분면3","사분면4"]}
+사분면 순서: 1=(X−,Y+) 2=(X+,Y+) 3=(X−,Y−) 4=(X+,Y−)`;
+  const usr=`분석 대상: ${state.session.topic||'(미지정)'} / 지평: ${state.session.horizon||''}
+가로축(X): ${sc.axisX} [− ${sc.xNeg||'?'} ~ + ${sc.xPos||'?'}]
+세로축(Y): ${sc.axisY} [− ${sc.yNeg||'?'} ~ + ${sc.yPos||'?'}]`;
+  try{
+    const data=await callClaude(sys,usr,2500);
+    const text=(data.content||[]).map(b=>b.text||'').join('');
+    const json=extractJSON(text); if(!json||!json.cells) throw new Error('파싱 실패');
+    sc.cells = json.cells.slice(0,4); save(); renderScnGrid();
+    out.innerHTML=`<div class="notice ok">✅ 초안을 채웠습니다. 팀 토론으로 다듬으세요.</div>`;
+  }catch(e){ out.innerHTML=`<div class="notice warn">⚠ 실패: ${esc(e.message)}</div>`; }
+}
+
+/* =================== STEP 7: EXPORT =================== */
+function renderExport(root){
+  root.innerHTML = `
+  <div class="panel">
+    <h2 class="title">내보내기 / 리포트</h2>
+    <p class="subtitle">단계별 결과물을 추출합니다. 조원별 JSON은 진행자가 <b>불러오기 → 병합</b>으로 취합할 수 있습니다.</p>
+    <div class="grid2">
+      <div class="quad-box">
+        <h4>📊 데이터</h4>
+        <div class="chips" style="margin-top:8px">
+          <button class="btn sm" id="exVarsCsv">변수+평가 CSV</button>
+          <button class="btn sm" id="exJson">전체 JSON</button>
+          <button class="btn sm" id="exMatrix">매트릭스 PNG</button>
+        </div>
+      </div>
+      <div class="quad-box">
+        <h4>📄 종합 리포트</h4>
+        <div class="chips" style="margin-top:8px">
+          <button class="btn sm primary" id="exReport">리포트 보기 / 인쇄(PDF)</button>
+        </div>
+        <p class="hint">인쇄 대화상자에서 'PDF로 저장'을 선택하면 PDF로 추출됩니다.</p>
+      </div>
+    </div>
+    <div class="quad-box" style="margin-top:14px">
+      <h4>🔀 조원 결과 취합 (병합)</h4>
+      <p class="hint">각 조원이 내보낸 여러 JSON 파일을 한 번에 불러와 변수 목록을 합칩니다. (중복 텍스트는 자동 제외)</p>
+      <button class="btn sm" id="btnMerge">JSON 파일 병합하기</button>
+      <span id="mergeMsg" class="meta"></span>
+    </div>
+    <div id="reportHost" class="hidden"></div>
+  </div>
+  ${navButtons()}`;
+
+  document.getElementById('exVarsCsv').onclick = exportCSV;
+  document.getElementById('exJson').onclick = exportJSON;
+  document.getElementById('exMatrix').onclick = ()=>{ // need svg in DOM; render offscreen
+    const tmp=document.createElement('div'); tmp.style.position='fixed'; tmp.style.left='-9999px'; document.body.appendChild(tmp);
+    const host=document.getElementById('matrixHost');
+    // reuse drawMatrix by temporarily creating host
+    tmp.innerHTML='<div id="matrixHost"></div>'; drawMatrix(); exportMatrixPNG();
+  };
+  document.getElementById('exReport').onclick = showReport;
+  document.getElementById('btnMerge').onclick = ()=> document.getElementById('mergeInput').click();
+}
+
+function exportCSV(){
+  const head=['카테고리','변수(다듬은)','원문','영향도','불확실성','분류근거','작성자'];
+  const rows = state.variables.map(v=>[
+    (STEEP[v.category]||STEEP.U).name, v.aiName||'', v.text, v.impact||'', v.uncertainty||'', v.rationale||'', v.author||''
+  ]);
+  const csv = [head,...rows].map(r=> r.map(c=>`"${(c+'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadBlob(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}), fname('steep_variables','csv'));
+}
+function exportJSON(){
+  const payload = { ...state, exportedAt:new Date().toISOString() };
+  downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}), fname('steep_session','json'));
+}
+
+function showReport(){
+  const s=state.session;
+  const byCat = STEEP_ORDER.map(k=>({k, items: state.variables.filter(v=>v.category===k)}));
+  const crit = scoredVars().filter(v=>v.impact>=3&&v.uncertainty>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty));
+  const sc=state.scenario;
+  const w = window.open('', '_blank');
+  const css = `body{font-family:-apple-system,'Malgun Gothic','Noto Sans KR',sans-serif;color:#111;max-width:900px;margin:0 auto;padding:32px;line-height:1.6}
+    h1{font-size:24px;border-bottom:3px solid #4f9cf9;padding-bottom:8px} h2{font-size:18px;margin-top:28px;color:#1a2a3a;border-left:4px solid #4f9cf9;padding-left:10px}
+    table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px} th,td{border:1px solid #ccc;padding:6px 8px;text-align:left} th{background:#f0f4f8}
+    .tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;color:#fff} .muted{color:#666}
+    .scn{border:1px solid #ccc;border-radius:8px;padding:12px;margin:8px 0} .scn h4{margin:0 0 6px}
+    @media print{ .noprint{display:none} }`;
+  const tag=(k)=>`<span class="tag" style="background:${STEEP[k].hex}">${STEEP[k].name}</span>`;
+  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>STEEP 시나리오 리포트</title><style>${css}</style></head><body>
+    <button class="noprint" onclick="window.print()" style="float:right;padding:8px 16px;cursor:pointer">🖨 인쇄 / PDF</button>
+    <h1>STEEP 시나리오 플래닝 리포트</h1>
+    <p class="muted">${esc(s.teamName||'')} ${s.author?'· '+esc(s.author):''} · 생성일 ${new Date().toLocaleDateString('ko-KR')}</p>
+    <p><b>분석 대상:</b> ${esc(s.topic||'(미지정)')}<br><b>시간 지평:</b> ${esc(s.horizon||'(미지정)')}</p>
+
+    <h2>1. STEEP 환경 분석</h2>
+    ${byCat.map(g=> g.items.length? `<h3>${STEEP[g.k].name}</h3><ul>${g.items.map(v=>`<li>${esc(v.aiName||v.text)} ${v.rationale?`<span class="muted">— ${esc(v.rationale)}</span>`:''}</li>`).join('')}</ul>`:'').join('')}
+
+    <h2>2. 영향도·불확실성 평가</h2>
+    <table><tr><th>변수</th><th>분류</th><th>영향도</th><th>불확실성</th></tr>
+    ${state.variables.filter(v=>v.impact||v.uncertainty).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty)).map(v=>`<tr><td>${esc(v.aiName||v.text)}</td><td>${tag(v.category)}</td><td>${v.impact||'-'}</td><td>${v.uncertainty||'-'}</td></tr>`).join('')}</table>
+
+    <h2>3. 핵심 불확실성 (Critical Uncertainties)</h2>
+    <ol>${crit.length?crit.map(v=>`<li><b>${esc(v.aiName||v.text)}</b> (영향 ${v.impact} / 불확실성 ${v.uncertainty})</li>`).join(''):'<li class="muted">평가된 핵심 불확실성이 없습니다.</li>'}</ol>
+
+    <h2>4. 시나리오</h2>
+    <p><b>가로축(X):</b> ${esc(sc.axisX||'-')} (${esc(sc.xNeg||'?')} ↔ ${esc(sc.xPos||'?')})<br>
+       <b>세로축(Y):</b> ${esc(sc.axisY||'-')} (${esc(sc.yNeg||'?')} ↔ ${esc(sc.yPos||'?')})</p>
+    ${[`${sc.xNeg||'X−'} ＋ ${sc.yPos||'Y＋'}`,`${sc.xPos||'X＋'} ＋ ${sc.yPos||'Y＋'}`,`${sc.xNeg||'X−'} ＋ ${sc.yNeg||'Y−'}`,`${sc.xPos||'X＋'} ＋ ${sc.yNeg||'Y−'}`]
+      .map((t,i)=>`<div class="scn"><h4>시나리오 ${i+1}: ${esc(t)}</h4><div>${esc(sc.cells[i]||'(미작성)').replace(/\n/g,'<br>')}</div></div>`).join('')}
+    </body></html>`;
+  w.document.write(html); w.document.close();
+}
+
+/* ---------- merge ---------- */
+function handleMerge(files){
+  let added=0, done=0;
+  const msg=document.getElementById('mergeMsg');
+  const existing = new Set(state.variables.map(v=>(v.text||'').trim()));
+  [...files].forEach(file=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const d=JSON.parse(r.result);
+        (d.variables||[]).forEach(v=>{
+          const t=(v.text||'').trim(); if(!t||existing.has(t)) return;
+          existing.add(t);
+          state.variables.push({ id:uid(), text:t, category:v.category||'U', aiName:v.aiName||'', rationale:v.rationale||'', impact:v.impact||0, uncertainty:v.uncertainty||0, author:v.author||(d.session?.teamName||'') });
+          added++;
+        });
+      }catch(e){ console.warn('merge parse fail',e); }
+      if(++done===files.length){ save(); if(msg) msg.textContent=` ✅ ${added}개 변수 병합 완료`; render(); }
+    };
+    r.readAsText(file);
+  });
+}
+
+/* ---------- import / export-all ---------- */
+function importJSON(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      if(!d.variables) throw new Error('형식 오류');
+      if(confirm('현재 세션을 불러온 데이터로 교체할까요? (병합이 아닌 교체)')){
+        state = Object.assign(DEFAULT_STATE(), d); save(); render();
+      }
+    }catch(e){ alert('불러오기 실패: '+e.message); }
+  };
+  r.readAsText(file);
+}
+
+/* ---------- helpers ---------- */
+function downloadBlob(blob, name){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+function fname(base,ext){
+  const t=(state.session.teamName||'steep').replace(/[^\w가-힣]+/g,'_').slice(0,20);
+  return `${t}_${base}_${new Date().toISOString().slice(0,10)}.${ext}`;
+}
+
+/* ---------- settings modal ---------- */
+function openSettings(){
+  const cur=getApiKey();
+  const bg=document.createElement('div'); bg.className='modal-bg';
+  bg.innerHTML=`<div class="modal">
+    <h3>⚙ AI 설정 (Claude API)</h3>
+    <div class="field"><label class="fl">Anthropic API Key</label>
+      <input type="password" id="m_key" value="${esc(cur)}" placeholder="sk-ant-...">
+      <div class="hint">키는 이 브라우저에만 저장되며 외부로 전송되지 않습니다(Anthropic API 직접 호출에만 사용). 세션 JSON에는 포함되지 않습니다.</div>
+    </div>
+    <div class="field"><label class="fl">모델</label>
+      <select id="m_model">
+        <option value="claude-sonnet-4-6">claude-sonnet-4-6 (균형·추천)</option>
+        <option value="claude-opus-4-8">claude-opus-4-8 (최고 성능)</option>
+        <option value="claude-haiku-4-5-20251001">claude-haiku-4-5 (빠름·저비용)</option>
+      </select>
+    </div>
+    <div class="notice">브라우저에서 직접 호출하므로 <span class="kbd">anthropic-dangerous-direct-browser-access</span> 헤더를 사용합니다. 개인/세미나용 키 사용을 권장합니다.</div>
+    <div class="toolbar"><div class="left">
+      <button class="btn ghost" id="m_clear">키 삭제</button>
+    </div><div class="right">
+      <button class="btn ghost" id="m_cancel">취소</button>
+      <button class="btn primary" id="m_save">저장</button>
+    </div></div>
+  </div>`;
+  document.body.appendChild(bg);
+  document.getElementById('m_model').value = state.settings.model||'claude-sonnet-4-6';
+  const close=()=>bg.remove();
+  bg.addEventListener('click',e=>{ if(e.target===bg) close(); });
+  document.getElementById('m_cancel').onclick=close;
+  document.getElementById('m_clear').onclick=()=>{ setApiKey(''); close(); render(); };
+  document.getElementById('m_save').onclick=()=>{
+    setApiKey(document.getElementById('m_key').value.trim());
+    state.settings.model=document.getElementById('m_model').value; save(); close(); render();
+  };
+}
+
+/* ---------- top buttons ---------- */
+document.getElementById('btnSettings').onclick=openSettings;
+document.getElementById('btnExportAll').onclick=()=>exportJSON();
+document.getElementById('btnImport').onclick=()=>document.getElementById('fileInput').click();
+document.getElementById('fileInput').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; };
+document.getElementById('mergeInput').onchange=e=>{ if(e.target.files.length) handleMerge(e.target.files); e.target.value=''; };
+
+/* ---------- boot ---------- */
+render();
+</script>
+</body>
+</html>
