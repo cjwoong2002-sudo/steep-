@@ -182,7 +182,9 @@
 <header class="top">
   <div class="logo">AI 사업기회 도출<span class="dot"> ·</span> STEEP 시나리오</div>
   <div class="spacer"></div>
+  <span class="meta" id="syncChip"></span>
   <div class="meta" id="sessionMeta"></div>
+  <button class="btn sm ghost" id="btnShare">👥 조 공유</button>
   <button class="btn sm ghost" id="btnSettings">⚙ AI 설정</button>
   <button class="btn sm ghost" id="btnImport">불러오기</button>
   <button class="btn sm ghost" id="btnExportAll">저장(JSON)</button>
@@ -312,8 +314,26 @@ const DEFAULT_STATE = () => ({
   canvas: { asis:{}, tobe:{} },
   oppthreat: { sel:{}, rat:{}, insight:'' }, // sel[varId]='opp'|'threat'|'none', rat[varId]=text
   settings: { model:'claude-sonnet-4-6' },
+  sync: { enabled:false, roomCode:'lg2026' },
   step: 0,
 });
+
+/* =====================================================================
+   ⬇⬇⬇ Firebase 실시간 공유 설정 — 교체 지점 ⬇⬇⬇
+   진행자가 Firebase 프로젝트(Realtime Database)를 만든 뒤 web 앱 config를
+   아래에 채우고 커밋하면, 참가자는 '조'만 선택하면 자동 연결됩니다.
+   (Firebase web config 키는 비밀이 아닌 공개 클라이언트 정보 — 보안은 DB 규칙으로)
+   비워두면 각자 '👥 조 공유' 설정에서 config를 붙여넣어 사용할 수 있습니다.
+   databaseURL 이 반드시 포함되어야 합니다.
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+  // apiKey: "...",
+  // authDomain: "your-app.firebaseapp.com",
+  // databaseURL: "https://your-app-default-rtdb.firebaseio.com",
+  // projectId: "your-app",
+  // appId: "..."
+};
+/* ⬆⬆⬆ Firebase 설정 끝 ⬆⬆⬆ */
 
 const STEPS = [
   { t:'세션 설정',                    r: renderSetup },
@@ -327,6 +347,8 @@ const STEPS = [
 
 const LS_KEY = 'steep_workshop_state_v4';
 const LS_APIKEY = 'steep_anthropic_key';
+const LS_PID = 'steep_participant_id';
+const LS_FBCONFIG = 'steep_firebase_config';
 
 let state = load();
 if(state.step>=STEPS.length) state.step=0;
@@ -336,12 +358,14 @@ function load(){
     if(raw){ const d = Object.assign(DEFAULT_STATE(), JSON.parse(raw));
       d.canvas = Object.assign({asis:{},tobe:{}}, d.canvas||{});
       d.oppthreat = Object.assign({sel:{},rat:{},insight:''}, d.oppthreat||{});
+      d.sync = Object.assign({enabled:false,roomCode:'lg2026'}, d.sync||{});
       if(d.scenario && d.scenario.selected==null) d.scenario.selected=-1;
       return d; }
   } catch(e){ console.warn('load failed', e); }
   return DEFAULT_STATE();
 }
-function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); updateMeta(); }
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); updateMeta(); syncPublishDebounced(); }
+function pid(){ let p=localStorage.getItem(LS_PID); if(!p){ p=uid(); localStorage.setItem(LS_PID,p); } return p; }
 function getApiKey(){ return localStorage.getItem(LS_APIKEY) || ''; }
 function setApiKey(k){ k ? localStorage.setItem(LS_APIKEY,k) : localStorage.removeItem(LS_APIKEY); }
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -454,6 +478,7 @@ function renderSetup(root){
   </div>`;
   const sv=()=>{ s.team=document.getElementById('f_team').value; s.name=val('f_name'); s.title=val('f_title'); s.topic=val('f_topic'); save(); };
   ['f_team','f_name','f_title','f_topic'].forEach(id=> document.getElementById(id).addEventListener('input',sv));
+  document.getElementById('f_team').addEventListener('change',()=>{ if(state.sync.enabled && getFirebaseConfig()) syncReconnect(); });
   document.getElementById('btnStart').onclick=()=>{ sv(); goto(1); };
   document.getElementById('btnExample').onclick=loadExample;
   document.getElementById('btnReset').onclick=()=>{ if(confirm('모든 데이터를 삭제하고 새로 시작할까요?')){ state=DEFAULT_STATE(); save(); render(); } };
@@ -785,22 +810,38 @@ function renderActIII(root){
     <h2 class="title">Activity III — 비즈니스 캔버스</h2>
     <p class="subtitle">현재 사업(As-Is)을 9블록으로 기술하고, 선정 시나리오 미래(To-Be)에서 각 블록이 어떻게 변화할지 구상하세요. 각 블록의 <b>🤖 AI 추천</b>은 직책·시나리오를 반영합니다.</p>
     ${sc.selected<0?`<div class="notice warn">⚠ Activity II에서 <b>실습 시나리오</b>를 먼저 선정하면 To-Be 작성과 AI 추천이 정확해집니다.</div>`:''}
-    <div class="act3-layout">
-      <div>
-        <div class="canvas-tabs">
-          <div class="tb ${canvasMode==='asis'?'active':''}" data-mode="asis">Step 1 · As-Is (현재)</div>
-          <div class="tb ${canvasMode==='tobe'?'active':''}" data-mode="tobe">Step 2 · To-Be (시나리오 반영 미래)</div>
+    <div class="toolbar" style="margin:0 0 12px"><div class="left">
+      <button class="btn sm ${sharedViewOn?'ghost':'primary'}" id="btnMine">✏ 내 캔버스</button>
+      <button class="btn sm ${sharedViewOn?'primary':'ghost'}" id="btnShared">👥 조 전체 캔버스 보기</button>
+    </div><div class="right"><span class="meta" id="shareHint"></span></div></div>
+    <div id="myCanvas" class="${sharedViewOn?'hidden':''}">
+      <div class="act3-layout">
+        <div>
+          <div class="canvas-tabs">
+            <div class="tb ${canvasMode==='asis'?'active':''}" data-mode="asis">Step 1 · As-Is (현재)</div>
+            <div class="tb ${canvasMode==='tobe'?'active':''}" data-mode="tobe">Step 2 · To-Be (시나리오 반영 미래)</div>
+          </div>
+          <div class="bmc" id="bmc"></div>
         </div>
-        <div class="bmc" id="bmc"></div>
+        <aside><div class="sidepanel" id="sidepanel"></div></aside>
       </div>
-      <aside>
-        <div class="sidepanel" id="sidepanel"></div>
-      </aside>
+    </div>
+    <div id="sharedWrap" class="${sharedViewOn?'':'hidden'}">
+      <div class="canvas-tabs">
+        <div class="tb ${canvasMode==='asis'?'active':''}" data-smode="asis">As-Is</div>
+        <div class="tb ${canvasMode==='tobe'?'active':''}" data-smode="tobe">To-Be</div>
+      </div>
+      <div id="sharedCanvas"></div>
     </div>
   </div>
   ${navButtons()}`;
-  root.querySelectorAll('.tb').forEach(t=> t.onclick=()=>{ canvasMode=t.dataset.mode; renderActIII(root); });
-  renderBMC(); renderSidePanel();
+  root.querySelectorAll('.tb[data-mode]').forEach(t=> t.onclick=()=>{ canvasMode=t.dataset.mode; renderActIII(root); });
+  root.querySelectorAll('.tb[data-smode]').forEach(t=> t.onclick=()=>{ canvasMode=t.dataset.smode; renderActIII(root); });
+  document.getElementById('btnMine').onclick=()=>{ sharedViewOn=false; renderActIII(root); };
+  document.getElementById('btnShared').onclick=()=>{ sharedViewOn=true; renderActIII(root);
+    if(!state.sync.enabled) document.getElementById('shareHint').textContent='실시간 공유가 꺼져 있습니다 — 👥 조 공유에서 켜세요'; };
+  if(sharedViewOn){ renderSharedCanvas(document.getElementById('sharedCanvas')); }
+  else { renderBMC(); renderSidePanel(); }
 }
 function renderBMC(){
   const host=document.getElementById('bmc'); if(!host) return; const data=state.canvas[canvasMode];
@@ -1045,13 +1086,130 @@ function openSettings(){
   document.getElementById('m_save').onclick=()=>{ setApiKey(document.getElementById('m_key').value.trim()); state.settings.model=document.getElementById('m_model').value; save(); close(); render(); };
 }
 
+/* ===================================================================
+   실시간 조별 공유 (Firebase Realtime Database)
+   조 = 방(room). 같은 조를 선택한 참가자끼리 자동 연결되어
+   각자의 캔버스/변수/시나리오/기회위협을 실시간 발행·열람합니다.
+   Firebase 미설정/오프라인이면 개인 모드로 정상 동작.
+   =================================================================== */
+let _fbMods=null, _fbApp=null, _fbDb=null, _memberRef=null, _roomRef=null, _unsub=null;
+let roomMembers={}, sharedViewOn=false, _syncState='off';
+
+function getFirebaseConfig(){
+  try{ const ls=localStorage.getItem(LS_FBCONFIG); if(ls){ const c=JSON.parse(ls); if(c&&c.apiKey) return c; } }catch(_){}
+  return (FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey) ? FIREBASE_CONFIG : null;
+}
+function roomId(){ return `${(state.sync.roomCode||'lg2026').replace(/[.#$\[\]\/\s]/g,'_')}_${(state.session.team||'team').replace(/[.#$\[\]\/\s]/g,'_')}`; }
+
+async function fbLoad(){
+  if(_fbMods) return _fbMods;
+  const app = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+  const db  = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+  _fbMods={app,db}; return _fbMods;
+}
+function syncStatus(s,msg){
+  _syncState=s; const chip=document.getElementById('syncChip'); if(!chip) return;
+  const n=Object.keys(roomMembers||{}).length;
+  const map={ off:'', connecting:'🟡 연결 중…', connected:`🟢 ${esc(state.session.team)} · ${n}명 접속`,
+    'config-missing':'⚪ 공유 미설정', error:'🔴 공유 오류' };
+  chip.textContent = map[s]||'';
+  chip.title = msg||'';
+}
+async function syncConnect(){
+  if(!state.sync.enabled){ syncStatus('off'); return; }
+  const cfg=getFirebaseConfig();
+  if(!cfg){ syncStatus('config-missing'); return; }
+  if(!state.session.team){ syncStatus('error','조를 먼저 선택하세요'); return; }
+  syncStatus('connecting');
+  try{
+    const {app,db}=await fbLoad();
+    if(!_fbApp){ try{ _fbApp=app.initializeApp(cfg); }catch(e){ _fbApp=app.getApp?app.getApp():_fbApp; } }
+    _fbDb=db.getDatabase(_fbApp);
+    if(_unsub){ try{_unsub();}catch(_){} _unsub=null; }
+    _memberRef=db.ref(_fbDb, `rooms/${roomId()}/members/${pid()}`);
+    _roomRef=db.ref(_fbDb, `rooms/${roomId()}/members`);
+    db.onDisconnect(_memberRef).remove();
+    await syncPublish(true);
+    _unsub=db.onValue(_roomRef, snap=>{ roomMembers=snap.val()||{}; onRoomUpdate(); }, err=>{ console.error(err); syncStatus('error',err.message); });
+    syncStatus('connected');
+  }catch(e){ console.error(e); syncStatus('error', e.message); }
+}
+async function syncDisconnect(){
+  try{ if(_unsub){ _unsub(); _unsub=null; } if(_memberRef&&_fbMods){ await _fbMods.db.remove(_memberRef); } }catch(_){}
+  roomMembers={}; syncStatus('off'); onRoomUpdate();
+}
+let _pubT=null;
+function syncPublishDebounced(){ if(!state.sync.enabled||!_memberRef) return; clearTimeout(_pubT); _pubT=setTimeout(()=>syncPublish(),700); }
+async function syncPublish(){
+  if(!_fbDb||!_memberRef||!_fbMods) return;
+  const payload={ pid:pid(),
+    profile:{ team:state.session.team, name:state.session.name||'(이름없음)', title:state.session.title||'' },
+    canvas:state.canvas, scenario:state.scenario, variables:state.variables, oppthreat:state.oppthreat, updatedAt:Date.now() };
+  try{ await _fbMods.db.set(_memberRef, payload); }catch(e){ console.warn('publish 실패',e); }
+}
+function onRoomUpdate(){
+  syncStatus(_syncState==='off'?'off':'connected');
+  if(sharedViewOn && state.step===3){ const host=document.getElementById('sharedCanvas'); if(host) renderSharedCanvas(host); }
+}
+async function syncReconnect(){ await syncDisconnect(); await syncConnect(); }
+
+/* ---------- 조 공유 설정 모달 ---------- */
+function openShareModal(){
+  const cfg = getFirebaseConfig();
+  const cfgText = (()=>{ try{ const ls=localStorage.getItem(LS_FBCONFIG); return ls?JSON.stringify(JSON.parse(ls),null,2):''; }catch(_){ return ''; } })();
+  const embedded = !!(FIREBASE_CONFIG && FIREBASE_CONFIG.apiKey);
+  const bg=document.createElement('div'); bg.className='modal-bg';
+  bg.innerHTML=`<div class="modal" style="width:min(620px,94vw)"><h3>👥 조별 실시간 공유 (Firebase)</h3>
+    <p class="hint">같은 <b>조 + 방 코드</b>를 가진 참가자끼리 캔버스를 실시간으로 공유합니다. 진행자가 Firebase Realtime Database를 만들어 config를 설정하면, 참가자는 조만 선택하면 됩니다.</p>
+    <div class="grid2">
+      <div class="field"><label class="fl">방 코드 (차수/세션 구분)</label><input type="text" id="s_room" value="${esc(state.sync.roomCode||'lg2026')}" placeholder="예: lg2026-1차"></div>
+      <div class="field"><label class="fl">현재 방</label><input type="text" value="${esc(roomId())}" disabled></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;margin:6px 0 12px;font-size:14px">
+      <input type="checkbox" id="s_enable" ${state.sync.enabled?'checked':''}> 실시간 공유 사용</label>
+    <div class="field"><label class="fl">Firebase 설정(config JSON) ${embedded?'<span style="color:var(--ok)">— 코드에 내장됨</span>':''}</label>
+      <textarea id="s_cfg" placeholder='{\n  "apiKey": "...",\n  "databaseURL": "https://...firebaseio.com",\n  "projectId": "...",\n  "appId": "..."\n}'>${esc(cfgText)}</textarea>
+      <div class="hint">databaseURL 포함 필수. web config 키는 공개 정보이며 보안은 DB 규칙으로 관리합니다. 진행자가 코드의 <span class="kbd">FIREBASE_CONFIG</span>에 넣어 커밋하면 참가자는 비워둬도 됩니다.</div></div>
+    <div id="s_status" class="notice ${cfg?'ok':'warn'}">${cfg?'설정 감지됨':'설정 없음 — config를 입력하세요'}</div>
+    <div class="toolbar"><div class="left"><button class="btn ghost" id="s_disc">연결 해제</button></div>
+      <div class="right"><button class="btn ghost" id="s_cancel">닫기</button><button class="btn primary" id="s_save">저장 &amp; 연결</button></div></div></div>`;
+  document.body.appendChild(bg);
+  const close=()=>bg.remove(); bg.addEventListener('click',e=>{ if(e.target===bg) close(); });
+  document.getElementById('s_cancel').onclick=close;
+  document.getElementById('s_disc').onclick=async()=>{ state.sync.enabled=false; save(); await syncDisconnect(); close(); render(); };
+  document.getElementById('s_save').onclick=async()=>{
+    state.sync.roomCode=document.getElementById('s_room').value.trim()||'lg2026';
+    state.sync.enabled=document.getElementById('s_enable').checked;
+    const t=document.getElementById('s_cfg').value.trim();
+    if(t){ try{ JSON.parse(t); localStorage.setItem(LS_FBCONFIG,t); }catch(e){ alert('config JSON 형식 오류: '+e.message); return; } }
+    save(); close();
+    if(state.sync.enabled) await syncReconnect(); else await syncDisconnect();
+    render();
+  };
+}
+
+/* ---------- 조 전체 캔버스(공유) 보기 ---------- */
+function renderSharedCanvas(host){
+  const members=Object.values(roomMembers||{}).sort((a,b)=>(a.profile?.name||'').localeCompare(b.profile?.name||''));
+  if(!members.length){ host.innerHTML=`<div class="notice warn">아직 연결된 조원이 없습니다. (본인 포함 표시되려면 ‘👥 조 공유’에서 실시간 공유를 켜세요)</div>`; return; }
+  host.innerHTML = members.map(m=>{
+    const me = m.pid===pid(); const c=(m.canvas&&m.canvas[canvasMode])||{};
+    return `<div class="quad-box" style="margin-bottom:12px">
+      <h4>${me?'🙋 ':''}${esc(m.profile?.name||'(이름없음)')} <span class="meta">${esc(m.profile?.title||'')}</span> ${me?'<span class="meta">· 나</span>':''}</h4>
+      <table class="eval"><tbody>${BMC.map(b=>`<tr><td style="width:26%"><b>${b.name}</b></td><td>${esc(c[b.k]||'-').replace(/\n/g,'<br>')}</td></tr>`).join('')}</tbody></table>
+    </div>`;
+  }).join('');
+}
+
 /* ---------- top buttons / boot ---------- */
 document.getElementById('btnSettings').onclick=openSettings;
+document.getElementById('btnShare').onclick=openShareModal;
 document.getElementById('btnExportAll').onclick=exportJSON;
 document.getElementById('btnImport').onclick=()=>document.getElementById('fileInput').click();
 document.getElementById('fileInput').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; };
 document.getElementById('mergeInput').onchange=e=>{ if(e.target.files.length) handleMerge(e.target.files); e.target.value=''; };
 render();
+if(state.sync.enabled && getFirebaseConfig()) syncConnect(); else syncStatus(getFirebaseConfig()?'off':'off');
 </script>
 </body>
 </html>

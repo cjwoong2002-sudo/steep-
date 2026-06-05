@@ -35,6 +35,12 @@ Activity별 Output을 개인별로 추출합니다. 단일 HTML 파일, 빌드 �
 - 실제 Kearney 샘플로 교체하려면 `index.html` 내 **`KEARNEY_EXAMPLE` 객체**(주석 `⬇⬇⬇ KEARNEY 예시 교체 지점 ⬇⬇⬇`)만 바꾸면 됩니다.
 - 변수 `id`는 `ex1`~`ex8`처럼 고정해 두세요 — 기회/위협(`oppthreat.sel`/`rat`) 키가 이 id를 참조합니다.
 
+### 👥 조별 실시간 공유 (Firebase) → [설정 가이드](docs/firebase-setup.md)
+같은 **조 + 방 코드**를 선택한 참가자끼리 캔버스를 실시간 공유합니다.
+- 진행자가 Firebase Realtime Database를 만들어 config를 `index.html`의 `FIREBASE_CONFIG`에 넣어 커밋하면, 참가자는 **조만 선택**하면 자동 연결됩니다. (헤더 **👥 조 공유**에서 화면 붙여넣기도 가능)
+- **Activity III → 👥 조 전체 캔버스 보기**로 조원들의 As-Is/To-Be를 실시간 열람
+- Firebase 미설정/오프라인이면 **개인 모드**로 정상 동작 (공유만 비활성)
+
 - **STEEP** = Social(사회) · Technological(기술) · Economic(경제) · Environmental(환경) · Political(정치)
 - **각 Activity 진입 시 Framework 설명 패널**(접이식)로 개념·해석 가이드 제공
 
