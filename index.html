@@ -22,7 +22,8 @@
   }
   a { color: var(--accent); }
   button { font-family: inherit; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 18px 18px 90px; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 18px 18px 90px; }
+  .wrap.wide { max-width: 1640px; }
 
   header.top {
     display: flex; align-items: center; gap: 14px; padding: 12px 18px;
@@ -141,14 +142,36 @@
   .canvas-tabs { display:flex; gap:8px; margin-bottom:14px; }
   .canvas-tabs .tb { padding:8px 16px; border-radius:9px 9px 0 0; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); cursor:pointer; font-weight:600; }
   .canvas-tabs .tb.active { background:var(--accent); color:#fff; border-color:transparent; }
-  .act3-layout { display:grid; grid-template-columns: 1fr 300px; gap:16px; align-items:start; }
-  @media (max-width:980px){ .act3-layout{ grid-template-columns:1fr; } }
-  .bmc { display:grid; grid-template-columns:repeat(10,1fr); grid-auto-rows:minmax(150px,auto); gap:8px; }
-  .bmc .blk { border:1px solid var(--line); border-radius:9px; background:var(--panel-2); padding:9px; display:flex; flex-direction:column; }
-  .bmc .blk h5 { margin:0 0 3px; font-size:12.5px; display:flex; align-items:center; gap:6px; }
-  .bmc .blk .bq { font-size:10.5px; color:var(--muted); margin-bottom:6px; }
-  .bmc .blk textarea { flex:1; min-height:64px; font-size:12.5px; padding:7px; }
-  .bmc .blk .ai-mini { align-self:flex-end; margin-top:6px; }
+  .act3-layout { display:grid; grid-template-columns: 1fr 260px; gap:16px; align-items:start; }
+  @media (max-width:1100px){ .act3-layout{ grid-template-columns:1fr; } }
+  .bmc { display:grid; grid-template-columns:repeat(10,1fr); grid-auto-rows:minmax(190px,auto); gap:10px; }
+  .bmc .blk { border:1px solid var(--line); border-radius:9px; background:var(--panel-2); padding:11px; display:flex; flex-direction:column; }
+  .bmc .blk h5 { margin:0 0 3px; font-size:14px; display:flex; align-items:center; gap:6px; }
+  .bmc .blk .bq { font-size:11.5px; color:var(--muted); margin-bottom:7px; }
+  .bmc .blk textarea { flex:1; min-height:96px; font-size:14px; padding:9px; line-height:1.5; }
+  .bmc .blk .ai-mini { align-self:flex-end; margin-top:7px; }
+  /* opportunity / threat coloring (Activity IV) */
+  .bmc .blk.opp { background:#0f241a; border-color:var(--ok); box-shadow:inset 0 0 0 1px var(--ok); }
+  .bmc .blk.threat { background:#2a1212; border-color:var(--danger); box-shadow:inset 0 0 0 1px var(--danger); }
+  .bmc .blk .ot-read { flex:1; font-size:13.5px; white-space:pre-wrap; overflow:auto; background:var(--panel); border:1px solid var(--line); border-radius:7px; padding:8px; min-height:84px; }
+  .bmc .blk.opp .ot-read, .bmc .blk.threat .ot-read { background:rgba(0,0,0,.18); }
+  .ot-seg { display:flex; gap:4px; margin-top:8px; }
+  .ot-seg button { flex:1; background:transparent; border:1px solid var(--line); color:var(--muted); padding:5px 0; border-radius:7px; cursor:pointer; font-size:12px; }
+  .ot-seg button.opp.on { background:var(--ok); color:#04130b; font-weight:700; border-color:transparent; }
+  .ot-seg button.threat.on { background:var(--danger); color:#1a0606; font-weight:700; border-color:transparent; }
+  .bmc .blk .ot-rat { margin-top:7px; min-height:46px; font-size:12.5px; }
+  /* Kearney example drawer */
+  #exDrawer { position:fixed; top:58px; right:0; bottom:0; width:360px; background:#13202d; border-left:1px solid var(--accent);
+    box-shadow:-8px 0 24px rgba(0,0,0,.4); z-index:60; transform:translateX(100%); transition:transform .2s; display:flex; flex-direction:column; }
+  #exDrawer.open { transform:translateX(0); }
+  #exDrawer .exhd { padding:12px 14px; border-bottom:1px solid var(--line); font-weight:700; color:var(--accent); display:flex; align-items:center; gap:8px; }
+  #exDrawer .exbody { padding:12px 14px; overflow:auto; font-size:12.5px; color:#cdd7e1; }
+  #exDrawer .exbody h5 { margin:12px 0 4px; font-size:12.5px; color:var(--text); }
+  #exDrawer .exbody .ebox { border:1px solid var(--line); border-radius:8px; padding:8px; background:var(--panel-2); margin-bottom:8px; }
+  #exToggle { position:fixed; top:50%; right:0; transform:translateY(-50%); z-index:61; writing-mode:vertical-rl;
+    background:var(--accent); color:#fff; border:none; padding:14px 7px; border-radius:9px 0 0 9px; cursor:pointer; font-weight:700; font-size:12.5px; box-shadow:-4px 0 12px rgba(0,0,0,.3); }
+  #exToggle.hidden { display:none; }
+  @media (min-width:1280px){ body.drawer-on { padding-right: 372px; } }
   @media (max-width:860px){ .bmc { display:flex; flex-direction:column; } }
   .sidepanel { position:sticky; top:70px; border:1px solid var(--line); border-radius:10px; background:#13202d; padding:14px; font-size:13px; }
   .sidepanel h4 { margin:0 0 8px; font-size:13.5px; color:var(--accent); }
@@ -197,6 +220,12 @@
     데이터는 이 브라우저에 자동 저장됩니다 · 시간 지평: <b>향후 5년</b> 고정 ·
     Activity별 Output은 <b>Output 추출</b> 단계에서 PDF/JSON으로 다운로드
   </footer>
+</div>
+
+<button id="exToggle" class="hidden">📖 Kearney 예시</button>
+<div id="exDrawer">
+  <div class="exhd">📖 Kearney 예시 <span style="flex:1"></span><button class="btn tiny ghost" id="exClose">✕</button></div>
+  <div class="exbody" id="exBody"></div>
 </div>
 
 <input type="file" id="fileInput" accept="application/json" class="hidden" />
@@ -292,14 +321,15 @@ const KEARNEY_EXAMPLE = {
     },
   },
   oppthreat: {
-    sel: { ex1:'opp', ex2:'threat', ex3:'threat', ex6:'opp', ex7:'opp', ex8:'threat' },
+    canvasMode:'tobe',
+    sel: { vp:'opp', rs:'opp', cr:'opp', kr:'opp', cost:'threat', kp:'threat' },
     rat: {
-      ex1:'가치 제안을 AI 경험으로 재정의 → 프리미엄 신규 수요 창출',
-      ex2:'AI 연산 비용 상승 → 비용 구조 압박',
-      ex3:'데이터 활용 제약 → 초개인화 가치 제안 약화',
-      ex6:'수익원을 일시불에서 구독·서비스로 전환하는 기회',
-      ex7:'스마트홈 플랫폼 주도권 확보 시 고객 관계·락인 강화',
-      ex8:'핵심 파트너십·부품(핵심 자원) 공급 리스크',
+      vp:'가치 제안을 AI 경험으로 재정의 → 프리미엄 신규 수요 창출',
+      rs:'수익원을 일시불에서 구독·서비스로 전환',
+      cr:'데이터 기반 상시 관계로 락인 강화',
+      kr:'AI/데이터 자산 확보가 새로운 경쟁우위',
+      cost:'AI 인프라·데이터센터 비용 상승 압박',
+      kp:'AI칩·클라우드 등 핵심 파트너 의존 리스크',
     },
     insight:'AI 골드러시 시나리오에서 핵심 승부처는 하드웨어가 아니라 데이터·플랫폼 선점이다. 가치 제안을 「AI 비서 내장 초개인화 경험」으로 재정의하고, 수익원을 일시불에서 구독·서비스로 전환해 LTV를 끌어올려야 한다. 동시에 AI 인프라 비용 상승과 데이터 규제는 비용 구조·개인화 역량을 위협하므로, 엣지 AI·프라이버시 보존 기술과 공급망 다변화에 선제 투자해 다운사이드를 방어할 필요가 있다.',
   },
@@ -310,9 +340,9 @@ const DEFAULT_STATE = () => ({
   v: 4,
   session: { team:'1조', name:'', title:'', topic:'', createdAt: Date.now() },
   variables: [],   // {id,text,category,aiName,rationale,aiLinked,crossImpact,impact,uncertainty,author}
-  scenario: { axisX:'', axisY:'', xPos:'', xNeg:'', yPos:'', yNeg:'', cells:['','','',''], selected:-1 },
+  scenario: { axisX:'', axisY:'', xPos:'', xNeg:'', yPos:'', yNeg:'', cells:['','','',''], selected:-1, discussion:'' },
   canvas: { asis:{}, tobe:{} },
-  oppthreat: { sel:{}, rat:{}, insight:'' }, // sel[varId]='opp'|'threat'|'none', rat[varId]=text
+  oppthreat: { canvasMode:'tobe', sel:{}, rat:{}, insight:'' }, // sel[blockKey]='opp'|'threat'|'none', rat[blockKey]=text
   settings: { model:'claude-sonnet-4-6' },
   sync: { enabled:false, roomCode:'lg2026' },
   step: 0,
@@ -359,7 +389,7 @@ function load(){
   try { const raw = localStorage.getItem(LS_KEY);
     if(raw){ const d = Object.assign(DEFAULT_STATE(), JSON.parse(raw));
       d.canvas = Object.assign({asis:{},tobe:{}}, d.canvas||{});
-      d.oppthreat = Object.assign({sel:{},rat:{},insight:''}, d.oppthreat||{});
+      d.oppthreat = Object.assign({canvasMode:'tobe',sel:{},rat:{},insight:''}, d.oppthreat||{});
       d.sync = Object.assign({enabled:false,roomCode:'lg2026'}, d.sync||{});
       if(d.scenario && d.scenario.selected==null) d.scenario.selected=-1;
       return d; }
@@ -396,7 +426,56 @@ function renderStepper(){
   el.querySelectorAll('.step').forEach(n=> n.onclick=()=>goto(+n.dataset.step));
 }
 function goto(i){ state.step=Math.max(0,Math.min(STEPS.length-1,i)); save(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
-function render(){ renderStepper(); const v=document.getElementById('view'); v.innerHTML=''; STEPS[state.step].r(v); updateMeta(); }
+function render(){
+  renderStepper();
+  document.querySelector('.wrap').classList.toggle('wide', state.step===3);
+  const v=document.getElementById('view'); v.innerHTML=''; STEPS[state.step].r(v); updateMeta();
+  updateExampleDrawer();
+}
+
+/* ---------- Kearney 예시 드로어 (각 Activity 우측) ---------- */
+let drawerOpen = true;
+function updateExampleDrawer(){
+  const drawer=document.getElementById('exDrawer'), toggle=document.getElementById('exToggle'), body=document.getElementById('exBody');
+  const html = exampleDrawerHTML(state.step);
+  if(!html){ drawer.classList.remove('open'); toggle.classList.add('hidden'); document.body.classList.remove('drawer-on'); return; }
+  body.innerHTML = html;
+  toggle.classList.remove('hidden');
+  drawer.classList.toggle('open', drawerOpen);
+  document.body.classList.toggle('drawer-on', drawerOpen);
+  toggle.textContent = drawerOpen ? '📖 예시 닫기' : '📖 Kearney 예시';
+}
+function exampleDrawerHTML(step){
+  const E=KEARNEY_EXAMPLE;
+  const intro=`<div class="ebox" style="border-color:var(--accent)">아래는 Kearney 데모 예시(<b>${esc(E.topic)}</b>)입니다. 참고만 하세요.</div>`;
+  if(step===1){ // Activity I
+    return intro + STEEP_ORDER.map(k=>{ const items=E.variables.filter(v=>v.category===k); if(!items.length) return '';
+      return `<h5 style="color:${STEEP[k].hex}">${STEEP[k].name}</h5>`+items.map(v=>`<div class="ebox">${v.aiLinked?'⚡ ':''}${esc(v.aiName||v.text)}${v.crossImpact?`<div style="color:var(--ai);margin-top:3px">↳ ${esc(v.crossImpact)}</div>`:''}</div>`).join(''); }).join('');
+  }
+  if(step===2){ // Activity II
+    const t=scenarioTitlesOf(E.scenario);
+    return intro + `<h5>핵심변수 Scoring (예시)</h5>`+E.variables.slice(0,6).map(v=>`<div class="ebox">${esc(v.aiName||v.text)} <span style="color:var(--muted)">(I${v.impact}/U${v.uncertainty})</span></div>`).join('')
+      + `<h5>2×2 축</h5><div class="ebox">X: ${esc(E.scenario.axisX)} (${esc(E.scenario.xNeg)} ↔ ${esc(E.scenario.xPos)})<br>Y: ${esc(E.scenario.axisY)} (${esc(E.scenario.yNeg)} ↔ ${esc(E.scenario.yPos)})</div>`
+      + `<h5>4개 시나리오</h5>`+E.scenario.cells.map((c,i)=>`<div class="ebox" style="${E.scenario.selected===i?'border-color:var(--ok)':''}">${E.scenario.selected===i?'✅ ':''}<b>${esc(t[i])}</b><div style="margin-top:3px">${esc(c)}</div></div>`).join('');
+  }
+  if(step===3){ // Activity III
+    const cv=E.canvas;
+    const blk=(m)=>BMC.map(b=>`<div class="ebox"><b>${b.name}</b><div style="margin-top:3px;white-space:pre-wrap">${esc(cv[m][b.k]||'-')}</div></div>`).join('');
+    return intro + `<h5>As-Is (현재)</h5>`+blk('asis')+`<h5>To-Be (미래)</h5>`+blk('tobe');
+  }
+  if(step===4){ // Activity IV
+    const ot=E.oppthreat; const cv=E.canvas[ot.canvasMode||'tobe'];
+    return intro + `<h5>기회/위협 (예시 · To-Be 기준)</h5>`+BMC.map(b=>{ const s=ot.sel[b.k]; if(!s||s==='none') return '';
+      const col=s==='opp'?'var(--ok)':'var(--danger)'; const lbl=s==='opp'?'🟢 기회':'🔴 위협';
+      return `<div class="ebox" style="border-color:${col}"><b>${b.name}</b> ${lbl}<div style="margin-top:3px">${esc(cv[b.k]||'')}</div><div style="color:var(--muted);margin-top:3px">↳ ${esc(ot.rat[b.k]||'')}</div></div>`; }).join('')
+      + `<h5>핵심 시사점</h5><div class="ebox">${esc(ot.insight)}</div>`;
+  }
+  return '';
+}
+function scenarioTitlesOf(sc){ return [
+  `${sc.xNeg||'X−'} × ${sc.yPos||'Y＋'}`, `${sc.xPos||'X＋'} × ${sc.yPos||'Y＋'}`,
+  `${sc.xNeg||'X−'} × ${sc.yNeg||'Y−'}`, `${sc.xPos||'X＋'} × ${sc.yNeg||'Y−'}`,
+]; }
 function navButtons(){
   const prev = state.step>0 ? `<button class="btn ghost" onclick="goto(${state.step-1})">← 이전</button>`:'<span></span>';
   const next = state.step<STEPS.length-1 ? `<button class="btn primary" onclick="goto(${state.step+1})">다음 →</button>`:'';
@@ -471,19 +550,46 @@ function renderSetup(root){
     <div class="notice ai">🧭 이 워크숍은 <b>AI라는 파도</b>에 대응하는 전략적 유연성을 기르는 과정입니다. 시간 지평은 <b>${TIME_HORIZON}</b>로 고정됩니다.</div>
     <div class="notice">진행: <b>세션 설정 → Activity I(STEEP) → II(시나리오) → III(캔버스) → IV(기회/위협) → Output</b>. 각 단계 결과가 다음 단계로 자동 연결됩니다.</div>
     <div class="notice">📖 <b>Kearney 데모 예시</b>를 불러오면 Activity I~IV가 완성된 샘플로 채워져 시연용으로 활용할 수 있습니다. (조·성함·직책은 유지)</div>
+    <div class="field">
+      <label class="fl">조 공유 방 코드 (차수/세션 구분)</label>
+      <input type="text" id="f_room" value="${esc(state.sync.roomCode||'lg2026')}" placeholder="예: lg2026-1차">
+      <div class="hint">같은 <b>조 + 방 코드</b>를 입력한 참가자끼리 실시간으로 연결됩니다. <b>저장 &amp; 연결</b>을 해야 시작할 수 있습니다.</div>
+    </div>
+    <div id="setupSync" class="notice">조 공유에 연결되지 않았습니다.</div>
     <div class="toolbar"><div class="left">
       <button class="btn danger ghost" id="btnReset">세션 초기화</button>
       <button class="btn ghost" id="btnExample">📖 Kearney 예시 불러오기</button>
     </div><div class="right">
-      <button class="btn primary" id="btnStart">저장하고 시작 →</button>
+      <button class="btn ${syncConnected()?'ghost':'primary'}" id="btnConnect">👥 조 공유 저장 &amp; 연결</button>
+      <button class="btn primary" id="btnStart" ${syncConnected()?'':'disabled'}>저장하고 시작 →</button>
     </div></div>
   </div>`;
   const sv=()=>{ s.team=document.getElementById('f_team').value; s.name=val('f_name'); s.title=val('f_title'); s.topic=val('f_topic'); save(); };
   ['f_team','f_name','f_title','f_topic'].forEach(id=> document.getElementById(id).addEventListener('input',sv));
+  document.getElementById('f_room').addEventListener('input',()=>{ state.sync.roomCode=val('f_room')||'lg2026'; save(); });
   document.getElementById('f_team').addEventListener('change',()=>{ if(state.sync.enabled && getFirebaseConfig()) syncReconnect(); });
-  document.getElementById('btnStart').onclick=()=>{ sv(); goto(1); };
+  document.getElementById('btnStart').onclick=()=>{ if(!syncConnected()){ alert('먼저 [조 공유 저장 & 연결]을 진행하세요.'); return; } sv(); goto(1); };
+  document.getElementById('btnConnect').onclick=async()=>{
+    sv();
+    if(!getFirebaseConfig()){ alert('Firebase 설정이 없습니다. 헤더 👥 조 공유에서 config를 입력하세요.'); return; }
+    state.sync.enabled=true; state.sync.roomCode=val('f_room')||'lg2026'; save();
+    const btn=document.getElementById('btnConnect'); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>연결 중';
+    await syncConnect();
+    refreshSetupSync();
+  };
   document.getElementById('btnExample').onclick=loadExample;
-  document.getElementById('btnReset').onclick=()=>{ if(confirm('모든 데이터를 삭제하고 새로 시작할까요?')){ state=DEFAULT_STATE(); save(); render(); } };
+  document.getElementById('btnReset').onclick=()=>{ if(confirm('모든 데이터를 삭제하고 새로 시작할까요?')){ const rc=state.sync.roomCode; state=DEFAULT_STATE(); state.sync.roomCode=rc; save(); render(); } };
+  refreshSetupSync();
+}
+function syncConnected(){ return _syncState==='connected'; }
+function refreshSetupSync(){
+  const box=document.getElementById('setupSync'); const start=document.getElementById('btnStart'); const conn=document.getElementById('btnConnect');
+  if(!box) return;
+  const n=Object.keys(roomMembers||{}).length;
+  if(syncConnected()){ box.className='notice ok'; box.innerHTML=`🟢 <b>${esc(state.session.team)}</b> · 방 <span class="kbd">${esc(roomId())}</span> 연결됨 · ${n}명 접속`;
+    if(start){ start.disabled=false; } if(conn){ conn.disabled=false; conn.className='btn ghost'; conn.textContent='👥 재연결'; } }
+  else { box.className='notice warn'; box.textContent='조 공유에 연결되지 않았습니다. [조 공유 저장 & 연결]을 눌러 연결하세요.';
+    if(start){ start.disabled=true; } if(conn){ conn.disabled=false; conn.className='btn primary'; conn.innerHTML='👥 조 공유 저장 &amp; 연결'; } }
 }
 function loadExample(){
   if(!confirm('Kearney 데모 예시 데이터를 불러올까요?\n현재 작업 중인 변수·시나리오·캔버스·기회/위협이 예시로 교체됩니다. (조·성함·직책은 유지)')) return;
@@ -516,8 +622,9 @@ function renderActI(root){
     </div>
     <div class="toolbar"><div class="left">
       <button class="btn primary" id="btnAdd">＋ 변수 추가</button>
-      <button class="btn ghost" id="btnSample">예시 채우기</button>
+      <button class="btn ai" id="btnSuggestVars">🤖 AI 변수 추천 (내 직책·사업 맥락 기반)</button>
     </div><div class="right"><span class="meta">총 <span class="badge-count" id="cnt">${state.variables.length}</span> 개</span></div></div>
+    <div id="suggestStatus"></div>
   </div>
   <div class="panel">
     <h3 class="sec" style="margin-top:0">AI STEEP 분류</h3>
@@ -527,7 +634,9 @@ function renderActI(root){
     <div class="toolbar" style="margin-top:0"><div class="left">
       <button class="btn ai" id="btnAI" ${state.variables.length?'':'disabled'}>🤖 Claude로 분류</button>
       <button class="btn ghost" id="btnRule" ${state.variables.length?'':'disabled'}>⚡ 규칙 기반 분류</button>
+      <button class="btn ai" id="btnMergeVars">🔀 조 변수 AI 취합 (중복 제거)</button>
     </div><div class="right"><span class="meta">미분류 <b id="uncnt">${state.variables.filter(v=>v.category==='U').length}</b></span></div></div>
+    <div class="notice">🔀 <b>조 변수 취합</b>: 조원 전원이 각자 입력한 변수를 AI가 중복 제거·정리해 조 공통 목록으로 만듭니다. 이후 모두가 <b>같은 변수 전체</b>를 각자 평가합니다(점수는 개인별). <span class="meta">※ 조 공유 연결 필요</span></div>
     <div id="aiStatus"></div>
     <div class="board" id="board" style="margin-top:14px"></div>
   </div>
@@ -540,13 +649,29 @@ function renderActI(root){
     document.getElementById('bulk').value=''; save(); renderBoard();
     document.getElementById('cnt').textContent=state.variables.length;
   };
-  document.getElementById('btnSample').onclick=()=>{ document.getElementById('bulk').value=SAMPLE.join('\n'); };
+  document.getElementById('btnSuggestVars').onclick=aiSuggestVariables;
+  document.getElementById('btnMergeVars').onclick=aiMergeTeamVariables;
   document.getElementById('btnAI').onclick=runAIClassify;
   document.getElementById('btnRule').onclick=()=>{ ruleClassify(); save(); renderBoard(); };
   renderBoard();
 }
-const SAMPLE=['생성형 AI의 업무 자동화 가속','AI 반도체 수요 폭증','고령화로 인한 생산가능인구 감소','MZ세대의 가치소비 확산',
- '기준금리 변동성 확대','글로벌 공급망 재편','탄소국경조정제도(CBAM) 도입','재생에너지 비중 확대 정책','미중 기술패권 경쟁','데이터 주권·AI 규제 강화'];
+
+/* #5 직책·조 사업맥락 기반 STEEP 변수 추천 */
+async function aiSuggestVariables(){
+  const key=getApiKey(); const out=document.getElementById('suggestStatus');
+  if(!key){ openSettings(); return; }
+  out.innerHTML=`<div class="notice ai"><span class="spinner"></span> AI가 직책·사업 맥락 기반 변수를 추천 중…</div>`;
+  const sys=`${persona()}당신은 STEEP 거시환경 분석 전문가입니다. 이 임원의 직책과 조 사업 맥락을 고려해, ${TIME_HORIZON} 내 사업환경에 영향을 줄 변수를 STEEP 5개 영역에 고루 걸쳐 8~12개 제안하세요. AI가 전 영역에 미치는 교차 영향도 반영하세요. JSON만 출력: {"variables":["변수1","변수2", ...]} (각 항목은 간결한 한 줄)`;
+  const usr=`직책: ${state.session.title||'(미입력)'}\n조: ${state.session.team}\n사업 맥락: ${state.session.topic||'(미지정)'}`;
+  try{
+    const data=await callClaude(sys,usr,1500);
+    const json=extractJSON((data.content||[]).map(b=>b.text||'').join(''));
+    if(!json||!Array.isArray(json.variables)) throw new Error('파싱 실패');
+    const ta=document.getElementById('bulk');
+    ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+json.variables.join('\n');
+    out.innerHTML=`<div class="notice ok">✅ ${json.variables.length}개 추천을 입력칸에 채웠습니다. 검토 후 <b>＋ 변수 추가</b>를 누르세요.</div>`;
+  }catch(e){ out.innerHTML=`<div class="notice warn">⚠ 실패: ${esc(e.message)}</div>`; }
+}
 
 function renderBoard(){
   const board=document.getElementById('board'); if(!board) return;
@@ -685,8 +810,22 @@ function renderActII(root){
       </div>
     </div>
     <datalist id="critList">${opts}</datalist>
+
+    <div class="quad-box" style="margin:14px 0">
+      <h4>🎙 조 토론 받아쓰기 → 시나리오 자동 생성</h4>
+      <p class="hint">2×2 시나리오를 적기 전, 조 토론을 음성으로 받아쓰면 그 내용을 반영해 AI가 4개 시나리오를 자동 작성합니다. (Chrome/Edge 권장, 마이크 권한 필요) 직접 붙여넣어도 됩니다.</p>
+      <div class="toolbar" style="margin:0 0 10px"><div class="left">
+        <button class="btn" id="btnSTT">🎙 받아쓰기 시작</button>
+        <button class="btn ghost" id="btnSTTclear">지우기</button>
+        ${state.sync.enabled?'<label style="font-size:12.5px;display:flex;align-items:center;gap:6px"><input type="checkbox" id="sttShare"> 조원에게 자막 실시간 공유</label>':''}
+      </div><div class="right"><span class="meta" id="sttState"></span></div></div>
+      <textarea id="sttText" placeholder="여기에 토론 내용이 받아쓰기됩니다 (직접 입력/붙여넣기 가능)…" style="min-height:90px">${esc(sc.discussion||'')}</textarea>
+      <div class="toolbar"><div class="left"><button class="btn ai" id="btnScnFromTalk">🤖 이 토론으로 시나리오 생성</button></div><div class="right"></div></div>
+      <div id="talkAi"></div>
+    </div>
+
     <div class="scenario-grid" id="scnGrid"></div>
-    <div class="toolbar"><div class="left"><button class="btn ai" id="btnGenScn">🤖 AI 시나리오 초안</button></div><div class="right"></div></div>
+    <div class="toolbar"><div class="left"><button class="btn ai" id="btnGenScn">🤖 AI 시나리오 초안(축만 활용)</button></div><div class="right"></div></div>
     <div id="scnAi"></div>
 
     <h3 class="sec">④ 실습 시나리오 선정</h3>
@@ -701,7 +840,49 @@ function renderActII(root){
   const bind=(id,key)=>{ const el=document.getElementById(id); el.addEventListener('input',()=>{ sc[key]=el.value; save(); renderScnGrid(); renderSelBox(); }); };
   ['axisX','axisY','xPos','xNeg','yPos','yNeg'].forEach(k=>bind(k,k));
   document.getElementById('btnGenScn').onclick=aiGenScenarios;
+  // 토론 받아쓰기 (STT)
+  const tt=document.getElementById('sttText');
+  tt.addEventListener('input',()=>{ sc.discussion=tt.value; save(); if(sttShareOn()) publishDiscussion(tt.value); });
+  document.getElementById('btnSTT').onclick=toggleSTT;
+  document.getElementById('btnSTTclear').onclick=()=>{ tt.value=''; sc.discussion=''; save(); if(sttShareOn()) publishDiscussion(''); };
+  document.getElementById('btnScnFromTalk').onclick=aiScenarioFromDiscussion;
+  updateSTTState();
   drawMatrix(); renderScnGrid(); renderSelBox();
+}
+/* ---- #4 Web Speech API 받아쓰기 ---- */
+let _rec=null, _recOn=false;
+function sttShareOn(){ const c=document.getElementById('sttShare'); return !!(c&&c.checked); }
+function updateSTTState(){ const el=document.getElementById('sttState'); if(el) el.textContent=_recOn?'🔴 녹음 중…':''; const b=document.getElementById('btnSTT'); if(b) b.textContent=_recOn?'⏹ 받아쓰기 중지':'🎙 받아쓰기 시작'; }
+function toggleSTT(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ alert('이 브라우저는 음성인식을 지원하지 않습니다. Chrome/Edge에서 사용하거나, 토론 내용을 직접 붙여넣으세요.'); return; }
+  if(_recOn){ _recOn=false; try{_rec&&_rec.stop();}catch(_){} updateSTTState(); return; }
+  _rec=new SR(); _rec.lang='ko-KR'; _rec.continuous=true; _rec.interimResults=true;
+  let base=document.getElementById('sttText').value;
+  _rec.onresult=(e)=>{ let fin='',intr='';
+    for(let i=e.resultIndex;i<e.results.length;i++){ const r=e.results[i]; if(r.isFinal) fin+=r[0].transcript; else intr+=r[0].transcript; }
+    if(fin) base=(base?base+' ':'')+fin.trim();
+    const ta=document.getElementById('sttText'); ta.value=base+(intr?' '+intr:'');
+    state.scenario.discussion=ta.value; save(); if(sttShareOn()) publishDiscussion(ta.value);
+  };
+  _rec.onerror=(e)=>{ console.warn('STT error',e.error); if(e.error==='not-allowed') alert('마이크 권한이 필요합니다.'); };
+  _rec.onend=()=>{ if(_recOn){ try{_rec.start();}catch(_){} } }; // 자동 재시작(장시간)
+  _recOn=true; try{_rec.start();}catch(_){} updateSTTState();
+}
+async function publishDiscussion(text){ if(!_fbDb||!_fbMods) return; try{ await _fbMods.db.set(_fbMods.db.ref(_fbDb,`rooms/${roomId()}/discussion`), {text, by:state.session.name||'', at:Date.now()}); }catch(_){} }
+async function aiScenarioFromDiscussion(){
+  const key=getApiKey(); const out=document.getElementById('talkAi'); const sc=state.scenario;
+  if(!key){ openSettings(); return; }
+  const talk=(document.getElementById('sttText').value||'').trim();
+  if(!talk){ alert('받아쓴(또는 입력한) 토론 내용이 없습니다.'); return; }
+  if(!sc.axisX||!sc.axisY){ out.innerHTML=`<div class="notice warn">먼저 X·Y 축을 지정하면 더 정확합니다.</div>`; }
+  out.innerHTML=`<div class="notice ai"><span class="spinner"></span> 토론 내용을 반영해 4개 시나리오 생성 중…</div>`;
+  const sys=`${persona()}시나리오 플래닝 전문가로서, 조의 토론 녹취를 바탕으로 2x2의 4개 사분면 미래 시나리오를 작성하세요(${TIME_HORIZON}). 토론에서 언급된 관점·우려·기대를 최대한 반영하세요. 각 시나리오: (1)임팩트 있는 이름 (2)2~3문장 상황 (3)사업 시사점 1문장. 한국어.
+JSON만: {"cells":["사분면1","사분면2","사분면3","사분면4"]} 순서: 1=(X−,Y+) 2=(X+,Y+) 3=(X−,Y−) 4=(X+,Y−)`;
+  const usr=`분석 대상: ${state.session.topic||'(미지정)'}\n가로축X: ${sc.axisX||'?'} [− ${sc.xNeg||'?'} ~ + ${sc.xPos||'?'}]\n세로축Y: ${sc.axisY||'?'} [− ${sc.yNeg||'?'} ~ + ${sc.yPos||'?'}]\n\n[조 토론 녹취]\n${talk}`;
+  try{ const data=await callClaude(sys,usr,2800); const json=extractJSON((data.content||[]).map(b=>b.text||'').join('')); if(!json||!json.cells) throw new Error('파싱 실패');
+    sc.cells=json.cells.slice(0,4); save(); renderScnGrid(); renderSelBox(); out.innerHTML=`<div class="notice ok">✅ 토론 기반 시나리오 초안 완료. 검토·선정하세요.</div>`;
+  }catch(e){ out.innerHTML=`<div class="notice warn">⚠ 실패: ${esc(e.message)}</div>`; }
 }
 
 function scoredVars(){ return state.variables.filter(v=>v.impact>0&&v.uncertainty>0); }
@@ -765,10 +946,7 @@ function drawMatrix(){
 }
 function setHTML(id,h){ const e=document.getElementById(id); if(e) e.innerHTML=h; }
 
-function scenarioTitles(){ const sc=state.scenario; return [
-  `${sc.xNeg||'X−'} × ${sc.yPos||'Y＋'}`, `${sc.xPos||'X＋'} × ${sc.yPos||'Y＋'}`,
-  `${sc.xNeg||'X−'} × ${sc.yNeg||'Y−'}`, `${sc.xPos||'X＋'} × ${sc.yNeg||'Y−'}`,
-]; }
+function scenarioTitles(){ return scenarioTitlesOf(state.scenario); }
 function renderScnGrid(){
   const sc=state.scenario; const g=document.getElementById('scnGrid'); if(!g) return; const titles=scenarioTitles();
   g.innerHTML=titles.map((t,i)=>`<div class="scn ${sc.selected===i?'selected':''}">
@@ -885,52 +1063,58 @@ async function aiCanvas(blockKey,btn){
    ACTIVITY IV: 기회/위협 도출 + AI 인사이트
    =================================================================== */
 function renderActIV(root){
-  const drivers=scoredVars().filter(v=>v.impact>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty));
-  const ot=state.oppthreat;
+  const ot=state.oppthreat; if(!ot.canvasMode) ot.canvasMode='tobe';
   root.innerHTML=`
   ${frameworkPanel('IV')}
   <div class="panel">
     <h2 class="title">Activity IV — 기회/위협 도출</h2>
-    <p class="subtitle">STEEP 핵심 드라이버별로 내 사업 관점의 <b>기회/위협/해당없음</b>을 선택하고 Rationale을 작성하세요. 완료 후 AI가 직책 기준 핵심 시사점을 정리합니다.</p>
+    <p class="subtitle">Activity III에서 작성한 <b>비즈니스 캔버스</b>를 불러왔습니다. 각 블록을 클릭(또는 버튼)해 <b style="color:var(--ok)">기회</b> / <b style="color:var(--danger)">위협</b>을 지정하면 해당 블록 색이 바뀝니다. 블록별 Rationale을 적고, 완료 후 AI가 핵심 시사점을 정리합니다.</p>
     ${state.scenario.selected>=0?`<div class="notice ok">🎯 실습 시나리오: <b>${esc(scenarioTitles()[state.scenario.selected])}</b></div>`:`<div class="notice warn">⚠ 실습 시나리오 미선정 — Activity II에서 선정하세요.</div>`}
-    ${drivers.length?'':'<div class="notice warn">⚠ 핵심 드라이버가 없습니다. Activity II에서 변수를 평가하세요(영향도≥3).</div>'}
-    <div id="otList"></div>
+    <div class="toolbar" style="margin:0 0 12px"><div class="left">
+      <button class="btn sm ${ot.canvasMode==='asis'?'primary':'ghost'}" data-otm="asis">As-Is 기준</button>
+      <button class="btn sm ${ot.canvasMode==='tobe'?'primary':'ghost'}" data-otm="tobe">To-Be 기준</button>
+    </div><div class="right"><span class="meta">🟢 기회 · 🔴 위협 · 클릭 시 순환</span></div></div>
+    <div class="bmc" id="otCanvas"></div>
     <h3 class="sec">AI 핵심 시사점</h3>
     <div class="toolbar" style="margin-top:0"><div class="left"><button class="btn ai" id="btnInsight">🤖 핵심 시사점 생성</button></div><div class="right"></div></div>
     <div id="insightWrap"><textarea id="insightTa" placeholder="AI가 생성하거나 직접 작성…" style="min-height:120px">${esc(ot.insight||'')}</textarea></div>
   </div>
   ${navButtons()}`;
-  renderOTList(drivers);
+  document.querySelector('.wrap').classList.add('wide');
+  root.querySelectorAll('[data-otm]').forEach(b=> b.onclick=()=>{ ot.canvasMode=b.dataset.otm; save(); renderActIV(root); });
+  renderOTCanvas();
   document.getElementById('insightTa').addEventListener('input',e=>{ ot.insight=e.target.value; save(); });
-  document.getElementById('btnInsight').onclick=()=>aiInsight(drivers);
+  document.getElementById('btnInsight').onclick=aiInsight;
 }
-function renderOTList(drivers){
-  const host=document.getElementById('otList'); if(!host) return; const ot=state.oppthreat;
-  host.innerHTML=drivers.map(v=>{ const sel=ot.sel[v.id]||'none';
-    return `<div class="ot-row"><div class="ot-head">
-      <span class="tag ${(STEEP[v.category]||STEEP.U).pill}">${(STEEP[v.category]||STEEP.U).name.split(' ')[0]}</span>
-      ${v.aiLinked?'<span class="ai-tag">⚡ AI</span>':''}
-      <b>${esc(v.aiName||v.text)}</b> <span class="meta">(I${v.impact}/U${v.uncertainty})</span>
-      <span style="flex:1"></span>
-      <span class="seg" data-id="${v.id}">
+function renderOTCanvas(){
+  const host=document.getElementById('otCanvas'); if(!host) return; const ot=state.oppthreat;
+  const data=state.canvas[ot.canvasMode]||{};
+  host.innerHTML=BMC.map(b=>{ const sel=ot.sel[b.k]||'none'; const content=data[b.k]||'';
+    return `<div class="blk ${sel==='opp'?'opp':sel==='threat'?'threat':''}" style="${BMC_POS[b.k]}" data-block="${b.k}">
+      <h5>${esc(b.name)} ${sel==='opp'?'🟢':sel==='threat'?'🔴':''}</h5>
+      <div class="ot-read">${content?esc(content):'<span style="color:var(--muted)">(Activity III 미작성)</span>'}</div>
+      <div class="ot-seg" data-block="${b.k}">
         <button class="opp ${sel==='opp'?'on':''}" data-t="opp">기회</button>
         <button class="threat ${sel==='threat'?'on':''}" data-t="threat">위협</button>
-        <button class="none ${sel==='none'?'on':''}" data-t="none">해당없음</button>
-      </span></div>
-      <textarea data-rat="${v.id}" placeholder="Rationale — 왜 기회/위협인가? 어느 캔버스 블록에 영향?">${esc(ot.rat[v.id]||'')}</textarea>
+      </div>
+      <textarea class="ot-rat" data-rat="${b.k}" placeholder="Rationale — 왜 기회/위협인가?">${esc(ot.rat[b.k]||'')}</textarea>
     </div>`; }).join('');
-  host.querySelectorAll('.seg').forEach(seg=> seg.querySelectorAll('button').forEach(b=> b.onclick=()=>{ ot.sel[seg.dataset.id]=b.dataset.t; save(); renderOTList(drivers); }));
+  // 블록 본문 클릭 → 순환(none→opp→threat→none)
+  host.querySelectorAll('.ot-read').forEach(r=> r.onclick=()=>{ const k=r.closest('.blk').dataset.block;
+    const cur=ot.sel[k]||'none'; ot.sel[k]= cur==='none'?'opp':cur==='opp'?'threat':'none'; save(); renderOTCanvas(); });
+  host.querySelectorAll('.ot-seg').forEach(seg=> seg.querySelectorAll('button').forEach(btn=> btn.onclick=(e)=>{ e.stopPropagation();
+    const k=seg.dataset.block; ot.sel[k]= (ot.sel[k]===btn.dataset.t)?'none':btn.dataset.t; save(); renderOTCanvas(); }));
   host.querySelectorAll('[data-rat]').forEach(t=> t.addEventListener('input',()=>{ ot.rat[t.dataset.rat]=t.value; save(); }));
 }
-async function aiInsight(drivers){
+async function aiInsight(){
   const key=getApiKey(); if(!key){ openSettings(); return; } const ot=state.oppthreat;
-  const wrap=document.getElementById('insightWrap');
-  const picks=drivers.filter(v=>ot.sel[v.id]&&ot.sel[v.id]!=='none').map(v=>({var:v.aiName||v.text, type:ot.sel[v.id]==='opp'?'기회':'위협', rationale:ot.rat[v.id]||''}));
-  if(!picks.length){ alert('기회/위협을 1개 이상 선택하세요.'); return; }
+  const wrap=document.getElementById('insightWrap'); const data=state.canvas[ot.canvasMode]||{};
+  const picks=BMC.filter(b=>ot.sel[b.k]&&ot.sel[b.k]!=='none').map(b=>({block:b.name, type:ot.sel[b.k]==='opp'?'기회':'위협', content:data[b.k]||'', rationale:ot.rat[b.k]||''}));
+  if(!picks.length){ alert('캔버스 블록에서 기회/위협을 1개 이상 지정하세요.'); return; }
   wrap.innerHTML=`<div class="notice ai"><span class="spinner"></span> AI가 핵심 시사점 생성 중…</div>`;
-  const sys=`${persona()}아래 임원이 선택한 기회/위협 영역을 바탕으로, ${TIME_HORIZON} 시계의 사업 핵심 시사점을 1~2문단으로 작성하세요. 경영자 관점, 구체적·실행지향적, 한국어. 불필요한 서론 없이 본론만.`;
-  const usr=`직책: ${state.session.title||'(미입력)'}\n실습 시나리오: ${state.scenario.selected>=0?scenarioTitles()[state.scenario.selected]:'(미선정)'}\n선택 내역:\n`+picks.map(p=>`- [${p.type}] ${p.var}: ${p.rationale}`).join('\n');
-  try{ const data=await callClaude(sys,usr,1200); const text=(data.content||[]).map(b=>b.text||'').join('').trim();
+  const sys=`${persona()}아래는 이 임원의 비즈니스 모델 캔버스에서 지정한 기회/위협 영역입니다. ${TIME_HORIZON} 시계의 사업 핵심 시사점을 1~2문단으로 작성하세요. 경영자 관점, 구체적·실행지향적, 한국어. 서론 없이 본론만.`;
+  const usr=`직책: ${state.session.title||'(미입력)'}\n실습 시나리오: ${state.scenario.selected>=0?scenarioTitles()[state.scenario.selected]:'(미선정)'}\n기준: ${ot.canvasMode==='tobe'?'To-Be':'As-Is'} 캔버스\n지정 내역:\n`+picks.map(p=>`- [${p.type}] ${p.block}: ${p.content} ${p.rationale?'(근거: '+p.rationale+')':''}`).join('\n');
+  try{ const data2=await callClaude(sys,usr,1200); const text=(data2.content||[]).map(b=>b.text||'').join('').trim();
     ot.insight=text; save(); wrap.innerHTML=`<textarea id="insightTa" style="min-height:120px">${esc(text)}</textarea>`;
     document.getElementById('insightTa').addEventListener('input',e=>{ ot.insight=e.target.value; save(); });
   }catch(e){ wrap.innerHTML=`<div class="notice warn">⚠ 실패: ${esc(e.message)}</div><textarea id="insightTa" style="min-height:120px">${esc(ot.insight||'')}</textarea>`; }
@@ -1018,9 +1202,9 @@ function showReport(){
   const crit=scoredVars().filter(v=>v.impact>=3&&v.uncertainty>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty));
   const tag=k=>`<span style="background:${STEEP[k].hex};color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px">${STEEP[k].name}</span>`;
   const bmcRows=BMC.map(b=>`<tr><td style="width:22%"><b>${b.name}</b></td><td>${esc((state.canvas.asis[b.k]||'-')).replace(/\n/g,'<br>')}</td><td>${esc((state.canvas.tobe[b.k]||'-')).replace(/\n/g,'<br>')}</td></tr>`).join('');
-  const drivers=scoredVars().filter(v=>v.impact>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty));
-  const otRows=drivers.map(v=>{ const sl=ot.sel[v.id]||'none'; const lbl=sl==='opp'?'🟢 기회':sl==='threat'?'🔴 위협':'– 해당없음';
-    return `<tr><td>${esc(v.aiName||v.text)}</td><td>${lbl}</td><td>${esc(ot.rat[v.id]||'')}</td></tr>`; }).join('');
+  const otCv=state.canvas[ot.canvasMode||'tobe']||{};
+  const otRows=BMC.filter(b=>ot.sel[b.k]&&ot.sel[b.k]!=='none').map(b=>{ const sl=ot.sel[b.k]; const lbl=sl==='opp'?'🟢 기회':'🔴 위협';
+    return `<tr><td><b>${b.name}</b></td><td>${lbl}</td><td>${esc(otCv[b.k]||'')}</td><td>${esc(ot.rat[b.k]||'')}</td></tr>`; }).join('');
   const w=window.open('','_blank');
   const css=`body{font-family:-apple-system,'Malgun Gothic','Noto Sans KR',sans-serif;color:#111;max-width:920px;margin:0 auto;padding:32px;line-height:1.6}
     h1{font-size:24px;border-bottom:3px solid #4f9cf9;padding-bottom:8px} h2{font-size:18px;margin-top:28px;color:#1a2a3a;border-left:4px solid #4f9cf9;padding-left:10px}
@@ -1046,8 +1230,8 @@ function showReport(){
     <h2>Activity III — 비즈니스 캔버스 (As-Is → To-Be)</h2>
     <table><tr><th>블록</th><th>As-Is (현재)</th><th>To-Be (미래)</th></tr>${bmcRows}</table>
 
-    <h2>Activity IV — 기회/위협 & 시사점</h2>
-    <table><tr><th>핵심 드라이버</th><th>구분</th><th>Rationale</th></tr>${otRows||'<tr><td colspan=3 class="muted">데이터 없음</td></tr>'}</table>
+    <h2>Activity IV — 기회/위협 & 시사점 <span class="muted" style="font-size:13px">(${ot.canvasMode==='tobe'?'To-Be':'As-Is'} 캔버스 기준)</span></h2>
+    <table><tr><th>캔버스 블록</th><th>구분</th><th>내용</th><th>Rationale</th></tr>${otRows||'<tr><td colspan=4 class="muted">데이터 없음</td></tr>'}</table>
     <h3>핵심 시사점</h3><p>${esc(ot.insight||'(미작성)').replace(/\n/g,'<br>')}</p>
     </body></html>`;
   w.document.write(html); w.document.close();
@@ -1094,7 +1278,7 @@ function openSettings(){
    각자의 캔버스/변수/시나리오/기회위협을 실시간 발행·열람합니다.
    Firebase 미설정/오프라인이면 개인 모드로 정상 동작.
    =================================================================== */
-let _fbMods=null, _fbApp=null, _fbDb=null, _memberRef=null, _roomRef=null, _unsub=null;
+let _fbMods=null, _fbApp=null, _fbDb=null, _memberRef=null, _roomRef=null, _unsub=null, _varsRef=null, _unsubVars=null, _unsubDisc=null;
 let roomMembers={}, sharedViewOn=false, _syncState='off';
 
 function getFirebaseConfig(){
@@ -1110,7 +1294,9 @@ async function fbLoad(){
   _fbMods={app,db}; return _fbMods;
 }
 function syncStatus(s,msg){
-  _syncState=s; const chip=document.getElementById('syncChip'); if(!chip) return;
+  _syncState=s;
+  if(typeof refreshSetupSync==='function' && state.step===0) refreshSetupSync();
+  const chip=document.getElementById('syncChip'); if(!chip) return;
   const n=Object.keys(roomMembers||{}).length;
   const map={ off:'', connecting:'🟡 연결 중…', connected:`🟢 ${esc(state.session.team)} · ${n}명 접속`,
     'config-missing':'⚪ 공유 미설정', error:'🔴 공유 오류' };
@@ -1129,17 +1315,63 @@ async function syncConnect(){
     const dbUrl = cfg.databaseURL || ('https://'+cfg.projectId+'-default-rtdb.firebaseio.com');
     _fbDb=db.getDatabase(_fbApp, dbUrl);
     if(_unsub){ try{_unsub();}catch(_){} _unsub=null; }
+    if(_unsubVars){ try{_unsubVars();}catch(_){} _unsubVars=null; }
     _memberRef=db.ref(_fbDb, `rooms/${roomId()}/members/${pid()}`);
     _roomRef=db.ref(_fbDb, `rooms/${roomId()}/members`);
+    _varsRef=db.ref(_fbDb, `rooms/${roomId()}/variables`);
     db.onDisconnect(_memberRef).remove();
     await syncPublish(true);
     _unsub=db.onValue(_roomRef, snap=>{ roomMembers=snap.val()||{}; onRoomUpdate(); }, err=>{ console.error(err); syncStatus('error',err.message); });
+    _unsubVars=db.onValue(_varsRef, snap=>{ const v=snap.val(); if(v&&Array.isArray(v.list)) applySharedVariables(v.list); }, err=>console.warn(err));
+    if(_unsubDisc){ try{_unsubDisc();}catch(_){} }
+    _unsubDisc=db.onValue(db.ref(_fbDb,`rooms/${roomId()}/discussion`), snap=>{ const d=snap.val(); if(d&&typeof d.text==='string') onDiscussionUpdate(d); }, err=>console.warn(err));
     syncStatus('connected');
   }catch(e){ console.error(e); syncStatus('error', e.message); }
 }
 async function syncDisconnect(){
-  try{ if(_unsub){ _unsub(); _unsub=null; } if(_memberRef&&_fbMods){ await _fbMods.db.remove(_memberRef); } }catch(_){}
+  try{ if(_unsub){ _unsub(); _unsub=null; } if(_unsubVars){ _unsubVars(); _unsubVars=null; } if(_memberRef&&_fbMods){ await _fbMods.db.remove(_memberRef); } }catch(_){}
   roomMembers={}; syncStatus('off'); onRoomUpdate();
+}
+/* #3 조 변수 공유 — 취합본을 받으면 내 점수를 보존하며 변수 목록을 동기화 */
+function applySharedVariables(list){
+  const byId={}, byText={};
+  state.variables.forEach(v=>{ byId[v.id]=v; byText[(v.text||'').trim()]=v; });
+  state.variables = list.map(it=>{
+    const prev = byId[it.id] || byText[(it.text||'').trim()] ||
+      (Array.isArray(it.sources)? it.sources.map(s=>byText[(s||'').trim()]).find(Boolean) : null);
+    return { id:it.id, text:it.text, category:it.category||'U', aiName:it.aiName||it.text||'',
+      rationale:it.rationale||'', aiLinked:!!it.aiLinked, crossImpact:it.crossImpact||'',
+      impact: prev?prev.impact:0, uncertainty: prev?prev.uncertainty:0, author: prev?prev.author:'' };
+  });
+  localStorage.setItem(LS_KEY, JSON.stringify(state)); updateMeta();
+  if(state.step===1) renderBoard();
+  if(state.step===2){ renderEvalTable(); drawMatrix(); }
+}
+async function aiMergeTeamVariables(){
+  const key=getApiKey(); const out=document.getElementById('aiStatus');
+  if(!key){ openSettings(); return; }
+  if(!_varsRef){ alert('먼저 조 공유에 연결하세요.'); return; }
+  // 내 변수 + 모든 조원 변수 텍스트 취합
+  const pool=[];
+  state.variables.forEach(v=> pool.push(v.text));
+  Object.values(roomMembers||{}).forEach(m=> (m.variables||[]).forEach(v=> pool.push(v.text)));
+  const uniqRaw=[...new Set(pool.map(t=>(t||'').trim()).filter(Boolean))];
+  if(!uniqRaw.length){ alert('취합할 변수가 없습니다.'); return; }
+  out.innerHTML=`<div class="notice ai"><span class="spinner"></span> 조원 ${Object.keys(roomMembers||{}).length}명의 변수 ${uniqRaw.length}개를 AI로 중복 제거·정리 중…</div>`;
+  const sys=`${persona()}당신은 STEEP 분석 퍼실리테이터입니다. 여러 조원이 각자 적은 변수 목록을 받습니다. 의미가 같거나 유사한 변수는 하나로 통합하고, 표현을 분석 변수답게 다듬어 STEEP로 분류하세요.
+[중요] AI는 S/T/E/Ec/P 전 영역에 연쇄 영향을 주는 외생변수. AI 직접연관이면 aiLinked=true, 그 경우 crossImpact에 타 영역 연쇄효과 1문장.
+각 통합 변수에 대해 어떤 원본들을 합쳤는지 sources 배열로 남기세요(점수 보존용, 원문 그대로).
+JSON만: {"items":[{"id":"v1","text":"통합 변수명","category":"S|T|Ec|En|P","rationale":"근거","aiLinked":bool,"crossImpact":"","sources":["원문1","원문2"]}]}`;
+  const usr=`분석 대상: ${state.session.topic||'(미지정)'} / ${TIME_HORIZON}\n원본 변수 목록(JSON):\n`+JSON.stringify(uniqRaw);
+  try{
+    const data=await callClaude(sys,usr,4000);
+    const json=extractJSON((data.content||[]).map(b=>b.text||'').join(''));
+    if(!json||!Array.isArray(json.items)) throw new Error('파싱 실패');
+    const list=json.items.map((it,i)=>({ id:it.id||('v'+(i+1)), text:it.text, aiName:it.text, category:STEEP[it.category]?it.category:'U',
+      rationale:it.rationale||'', aiLinked:!!it.aiLinked, crossImpact:it.aiLinked?(it.crossImpact||''):'', sources:it.sources||[] }));
+    await _fbMods.db.set(_varsRef, { list, mergedBy: state.session.name||'', mergedAt: Date.now() });
+    out.innerHTML=`<div class="notice ok">✅ ${uniqRaw.length}개 → ${list.length}개로 취합 완료. 조원 전원의 변수 목록이 동기화되었습니다(각자 점수는 개별 평가).</div>`;
+  }catch(e){ out.innerHTML=`<div class="notice warn">⚠ 취합 실패: ${esc(e.message)}</div>`; }
 }
 let _pubT=null;
 function syncPublishDebounced(){ if(!state.sync.enabled||!_memberRef) return; clearTimeout(_pubT); _pubT=setTimeout(()=>syncPublish(),700); }
@@ -1152,7 +1384,15 @@ async function syncPublish(){
 }
 function onRoomUpdate(){
   syncStatus(_syncState==='off'?'off':'connected');
+  if(state.step===0) refreshSetupSync();
   if(sharedViewOn && state.step===3){ const host=document.getElementById('sharedCanvas'); if(host) renderSharedCanvas(host); }
+}
+function onDiscussionUpdate(d){
+  // 내가 녹음 중이 아니고 Activity II 화면이면 공유된 자막을 반영
+  if(_recOn) return;
+  if(state.step!==2) return;
+  const ta=document.getElementById('sttText'); if(!ta) return;
+  if((ta.value||'')!==d.text){ ta.value=d.text; state.scenario.discussion=d.text; localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 }
 async function syncReconnect(){ await syncDisconnect(); await syncConnect(); }
 
@@ -1207,6 +1447,8 @@ function renderSharedCanvas(host){
 /* ---------- top buttons / boot ---------- */
 document.getElementById('btnSettings').onclick=openSettings;
 document.getElementById('btnShare').onclick=openShareModal;
+document.getElementById('exToggle').onclick=()=>{ drawerOpen=!drawerOpen; updateExampleDrawer(); };
+document.getElementById('exClose').onclick=()=>{ drawerOpen=false; updateExampleDrawer(); };
 document.getElementById('btnExportAll').onclick=exportJSON;
 document.getElementById('btnImport').onclick=()=>document.getElementById('fileInput').click();
 document.getElementById('fileInput').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; };
