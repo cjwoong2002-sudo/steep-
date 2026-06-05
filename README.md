@@ -1,51 +1,64 @@
-# STEEP 시나리오 플래닝 워크숍 도구
+# AI 사업기회 도출 워크숍 — STEEP 시나리오 플래닝 Tool
 
-사업 환경분석 → 변수 도출 → **STEEP 자동 분류(AI)** → **영향도·불확실성 평가** → **2×2 시나리오 도출**까지,
-세미나/워크숍을 한 화면에서 진행하는 단일 HTML 도구입니다.
+LG그룹 임원 대상 / Kearney 퍼실리테이션 세미나용 도구.
+조별 토론으로 도출한 내용을 **기입·정리·취합·시각화**까지 자동화하고,
+Activity별 Output을 개인별로 추출합니다. 단일 HTML 파일, 빌드 불필요, 오프라인 동작.
+
+## 🗺 워크숍 구조 (1일차)
+
+```
+세션 설정(조·성함·직책)
+   → Activity I   STEEP 변수 수집 → AI 분류(⚡AI 연계 태그)
+   → Activity II  변수 Scoring → 영향도·불확실성 매트릭스 → 2×2 시나리오 → 실습 시나리오 1개 선정
+   → Activity III 비즈니스 캔버스 As-Is → To-Be (직책·시나리오 반영 AI 추천)
+   → Activity IV  핵심 드라이버별 기회/위협 + Rationale → AI 핵심 시사점
+   → Output       개인별 종합 리포트(PDF) / JSON / CSV / 매트릭스 PNG
+```
+- 각 단계 결과가 다음 단계로 **자동 주입**됩니다 (선정 시나리오 → 캔버스·기회/위협).
+- 시간 지평은 **향후 5년**으로 고정.
+- 2일차(본업 개선 Action Item, 인접영역 확장)는 네비게이션에 placeholder만 — 별도 구현 예정.
 
 ## ✨ 핵심 기능
 
-| 단계 | 내용 |
-|------|------|
-| 1. 세션 설정 | 분석 대상(사업 환경), 시간 지평, 조 이름·작성자 입력 |
-| 2. 변수 입력 | 환경에 영향을 줄 변수를 자유 기입 (여러 줄 일괄 추가) |
-| 3. AI STEEP 분류 | **Claude API**가 변수를 S·T·E·E·P로 자동 분류 + 표현 다듬기 + 분류 근거 제시. 카드 **드래그**로 사람이 최종 조정 |
-| 4. 영향도·불확실성 평가 | 변수별 Impact / Uncertainty를 1~5점 슬라이더로 평가 (AI 제안값 참고 가능) |
-| 5. 우선순위 매트릭스 | 영향도–불확실성 2×2 산점도. 우상단 = **핵심 불확실성** 자동 도출 |
-| 6. 시나리오 도출 | 핵심 불확실성 2개를 축으로 2×2 시나리오 작성 (AI 초안 생성 가능) |
-| 7. 내보내기 | CSV · JSON · 매트릭스 PNG · 인쇄용 종합 리포트(PDF) |
+| Activity | 내용 |
+|----------|------|
+| **세션 설정** | 조 선택(1~6조) · 성함 · **직책** 입력. 직책은 이후 모든 AI 추천/제안에 자동 주입 |
+| **I. STEEP 변수** | 변수 자유 기입 → Claude가 S·T·E·Ec·P 분류 + 표현 다듬기 + 근거. **AI는 전 영역 교차 외생변수**로 취급해 연쇄효과 코멘트 생성, AI 연계 변수에 ⚡태그. 카드 드래그로 조정 |
+| **II. 핵심변수·시나리오** | 영향도·불확실성 1~5 Scoring → 2×2 매트릭스(핵심 불확실성 자동 도출) → 2×2 시나리오 작성(AI 초안) → **실습 시나리오 1개 선정** |
+| **III. 비즈니스 캔버스** | 개인별 As-Is / To-Be 9블록. 우측 사이드패널에 **선정 시나리오 + STEEP 핵심 드라이버 상시 노출**. 블록별 🤖 AI 추천(직책·시나리오 반영) |
+| **IV. 기회/위협** | 핵심 드라이버별 **기회/위협/해당없음 + Rationale**. 완료 후 AI가 직책 기준 핵심 시사점 생성 |
+| **Output** | 종합 리포트(PDF) · JSON · CSV · 매트릭스 PNG. 진행자용 JSON 병합 |
 
 - **STEEP** = Social(사회) · Technological(기술) · Economic(경제) · Environmental(환경) · Political(정치)
+- **각 Activity 진입 시 Framework 설명 패널**(접이식)로 개념·해석 가이드 제공
 
 ## 🚀 사용 방법
 
-### 가장 간단한 방법 (로컬)
-`index.html` 파일을 더블클릭해서 브라우저로 열면 끝. 설치·빌드 불필요.
+### 로컬
+`index.html` 더블클릭 → 브라우저에서 실행.
 
-### 세미나에서 여러 조원이 함께 쓰기 (GitHub Pages)
-1. 이 저장소를 **GitHub Pages**로 배포 → 조원 전원이 같은 URL로 접속
-   - GitHub 저장소 → Settings → Pages → Branch `claude/eloquent-rubin-iTxUl`(또는 main) `/root`
-   - 접속 URL: `https://cjwoong2002-sudo.github.io/steep-/`
-2. 각 조원이 자기 화면에서 변수를 입력·평가
-3. 각자 **전체 저장(JSON)** 으로 결과를 내보냄
-4. 진행자가 **7단계 → JSON 파일 병합**으로 여러 조원의 변수를 한 번에 취합 (중복 자동 제거)
+### 세미나 (GitHub Pages)
+1. 저장소 → Settings → Pages → Branch `claude/eloquent-rubin-iTxUl`(또는 main) `/root`
+2. 접속 URL: `https://cjwoong2002-sudo.github.io/steep-/` (모바일 포함)
+3. 각자 진행 → **Output**에서 개인 결과 다운로드
+4. (선택) 진행자가 **Output → JSON 병합**으로 조원 변수 취합
 
-> 데이터는 각 브라우저의 localStorage에 **자동 저장**됩니다. 새로고침해도 유지됩니다.
+> 데이터는 각 브라우저 localStorage에 **자동 저장**됩니다.
 
 ## 🤖 Claude API 키 설정
-1. 우측 상단 **⚙ AI 설정** 클릭
-2. Anthropic API 키(`sk-ant-...`) 입력 + 모델 선택 (기본: `claude-sonnet-4-6`)
-3. 저장 → 3·4·6단계의 AI 버튼이 동작
+1. 우측 상단 **⚙ AI 설정**
+2. Anthropic 키(`sk-ant-...`) 입력 + 모델 선택 (기본 `claude-sonnet-4-6`)
+3. AI 분류 / 평가 제안 / 시나리오 초안 / 캔버스 추천 / 기회·위협 시사점 동작
 
-- 키는 **해당 브라우저에만** 저장되며 Anthropic API 직접 호출에만 사용됩니다. 내보내는 세션 JSON에는 포함되지 않습니다.
-- 키가 없어도 **규칙 기반 자동 분류 + 수동 드래그**로 전체 워크숍 진행이 가능합니다.
+- 키는 **해당 브라우저에만** 저장, Anthropic API 직접 호출에만 사용. 세션 JSON에 미포함.
+- 키 없이도 규칙 기반 분류 + 수동 입력으로 전체 진행 가능.
 
 ## 📤 산출물
-- `*_steep_variables_*.csv` : 변수 + 분류 + 평가 점수
-- `*_steep_session_*.json` : 전체 세션 데이터 (재불러오기/병합용)
-- `*_matrix_*.png` : 영향도–불확실성 매트릭스 이미지
-- 종합 리포트 : 브라우저 인쇄 → PDF 저장
+- `*_session_*.json` : 전체 세션(재불러오기/병합용)
+- `*_variables_*.csv` : 변수·분류·AI연계·연쇄효과·점수
+- `*_matrix_*.png` : 영향도–불확실성 매트릭스
+- 종합 리포트 : 브라우저 인쇄 → PDF (프로필·STEEP·시나리오·캔버스·기회/위협 포함)
 
 ## 🛠 기술 메모
-- 단일 파일(`index.html`), 외부 의존성 없음, 오프라인 동작
-- AI 호출: `https://api.anthropic.com/v1/messages` (브라우저 직접 호출, `anthropic-dangerous-direct-browser-access` 헤더 사용)
+- 단일 파일(`index.html`), 외부 의존성 없음, localStorage 자동 저장
+- AI 호출: `https://api.anthropic.com/v1/messages` (브라우저 직접 호출, `anthropic-dangerous-direct-browser-access` 헤더)
