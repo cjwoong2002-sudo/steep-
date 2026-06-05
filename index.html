@@ -322,23 +322,19 @@ function renderInput(root){
   root.innerHTML = `
   <div class="panel">
     <h2 class="title">변수 입력</h2>
-    <p class="subtitle">사업 환경에 영향을 미칠 것 같은 요인/변수를 적어주세요. 한 줄에 하나씩 직접 입력하거나, <b>구글 시트에서 복사한 표를 그대로 붙여넣을</b> 수 있습니다. (분류는 다음 단계에서 AI가 정리합니다.)</p>
-    <div class="notice">📋 <b>구글 시트로 취합하기</b>: 조원들이 공유 시트의 <span class="kbd">변수 · 작성자 · 영향도 · 불확실성</span> 열에 입력 → 진행자가 그 범위를 복사해 아래에 붙여넣으면 <b>작성자·점수까지 자동 인식</b>됩니다. (탭 구분 표 감지)</div>
+    <p class="subtitle">사업 환경에 영향을 미칠 것 같은 요인/변수를 자유롭게 적어주세요. 한 줄에 하나씩, 혹은 아래에 여러 줄을 붙여넣어 한 번에 추가할 수 있습니다. (분류는 다음 단계에서 AI가 정리합니다.)</p>
     <div class="field">
-      <textarea id="bulk" placeholder="① 직접 입력 — 한 줄에 변수 하나
+      <textarea id="bulk" placeholder="예)
 고령화로 인한 노동인구 감소
 생성형 AI의 빠른 보급
-
-② 또는 구글 시트에서 복사한 표 붙여넣기 (탭 구분, 헤더 행은 자동 무시)
-변수	작성자	영향도	불확실성
-고령화로 인한 노동인구 감소	홍길동	4	3
-탄소국경세 도입	김철수	5	5"></textarea>
-      <div class="hint">표를 붙여넣으면 열 순서 <b>변수 → 작성자 → 영향도(1-5) → 불확실성(1-5)</b> 로 읽습니다. 변수 텍스트만 있는 줄은 그대로 추가됩니다.</div>
+기준금리 인상 기조
+탄소국경세 도입
+미중 무역 갈등 심화"></textarea>
+      <div class="hint">여러 줄을 입력하면 줄 단위로 각각의 변수로 추가됩니다.</div>
     </div>
     <div class="toolbar"><div class="left">
       <button class="btn primary" id="btnAdd">＋ 변수 추가</button>
       <button class="btn ghost" id="btnSample">예시 채우기</button>
-      <button class="btn ghost" id="btnCopyHeader">📋 시트 헤더 복사</button>
     </div><div class="right">
       <span class="meta">총 <span class="badge-count" id="cnt">${state.variables.length}</span> 개</span>
     </div></div>
@@ -350,50 +346,17 @@ function renderInput(root){
   ${navButtons()}`;
 
   document.getElementById('btnAdd').onclick = ()=>{
-    const items = parseBulk(document.getElementById('bulk').value);
-    if(!items.length){ return; }
-    items.forEach(it=> state.variables.push({ id:uid(), text:it.text, category:'U', aiName:'', rationale:'',
-      impact:it.impact||0, uncertainty:it.uncertainty||0, author: it.author || state.session.author||'' }));
+    const lines = document.getElementById('bulk').value.split('\n').map(x=>x.trim()).filter(Boolean);
+    if(!lines.length){ return; }
+    lines.forEach(t=> state.variables.push({ id:uid(), text:t, category:'U', aiName:'', rationale:'', impact:0, uncertainty:0, author: state.session.author||'' }));
     document.getElementById('bulk').value='';
     save(); renderVarList(); document.getElementById('cnt').textContent = state.variables.length;
   };
   document.getElementById('btnSample').onclick = ()=>{
     document.getElementById('bulk').value = SAMPLE.join('\n');
   };
-  document.getElementById('btnCopyHeader').onclick = (e)=>{
-    const header = ['변수','작성자','영향도(1-5)','불확실성(1-5)'].join('\t');
-    navigator.clipboard?.writeText(header).then(()=>{
-      const b=e.target; const t=b.textContent; b.textContent='✅ 복사됨 (시트 1행에 붙여넣기)';
-      setTimeout(()=>b.textContent=t, 1800);
-    });
-  };
   renderVarList();
 }
-
-/* 표(탭 구분) 또는 줄 단위 입력을 파싱.
-   표 모드 열 순서: 변수 / 작성자 / 영향도(1-5) / 불확실성(1-5) */
-function parseBulk(raw){
-  const rows = (raw||'').split('\n').map(l=>l.replace(/\r$/,'')).filter(l=>l.trim().length);
-  const tableMode = rows.some(l=>l.includes('\t'));
-  const items=[];
-  rows.forEach((line, idx)=>{
-    if(tableMode){
-      const cols = line.split('\t').map(c=>c.trim());
-      const text = cols[0]||'';
-      if(!text) return;
-      // 첫 행이 헤더(변수/작성자/영향도… 텍스트, 점수 없음)면 무시
-      const looksHeader = idx===0 && /^(변수|항목|요인|내용|factor|variable)/i.test(text)
-                          && scoreOf(cols[2])===0 && scoreOf(cols[3])===0;
-      if(looksHeader) return;
-      items.push({ text, author: cols[1]||'', impact: scoreOf(cols[2]), uncertainty: scoreOf(cols[3]) });
-    } else {
-      const text=line.trim();
-      if(text) items.push({ text, author:'', impact:0, uncertainty:0 });
-    }
-  });
-  return items;
-}
-function scoreOf(s){ const n=parseInt(s,10); return (n>=1 && n<=5) ? n : 0; }
 const SAMPLE = ['고령화로 인한 생산가능인구 감소','MZ세대의 가치소비 확산','생성형 AI의 업무 자동화 가속',
  '배터리 기술 혁신과 가격 하락','기준금리 변동성 확대','글로벌 공급망 재편','탄소국경조정제도(CBAM) 도입',
  '재생에너지 비중 확대 정책','미중 기술패권 경쟁','국내 규제 샌드박스 확대'];
