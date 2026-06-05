@@ -29,6 +29,12 @@ Activity별 Output을 개인별로 추출합니다. 단일 HTML 파일, 빌드 �
 | **IV. 기회/위협** | 핵심 드라이버별 **기회/위협/해당없음 + Rationale**. 완료 후 AI가 직책 기준 핵심 시사점 생성 |
 | **Output** | 종합 리포트(PDF) · JSON · CSV · 매트릭스 PNG. 진행자용 JSON 병합 |
 
+### 📖 Kearney 예시(데모) 프리로드
+세션 설정의 **`📖 Kearney 예시 불러오기`** 버튼으로 Activity I~IV가 완성된 데모 샘플(생활가전 사업의 AI 대응)을 한 번에 로드해 시연할 수 있습니다. (조·성함·직책은 유지)
+
+- 실제 Kearney 샘플로 교체하려면 `index.html` 내 **`KEARNEY_EXAMPLE` 객체**(주석 `⬇⬇⬇ KEARNEY 예시 교체 지점 ⬇⬇⬇`)만 바꾸면 됩니다.
+- 변수 `id`는 `ex1`~`ex8`처럼 고정해 두세요 — 기회/위협(`oppthreat.sel`/`rat`) 키가 이 id를 참조합니다.
+
 - **STEEP** = Social(사회) · Technological(기술) · Economic(경제) · Environmental(환경) · Political(정치)
 - **각 Activity 진입 시 Framework 설명 패널**(접이식)로 개념·해석 가이드 제공
 

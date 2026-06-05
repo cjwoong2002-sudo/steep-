@@ -236,6 +236,74 @@ const BMC_POS = {
   cs:'grid-column:9/11;grid-row:1/3', cost:'grid-column:1/6;grid-row:3/4', rs:'grid-column:6/11;grid-row:3/4',
 };
 
+/* =====================================================================
+   ⬇⬇⬇ KEARNEY 예시(데모) 데이터 — 교체 지점 ⬇⬇⬇
+   Kearney가 작성한 실제 샘플을 받으면 이 KEARNEY_EXAMPLE 객체만 교체하면 됩니다.
+   (id는 'ex*'로 고정 — oppthreat의 sel/rat 키가 이 id를 참조)
+   '세션 설정'의 [📖 Kearney 예시 불러오기] 버튼으로 로드됩니다.
+   ===================================================================== */
+const KEARNEY_EXAMPLE = {
+  topic: '생활가전 사업의 AI 시대 대응 (~2030)',
+  variables: [
+    { id:'ex1', text:'생성형 AI 가전 UX 보편화', category:'T', aiName:'생성형 AI 기반 가전 UX 보편화', rationale:'온디바이스 AI가 제품 경험의 핵심으로 부상', aiLinked:true, crossImpact:'가사노동 행태(S)와 가정 전력 수요(En)에 파급', impact:5, uncertainty:4 },
+    { id:'ex2', text:'AI 반도체·전력 비용 변동', category:'Ec', aiName:'AI 인프라(반도체·전력) 비용 변동', rationale:'AI 연산 비용이 제품 원가구조를 좌우', aiLinked:true, crossImpact:'데이터센터 에너지 소비(En)와 부품 공급(P)에 연쇄', impact:4, uncertainty:5 },
+    { id:'ex3', text:'데이터 주권·AI 규제 강화', category:'P', aiName:'데이터 주권·AI 규제 강화', rationale:'각국 규제가 데이터 활용 범위를 제약', aiLinked:true, crossImpact:'개인화 기술(T)과 글로벌 판매(Ec)를 동시 제약', impact:4, uncertainty:5 },
+    { id:'ex4', text:'1인·고령 가구 증가', category:'S', aiName:'1인·고령 가구 구조 변화', rationale:'가구 구조 변화로 제품 수요 패턴 이동', aiLinked:false, crossImpact:'', impact:4, uncertainty:2 },
+    { id:'ex5', text:'에너지 효율 규제 강화', category:'En', aiName:'에너지 효율·환경 규제 강화', rationale:'친환경 규제가 제품 설계 제약', aiLinked:false, crossImpact:'', impact:3, uncertainty:3 },
+    { id:'ex6', text:'구독·서비스형 가전 확산', category:'Ec', aiName:'구독·서비스형(XaaS) 가전 확산', rationale:'소유에서 구독으로 수익모델 전환', aiLinked:false, crossImpact:'', impact:4, uncertainty:4 },
+    { id:'ex7', text:'스마트홈 플랫폼 주도권 경쟁', category:'T', aiName:'AI 스마트홈 플랫폼 주도권 경쟁', rationale:'AI 비서가 생태계 락인의 핵심', aiLinked:true, crossImpact:'플랫폼 락인(Ec)과 사용자 관계(S)를 재편', impact:5, uncertainty:4 },
+    { id:'ex8', text:'미중 기술패권·공급망 재편', category:'P', aiName:'미중 기술패권·공급망 재편', rationale:'지정학 리스크가 부품 조달을 위협', aiLinked:false, crossImpact:'', impact:4, uncertainty:3 },
+  ],
+  scenario: {
+    axisX:'AI 규제 강도', xNeg:'규제 강화(데이터 제약)', xPos:'규제 완화(데이터 자유)',
+    axisY:'AI 개인화 가전 수요', yNeg:'수요 정체', yPos:'수요 급증',
+    cells:[
+      '【신뢰가 프리미엄】 규제는 강하지만 개인화 수요는 폭발. 온디바이스·프라이버시 보존 AI가 차별화 포인트. → 엣지 AI·보안 역량 선제 투자.',
+      '【AI 가전 골드러시】 규제 완화 + 수요 급증. 클라우드 기반 초개인화 서비스 경쟁 격화. → 데이터·플랫폼 선점과 생태계 확장이 승부처.',
+      '【저성장 표준화】 규제 강화 + 수요 정체. 기능 경쟁 둔화, 비용·효율이 관건. → 원가구조 혁신과 핵심시장 방어.',
+      '【공급 과잉 가격전】 규제 완화 + 수요 정체. 차별화 약화로 범용화·가격경쟁. → 서비스·구독으로 수익원 전환.',
+    ],
+    selected:1,
+  },
+  canvas: {
+    asis: {
+      cs:'• 범용 가정용 가전 소비자\n• 프리미엄 빌트인 B2B(건설사)',
+      vp:'• 고성능·고신뢰 하드웨어\n• 브랜드 신뢰',
+      ch:'• 오프라인 양판점·유통\n• 자사몰',
+      cr:'• A/S 중심 사후관리',
+      rs:'• 제품 일시불 판매',
+      kr:'• 제조 역량·생산설비\n• 브랜드 자산',
+      ka:'• 제품 R&D·제조·품질관리',
+      kp:'• 부품 공급사·유통 파트너',
+      cost:'• 제조원가·마케팅·물류',
+    },
+    tobe: {
+      cs:'+ 초개인화를 원하는 디지털 가구\n+ 데이터 기반 B2B 서비스 고객',
+      vp:'+ AI 비서 내장 초개인화 경험\n+ 지속 업데이트되는 SW 가치',
+      ch:'+ 앱·구독 플랫폼\n+ OTA 업데이트 채널',
+      cr:'+ 데이터 기반 상시 관계\n+ 구독 멤버십·커뮤니티',
+      rs:'+ 구독·서비스 수익\n+ 데이터/제휴 수익',
+      kr:'+ AI/데이터 인력·플랫폼\n+ 사용자 데이터 자산',
+      ka:'+ AI 모델 운영·데이터 분석\n+ 생태계 파트너십 관리',
+      kp:'+ AI칩·클라우드·콘텐츠 파트너',
+      cost:'+ AI 인프라·데이터센터 비용\n+ SW 개발·운영 비용',
+    },
+  },
+  oppthreat: {
+    sel: { ex1:'opp', ex2:'threat', ex3:'threat', ex6:'opp', ex7:'opp', ex8:'threat' },
+    rat: {
+      ex1:'가치 제안을 AI 경험으로 재정의 → 프리미엄 신규 수요 창출',
+      ex2:'AI 연산 비용 상승 → 비용 구조 압박',
+      ex3:'데이터 활용 제약 → 초개인화 가치 제안 약화',
+      ex6:'수익원을 일시불에서 구독·서비스로 전환하는 기회',
+      ex7:'스마트홈 플랫폼 주도권 확보 시 고객 관계·락인 강화',
+      ex8:'핵심 파트너십·부품(핵심 자원) 공급 리스크',
+    },
+    insight:'AI 골드러시 시나리오에서 핵심 승부처는 하드웨어가 아니라 데이터·플랫폼 선점이다. 가치 제안을 「AI 비서 내장 초개인화 경험」으로 재정의하고, 수익원을 일시불에서 구독·서비스로 전환해 LTV를 끌어올려야 한다. 동시에 AI 인프라 비용 상승과 데이터 규제는 비용 구조·개인화 역량을 위협하므로, 엣지 AI·프라이버시 보존 기술과 공급망 다변화에 선제 투자해 다운사이드를 방어할 필요가 있다.',
+  },
+};
+/* ⬆⬆⬆ KEARNEY 예시(데모) 데이터 끝 ⬆⬆⬆ */
+
 const DEFAULT_STATE = () => ({
   v: 4,
   session: { team:'1조', name:'', title:'', topic:'', createdAt: Date.now() },
@@ -376,8 +444,10 @@ function renderSetup(root){
       <input type="text" id="f_topic" value="${esc(s.topic)}" placeholder="예: 가전·디스플레이 사업의 AI 시대 대응"></div>
     <div class="notice ai">🧭 이 워크숍은 <b>AI라는 파도</b>에 대응하는 전략적 유연성을 기르는 과정입니다. 시간 지평은 <b>${TIME_HORIZON}</b>로 고정됩니다.</div>
     <div class="notice">진행: <b>세션 설정 → Activity I(STEEP) → II(시나리오) → III(캔버스) → IV(기회/위협) → Output</b>. 각 단계 결과가 다음 단계로 자동 연결됩니다.</div>
+    <div class="notice">📖 <b>Kearney 데모 예시</b>를 불러오면 Activity I~IV가 완성된 샘플로 채워져 시연용으로 활용할 수 있습니다. (조·성함·직책은 유지)</div>
     <div class="toolbar"><div class="left">
       <button class="btn danger ghost" id="btnReset">세션 초기화</button>
+      <button class="btn ghost" id="btnExample">📖 Kearney 예시 불러오기</button>
     </div><div class="right">
       <button class="btn primary" id="btnStart">저장하고 시작 →</button>
     </div></div>
@@ -385,7 +455,17 @@ function renderSetup(root){
   const sv=()=>{ s.team=document.getElementById('f_team').value; s.name=val('f_name'); s.title=val('f_title'); s.topic=val('f_topic'); save(); };
   ['f_team','f_name','f_title','f_topic'].forEach(id=> document.getElementById(id).addEventListener('input',sv));
   document.getElementById('btnStart').onclick=()=>{ sv(); goto(1); };
+  document.getElementById('btnExample').onclick=loadExample;
   document.getElementById('btnReset').onclick=()=>{ if(confirm('모든 데이터를 삭제하고 새로 시작할까요?')){ state=DEFAULT_STATE(); save(); render(); } };
+}
+function loadExample(){
+  if(!confirm('Kearney 데모 예시 데이터를 불러올까요?\n현재 작업 중인 변수·시나리오·캔버스·기회/위협이 예시로 교체됩니다. (조·성함·직책은 유지)')) return;
+  state.variables = KEARNEY_EXAMPLE.variables.map(v=>({...v}));
+  state.scenario  = JSON.parse(JSON.stringify(KEARNEY_EXAMPLE.scenario));
+  state.canvas    = JSON.parse(JSON.stringify(KEARNEY_EXAMPLE.canvas));
+  state.oppthreat = JSON.parse(JSON.stringify(KEARNEY_EXAMPLE.oppthreat));
+  if(!state.session.topic) { state.session.topic = KEARNEY_EXAMPLE.topic; }
+  save(); goto(1);
 }
 
 /* ===================================================================
