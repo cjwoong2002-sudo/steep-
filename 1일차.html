@@ -412,6 +412,7 @@ const DEFAULT_STATE = () => ({
   variables: [],   // {id,text,category,aiName,rationale,aiLinked,crossImpact,impact,uncertainty,author}
   scenario: { axisX:'', axisY:'', xPos:'', xNeg:'', yPos:'', yNeg:'', cells:['','','',''], selected:-1, discussion:'' },
   canvas: { asis:{}, tobe:{} },
+  compare: { blocks:{}, insight:'' },
   oppthreat: { canvasMode:'tobe', sel:{}, rat:{}, insight:'' }, // sel[blockKey]='opp'|'threat'|'none', rat[blockKey]=text
   settings: { model:'claude-sonnet-4-6' },
   sync: { enabled:false, roomCode:'lg2026' },
@@ -458,6 +459,7 @@ function load(){
   try { const raw = localStorage.getItem(LS_KEY);
     if(raw){ const d = Object.assign(DEFAULT_STATE(), JSON.parse(raw));
       d.canvas = Object.assign({asis:{},tobe:{}}, d.canvas||{});
+      d.compare = Object.assign({blocks:{},insight:''}, d.compare||{});
       d.oppthreat = Object.assign({canvasMode:'tobe',sel:{},rat:{},insight:''}, d.oppthreat||{});
       d.sync = Object.assign({enabled:false,roomCode:'lg2026'}, d.sync||{});
       if(d.scenario && d.scenario.selected==null) d.scenario.selected=-1;
@@ -1164,19 +1166,27 @@ function renderActIII(root){
       <button class="btn sm ${sharedViewOn?'primary':'ghost'}" id="btnShared">👥 조 전체 캔버스 보기</button>
     </div><div class="right"><span class="meta" id="shareHint"></span></div></div>
     <div id="myCanvas" class="${sharedViewOn?'hidden':''}">
-      <div class="act3-layout">
-        <div>
-          <div class="canvas-tabs">
-            <div class="tb ${canvasMode==='asis'?'active':''}" data-mode="asis">Step 1 · As-Is (현재)</div>
-            <div class="tb ${canvasMode==='tobe'?'active':''}" data-mode="tobe">Step 2 · To-Be (시나리오 반영 미래)</div>
-          </div>
-          <div class="toolbar" style="margin:0 0 10px"><div class="left">
-            <button class="btn ai" id="btnCanvasAll">🤖 내 직책·사업 맥락 기반 ${canvasMode==='asis'?'As-Is':'To-Be'} 캔버스 초안 작성</button>
-          </div><div class="right"><span class="meta" id="canvasAiState"></span></div></div>
-          <div class="bmc" id="bmc"></div>
-        </div>
-        <aside><div class="sidepanel" id="sidepanel"></div></aside>
+      <div class="canvas-tabs">
+        <div class="tb ${canvasMode==='asis'?'active':''}" data-mode="asis">Step 1 · As-Is (현재)</div>
+        <div class="tb ${canvasMode==='tobe'?'active':''}" data-mode="tobe">Step 2 · To-Be (시나리오 반영 미래)</div>
+        <div class="tb ${canvasMode==='compare'?'active':''}" data-mode="compare">Step 3 · As-Is↔To-Be 비교</div>
       </div>
+      ${canvasMode==='compare' ? `
+        <div class="toolbar" style="margin:0 0 12px"><div class="left">
+          <button class="btn ai" id="btnCompare">🤖 As-Is↔To-Be 비교·시사점 생성</button>
+        </div><div class="right"><span class="meta" id="cmpState"></span></div></div>
+        <div id="compareView"></div>
+      ` : `
+        <div class="act3-layout">
+          <div>
+            <div class="toolbar" style="margin:0 0 10px"><div class="left">
+              <button class="btn ai" id="btnCanvasAll">🤖 내 직책·사업 맥락 기반 ${canvasMode==='asis'?'As-Is':'To-Be'} 캔버스 초안 작성</button>
+            </div><div class="right"><span class="meta" id="canvasAiState"></span></div></div>
+            <div class="bmc" id="bmc"></div>
+          </div>
+          <aside><div class="sidepanel" id="sidepanel"></div></aside>
+        </div>
+      `}
     </div>
     <div id="sharedWrap" class="${sharedViewOn?'':'hidden'}">
       <div class="canvas-tabs">
@@ -1190,13 +1200,49 @@ function renderActIII(root){
   root.querySelectorAll('.tb[data-mode]').forEach(t=> t.onclick=()=>{ canvasMode=t.dataset.mode; renderActIII(root); });
   root.querySelectorAll('.tb[data-smode]').forEach(t=> t.onclick=()=>{ canvasMode=t.dataset.smode; renderActIII(root); });
   document.getElementById('btnMine').onclick=()=>{ sharedViewOn=false; renderActIII(root); };
-  document.getElementById('btnShared').onclick=()=>{ sharedViewOn=true; renderActIII(root);
+  document.getElementById('btnShared').onclick=()=>{ sharedViewOn=true; if(canvasMode==='compare') canvasMode='tobe'; renderActIII(root);
     if(!state.sync.enabled) document.getElementById('shareHint').textContent='실시간 공유가 꺼져 있습니다 — 👥 조 공유에서 켜세요'; };
-  if(sharedViewOn){ renderSharedCanvas(document.getElementById('sharedCanvas')); }
+  if(sharedViewOn){ if(canvasMode==='compare') canvasMode='tobe'; renderSharedCanvas(document.getElementById('sharedCanvas')); }
+  else if(canvasMode==='compare'){
+    const cb=document.getElementById('btnCompare'); if(cb) cb.onclick=aiCompare;
+    renderCompareView();
+  }
   else {
     const b=document.getElementById('btnCanvasAll'); if(b) b.onclick=()=>aiCanvasAll(canvasMode);
     renderBMC(); renderSidePanel();
   }
+}
+function renderCompareView(){
+  const host=document.getElementById('compareView'); if(!host) return; const cmp=state.compare||{blocks:{},insight:''};
+  host.innerHTML=`
+    <table class="eval"><thead><tr><th style="width:13%">블록</th><th>As-Is (Step 1)</th><th>To-Be (Step 2)</th><th style="width:27%">변화·시사점 (AI)</th></tr></thead><tbody>
+    ${BMC.map(b=>`<tr>
+      <td><b>${esc(b.name)}</b></td>
+      <td style="white-space:pre-wrap;font-size:13px">${esc(state.canvas.asis[b.k]||'-')}</td>
+      <td style="white-space:pre-wrap;font-size:13px">${esc(state.canvas.tobe[b.k]||'-')}</td>
+      <td style="white-space:pre-wrap;font-size:13px;color:var(--ai)">${esc((cmp.blocks&&cmp.blocks[b.k])||'')}</td></tr>`).join('')}
+    </tbody></table>
+    <h3 class="sec">종합 비교 시사점</h3>
+    <textarea id="cmpInsight" style="min-height:120px" placeholder="AI가 생성하거나 직접 작성…">${esc(cmp.insight||'')}</textarea>`;
+  document.getElementById('cmpInsight').addEventListener('input',e=>{ state.compare.insight=e.target.value; save(); });
+}
+async function aiCompare(){
+  const key=getApiKey(); if(!key){ alert('먼저 우측 상단 ⚙ AI 설정에서 Claude API 키를 입력하세요.'); openSettings(); return; }
+  const hasAny=BMC.some(b=>(state.canvas.asis[b.k]||'').trim()||(state.canvas.tobe[b.k]||'').trim());
+  if(!hasAny){ alert('Step 1(As-Is)·Step 2(To-Be)를 먼저 작성하세요.'); return; }
+  const st=document.getElementById('cmpState'); const btn=document.getElementById('btnCompare');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span>비교 분석 중…'; }
+  const pairs=BMC.map(b=>`■ ${b.name}\n  As-Is: ${(state.canvas.asis[b.k]||'(미작성)').replace(/\n/g,' ')}\n  To-Be: ${(state.canvas.tobe[b.k]||'(미작성)').replace(/\n/g,' ')}`).join('\n');
+  const sel = state.scenario.selected>=0 ? `${scenarioTitles()[state.scenario.selected]} — ${state.scenario.cells[state.scenario.selected]||''}` : '(미선정)';
+  const sys=`${persona()}비즈니스 모델 캔버스 전문가입니다. 같은 사업의 As-Is와 To-Be 캔버스를 블록별로 비교해, 각 블록의 핵심 변화와 그 시사점을 1~2문장으로 요약하고, 마지막에 종합 시사점(전략적 함의)을 1~2문단으로 작성하세요. 한국어, 경영자 관점.
+JSON만 출력: {"blocks":{"cs":"","vp":"","ch":"","cr":"","rs":"","kr":"","ka":"","kp":"","cost":""},"insight":""} (blocks의 각 값은 해당 블록의 변화·시사점)`;
+  const usr=`직책: ${state.session.title||'(미입력)'}\n실습 시나리오: ${sel}\n\n[블록별 As-Is → To-Be]\n${pairs}`;
+  try{ const data=await callClaude(sys,usr,2800); const json=extractJSON((data.content||[]).map(b=>b.text||'').join(''));
+    if(!json) throw new Error('파싱 실패');
+    state.compare={ blocks:(json.blocks||{}), insight:(json.insight||'') }; save(); renderCompareView();
+    if(st) st.textContent='✅ 비교·시사점 생성 완료 — 검토·수정하세요';
+  }catch(e){ if(st) st.textContent='⚠ 실패: '+e.message; }
+  finally{ if(btn){ btn.disabled=false; btn.innerHTML='🤖 As-Is↔To-Be 비교·시사점 생성'; } }
 }
 function renderBMC(){
   const host=document.getElementById('bmc'); if(!host) return; const data=state.canvas[canvasMode];
@@ -1393,7 +1439,9 @@ function showReport(){
     ${scenarioTitles().map((t,i)=>`<div class="scn ${sc.selected===i?'sel':''}"><b>시나리오 ${i+1}: ${esc(t)}</b>${sc.selected===i?' ✅ 실습 선정':''}<div>${esc(sc.cells[i]||'(미작성)').replace(/\n/g,'<br>')}</div></div>`).join('')}
 
     <h2>Activity III — 비즈니스 캔버스 (As-Is → To-Be)</h2>
-    <table><tr><th>블록</th><th>As-Is (현재)</th><th>To-Be (미래)</th></tr>${bmcRows}</table>
+    <table><tr><th>블록</th><th>As-Is (현재)</th><th>To-Be (미래)</th>${(state.compare&&state.compare.blocks&&Object.keys(state.compare.blocks).length)?'<th>변화·시사점</th>':''}</tr>
+    ${BMC.map(b=>`<tr><td style="width:18%"><b>${b.name}</b></td><td>${esc(state.canvas.asis[b.k]||'-').replace(/\n/g,'<br>')}</td><td>${esc(state.canvas.tobe[b.k]||'-').replace(/\n/g,'<br>')}</td>${(state.compare&&state.compare.blocks&&Object.keys(state.compare.blocks).length)?`<td>${esc((state.compare.blocks[b.k])||'').replace(/\n/g,'<br>')}</td>`:''}</tr>`).join('')}</table>
+    ${(state.compare&&state.compare.insight)?`<h3>As-Is↔To-Be 종합 비교 시사점</h3><p>${esc(state.compare.insight).replace(/\n/g,'<br>')}</p>`:''}
 
     <h2>Activity IV — 기회/위협 & 시사점 <span class="muted" style="font-size:13px">(${ot.canvasMode==='tobe'?'To-Be':'As-Is'} 캔버스 기준)</span></h2>
     <table><tr><th>캔버스 블록</th><th>구분</th><th>내용</th><th>Rationale</th></tr>${otRows||'<tr><td colspan=4 class="muted">데이터 없음</td></tr>'}</table>

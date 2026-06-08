@@ -172,6 +172,33 @@
 
   footer.foot { text-align:center; color:var(--muted); font-size:12px; margin-top:30px; }
   .badge-count { background: var(--accent); color:#fff; border-radius:999px; padding:1px 8px; font-size:12px; }
+
+  /* ── 추가: 정보 버튼 / 비즈니스 캔버스 ── */
+  .btn.ai{ background:linear-gradient(180deg,#a855f7,#7c3aed); border-color:transparent; font-weight:600; color:#fff; }
+  .info-rail{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 16px; }
+  .info-rail .ibtn{ background:#13202d; border:1px solid var(--accent); color:var(--accent); border-radius:9px; padding:9px 14px; cursor:pointer; font-size:13.5px; font-weight:600; }
+  .info-rail .ibtn:hover{ background:#16222f; }
+  .modal.info{ width:min(680px,94vw); }
+  .modal.info .ibody{ max-height:70vh; overflow:auto; font-size:14px; color:#cdd7e1; line-height:1.65; }
+  .modal.info .ibody h4{ margin:16px 0 6px; font-size:15px; color:var(--text); }
+  .modal.info .ibody ul{ margin:6px 0; padding-left:20px; } .modal.info .ibody li{ margin:4px 0; }
+  .fw-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:8px 0; }
+  @media (max-width:760px){ .modal.info .ibody .fw-grid{ grid-template-columns:1fr 1fr; } }
+  .fw-cell{ border:1px solid var(--line); border-radius:8px; padding:8px; background:var(--panel-2); }
+  .canvas-tabs{ display:flex; gap:8px; margin-bottom:14px; }
+  .canvas-tabs .tb{ padding:8px 16px; border-radius:9px 9px 0 0; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); cursor:pointer; font-weight:600; }
+  .canvas-tabs .tb.active{ background:var(--accent); color:#fff; border-color:transparent; }
+  .act3-layout{ display:grid; grid-template-columns:1fr 260px; gap:16px; align-items:start; }
+  @media (max-width:1100px){ .act3-layout{ grid-template-columns:1fr; } }
+  .bmc{ display:grid; grid-template-columns:repeat(10,1fr); grid-auto-rows:minmax(180px,auto); gap:10px; }
+  .bmc .blk{ border:1px solid var(--line); border-radius:9px; background:var(--panel-2); padding:11px; display:flex; flex-direction:column; }
+  .bmc .blk h5{ margin:0 0 3px; font-size:14px; } .bmc .blk .bq{ font-size:11.5px; color:var(--muted); margin-bottom:7px; }
+  .bmc .blk textarea{ flex:1; min-height:92px; font-size:14px; padding:9px; line-height:1.5; }
+  @media (max-width:860px){ .bmc{ display:flex; flex-direction:column; } }
+  .sidepanel{ position:sticky; top:70px; border:1px solid var(--line); border-radius:10px; background:#13202d; padding:14px; font-size:13px; }
+  .sidepanel h4{ margin:0 0 8px; font-size:13.5px; color:var(--accent); }
+  .sidepanel .drv{ padding:6px 0; border-bottom:1px dashed var(--line); }
+  .sidepanel .scnbox{ background:var(--panel-2); border:1px solid var(--ok); border-radius:8px; padding:10px; margin-bottom:12px; font-size:12.5px; }
 </style>
 </head>
 <body>
@@ -224,7 +251,8 @@ const DEFAULT_STATE = () => ({
   v: 3,
   session: { teamName:'', topic:'', horizon:'', author:'', createdAt: Date.now() },
   variables: [],   // {id, text, category, aiName, rationale, impact(0|1-5), uncertainty(0|1-5), author}
-  scenario: { axisX:'', axisY:'', xPos:'', xNeg:'', yPos:'', yNeg:'', cells:['','','',''] },
+  scenario: { axisX:'', axisY:'', xPos:'', xNeg:'', yPos:'', yNeg:'', cells:['','','',''], selected:-1 },
+  canvas: { asis:{}, tobe:{} },
   settings: { model:'claude-sonnet-4-6' }, // apiKey stored separately (not exported)
   step: 0,
 });
@@ -236,7 +264,8 @@ const STEPS = [
   { t:'4. 영향도·불확실성 평가', r: renderEvaluate },
   { t:'5. 우선순위 매트릭스', r: renderMatrix },
   { t:'6. 시나리오 도출', r: renderScenario },
-  { t:'7. 내보내기', r: renderExport },
+  { t:'7. 비즈니스 캔버스', r: renderCanvas },
+  { t:'8. 내보내기', r: renderExport },
 ];
 
 const LS_KEY = 'steep_scenario_state_v3';
@@ -247,7 +276,11 @@ let state = load();
 function load(){
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if(raw){ return Object.assign(DEFAULT_STATE(), JSON.parse(raw)); }
+    if(raw){ const d = Object.assign(DEFAULT_STATE(), JSON.parse(raw));
+      d.canvas = Object.assign({asis:{},tobe:{}}, d.canvas||{});
+      if(d.scenario && d.scenario.selected==null) d.scenario.selected=-1;
+      if(d.step>=STEPS.length) d.step=0;
+      return d; }
   } catch(e){ console.warn('load failed', e); }
   return DEFAULT_STATE();
 }
@@ -289,6 +322,7 @@ function navButtons(){
 function renderSetup(root){
   const s = state.session;
   root.innerHTML = `
+  ${infoRail(['purpose','flow','steep'])}
   <div class="panel">
     <h2 class="title">세션 설정</h2>
     <p class="subtitle">워크숍의 분석 대상과 시간 지평을 정의합니다. 조 이름과 작성자를 적으면 추후 취합 시 출처를 구분할 수 있어요.</p>
@@ -308,6 +342,7 @@ function renderSetup(root){
       <button class="btn primary" id="btnSaveSetup">저장하고 시작 →</button>
     </div></div>
   </div>`;
+  wireInfoRail(root);
   const sv = ()=>{ s.teamName=val('f_team'); s.author=val('f_author'); s.topic=val('f_topic'); s.horizon=val('f_hz'); save(); };
   ['f_team','f_author','f_topic','f_hz'].forEach(id=> document.getElementById(id).addEventListener('input', sv));
   document.getElementById('btnSaveSetup').onclick = ()=>{ sv(); goto(1); };
@@ -800,7 +835,145 @@ JSON만 출력: {"cells":["사분면1 텍스트","사분면2","사분면3","사�
   }catch(e){ out.innerHTML=`<div class="notice warn">⚠ 실패: ${esc(e.message)}</div>`; }
 }
 
-/* =================== STEP 7: EXPORT =================== */
+/* =================== 정보 버튼(팝업) =================== */
+const INFO = {
+  purpose: { label:'🎯 본 Workshop의 목적', html:`
+    <h4>왜 'AI 사업기회 도출'인가</h4>
+    <ul>
+      <li>AI는 산업 생태계의 판도를 바꾸는 <b>파괴적 혁신(Disruption)</b>을 촉발하고 있고, 그 진화 속도는 기존의 예측을 상회합니다.</li>
+      <li>거대한 파도가 올 것은 모두가 알지만, 파편화된 미래의 <b>모든 변수를 정확히 예측하는 것은 불가능</b>에 가깝습니다.</li>
+      <li>중요한 것은 어떤 미래가 오더라도 살아남을 수 있는 <b>'대응력'과 '전략적 유연성'</b>, 즉 <b>전략적 근육</b>을 단련하는 것입니다.</li>
+      <li>본 Workshop은 경영자적 관점에서 AI라는 파도에 대응할 <b>Framework를 체득</b>하고, 각자 사업의 <b>기회/위협영역을 식별</b>해 고도화·신규 기회를 모색하는 데 목적이 있습니다.</li>
+    </ul>` },
+  flow: { label:'🗺 Workshop 진행 방식', html:`
+    <h4>운영 원칙</h4>
+    <ul>
+      <li>사업적 맥락을 공유하는 인원끼리 <b>조 편성</b> → 조별 토론 중심으로 진행</li>
+      <li>Framework 소개·예시 시연 후 <b>실제 Activity는 조별 토론</b>으로 수행</li>
+      <li>토의 내용을 일일이 받아적는 대신, <b>본 Tool로 기입·정리·취합을 자동화</b>하고 참여자는 토론·고민에 집중</li>
+    </ul>
+    <h4>진행 단계</h4>
+    <ul>
+      <li>세션 설정 → STEEP 변수 도출/분류 → 영향도·불확실성 평가</li>
+      <li>우선순위 매트릭스 → 2×2 시나리오 도출 → 비즈니스 캔버스(As-Is/To-Be)</li>
+    </ul>` },
+  steep: { label:'📚 STEEP Framework란?', html:`
+    <h4>STEEP — 거시환경을 5개 렌즈로 스캔</h4>
+    <p>우리가 통제할 수 없는 <b>외생변수</b>를 빠짐없이 도출하기 위한 환경분석 도구입니다.</p>
+    <div class="fw-grid">${STEEP_ORDER.map(k=>`<div class="fw-cell"><b style="color:${STEEP[k].hex}">${STEEP[k].name}</b><br>${STEEP[k].desc}</div>`).join('')}</div>
+    <h4>⚡ 왜 'AI'를 특별히 보는가</h4>
+    <p>AI는 STEEP의 한 칸(기술)에 머무는 변수가 아니라, <b>5개 영역 전체에 연쇄적으로 파급되는 범용 외생변수</b>입니다.</p>
+    <ul>
+      <li><b>기술(T)</b>: 생성형 AI·에이전트의 급속한 성능 향상</li>
+      <li><b>경제(Ec)</b>: 생산성·원가구조 재편, AI 인프라 비용, 신규 수익모델</li>
+      <li><b>사회(S)</b>: 일자리·직무 재편, 소비행태·신뢰·프라이버시 인식 변화</li>
+      <li><b>정치(P)</b>: AI 규제·데이터 주권·지정학적 기술패권</li>
+      <li><b>환경(En)</b>: 데이터센터 전력·탄소, AI를 통한 에너지 효율화</li>
+    </ul>
+    <p>변수 도출 시 <b>"AI가 이 영역에 어떤 변화를 일으킬까?"</b>를 5개 영역마다 질문해 연쇄 효과를 함께 포착하세요.</p>` },
+};
+function infoRail(keys){ return `<div class="info-rail">${keys.map(k=>`<button class="ibtn" data-info="${k}">${INFO[k].label}</button>`).join('')}</div>`; }
+function wireInfoRail(root){ root.querySelectorAll('[data-info]').forEach(b=> b.onclick=()=>openInfo(b.dataset.info)); }
+function openInfo(key){
+  const it=INFO[key]; if(!it) return;
+  const bg=document.createElement('div'); bg.className='modal-bg';
+  bg.innerHTML=`<div class="modal info"><h3>${esc(it.label)}</h3><div class="ibody">${it.html}</div>
+    <div class="toolbar"><div class="left"></div><div class="right"><button class="btn primary" id="i_close">닫기</button></div></div></div>`;
+  document.body.appendChild(bg); const close=()=>bg.remove();
+  bg.addEventListener('click',e=>{ if(e.target===bg) close(); });
+  document.getElementById('i_close').onclick=close;
+}
+
+/* =================== STEP 7: 비즈니스 캔버스 =================== */
+const BMC = [
+  { k:'kp',   name:'핵심 파트너십', q:'누가 핵심 파트너·공급자인가?' },
+  { k:'ka',   name:'핵심 활동',     q:'가치 전달에 필수적인 활동은?' },
+  { k:'kr',   name:'핵심 자원',     q:'필수 자원(인적·물적·지적·재무)은?' },
+  { k:'vp',   name:'가치 제안',     q:'고객에게 어떤 가치를 주는가?' },
+  { k:'cr',   name:'고객 관계',     q:'고객과 어떤 관계를 맺는가?' },
+  { k:'ch',   name:'채널',         q:'어떤 경로로 가치를 전달하는가?' },
+  { k:'cs',   name:'고객 세그먼트', q:'누구를 위해 가치를 만드는가?' },
+  { k:'cost', name:'비용 구조',     q:'핵심 비용 동인은?' },
+  { k:'rs',   name:'수익원',        q:'고객은 무엇에 지불하는가?' },
+];
+const BMC_POS = {
+  kp:'grid-column:1/3;grid-row:1/3', ka:'grid-column:3/5;grid-row:1/2', kr:'grid-column:3/5;grid-row:2/3',
+  vp:'grid-column:5/7;grid-row:1/3', cr:'grid-column:7/9;grid-row:1/2', ch:'grid-column:7/9;grid-row:2/3',
+  cs:'grid-column:9/11;grid-row:1/3', cost:'grid-column:1/6;grid-row:3/4', rs:'grid-column:6/11;grid-row:3/4',
+};
+let canvasMode='asis';
+function scTitlesK(){ const sc=state.scenario; return [
+  `${sc.xNeg||'X−'} ＋ ${sc.yPos||'Y＋'}`, `${sc.xPos||'X＋'} ＋ ${sc.yPos||'Y＋'}`,
+  `${sc.xNeg||'X−'} ＋ ${sc.yNeg||'Y−'}`, `${sc.xPos||'X＋'} ＋ ${sc.yNeg||'Y−'}`,
+]; }
+function renderCanvas(root){
+  const sc=state.scenario; const sel=(sc.selected==null?-1:sc.selected); const titles=scTitlesK();
+  root.innerHTML=`
+  ${infoRail(['steep'])}
+  <div class="panel">
+    <h2 class="title">비즈니스 캔버스</h2>
+    <p class="subtitle">시나리오 1개를 선택하고, 현재 사업(As-Is)과 그 미래(To-Be)를 9블록으로 작성하세요. <b>🤖 초안 작성</b>으로 9개 블록을 한 번에 채울 수 있습니다.</p>
+    <div class="field" style="max-width:520px"><label class="fl">실습 시나리오 선택</label>
+      <select id="cv_sel"><option value="-1">— 선택 —</option>${[0,1,2,3].map(i=>`<option value="${i}" ${sel===i?'selected':''}>시나리오 ${i+1} · ${esc(titles[i])}</option>`).join('')}</select></div>
+    <div class="act3-layout">
+      <div>
+        <div class="canvas-tabs">
+          <div class="tb ${canvasMode==='asis'?'active':''}" data-mode="asis">Step 1 · As-Is (현재)</div>
+          <div class="tb ${canvasMode==='tobe'?'active':''}" data-mode="tobe">Step 2 · To-Be (시나리오 반영 미래)</div>
+        </div>
+        <div class="toolbar" style="margin:0 0 10px"><div class="left">
+          <button class="btn ai" id="btnCanvasAll">🤖 ${canvasMode==='asis'?'As-Is':'To-Be'} 캔버스 초안 작성</button>
+        </div><div class="right"><span class="meta" id="cvState"></span></div></div>
+        <div class="bmc" id="bmc"></div>
+      </div>
+      <aside><div class="sidepanel" id="sidepanel"></div></aside>
+    </div>
+  </div>
+  ${navButtons()}`;
+  wireInfoRail(root);
+  document.getElementById('cv_sel').onchange=(e)=>{ sc.selected=+e.target.value; save(); renderCanvasSide(); };
+  root.querySelectorAll('.tb[data-mode]').forEach(t=> t.onclick=()=>{ canvasMode=t.dataset.mode; renderCanvas(root); });
+  const b=document.getElementById('btnCanvasAll'); if(b) b.onclick=()=>aiCanvasAllK(canvasMode);
+  renderCanvasBMC(); renderCanvasSide();
+}
+function renderCanvasBMC(){
+  const host=document.getElementById('bmc'); if(!host) return; const data=state.canvas[canvasMode]||{};
+  host.innerHTML=BMC.map(b=>`<div class="blk" style="${BMC_POS[b.k]}"><h5>${esc(b.name)}</h5><div class="bq">${esc(b.q)}</div>
+    <textarea id="bmc_${b.k}" placeholder="${canvasMode==='tobe'?'시나리오 반영 변화…':'현재 내용…'}">${esc(data[b.k]||'')}</textarea></div>`).join('');
+  host.querySelectorAll('textarea').forEach(t=> t.addEventListener('input',()=>{ (state.canvas[canvasMode]=state.canvas[canvasMode]||{})[t.id.replace('bmc_','')]=t.value; save(); }));
+}
+function renderCanvasSide(){
+  const host=document.getElementById('sidepanel'); if(!host) return; const sc=state.scenario; const sel=(sc.selected==null?-1:sc.selected);
+  const drivers=scoredVars().filter(v=>v.impact>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty)).slice(0,8);
+  const scn= sel>=0 ? `<div class="scnbox"><b>🎯 선택 시나리오</b><br>${esc(scTitlesK()[sel])}<div class="hint" style="margin-top:4px">${esc((sc.cells[sel]||'').slice(0,160))}</div></div>` : `<div class="notice warn" style="margin-bottom:10px">시나리오 미선택</div>`;
+  host.innerHTML=`<h4>📌 참고 패널</h4>${scn}<h4>핵심 드라이버</h4>${drivers.length?drivers.map(v=>`<div class="drv">${esc(v.aiName||v.text)} <span class="hint">(I${v.impact}/U${v.uncertainty})</span></div>`).join(''):'<div class="hint">평가 단계에서 변수를 평가하면 표시됩니다.</div>'}`;
+}
+async function aiCanvasAllK(mode){
+  const key=getApiKey(); if(!key){ alert('먼저 ⚙ AI 설정에서 Claude API 키를 입력하세요.'); openSettings(); return; }
+  const st=document.getElementById('cvState'); const btn=document.getElementById('btnCanvasAll');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span>9개 블록 작성 중…'; }
+  const sc=state.scenario; const sel=(sc.selected==null?-1:sc.selected);
+  const scText= sel>=0 ? `${scTitlesK()[sel]} — ${sc.cells[sel]||''}` : '(시나리오 미선택)';
+  const blocks=BMC.map(b=>`${b.k}: ${b.name} (${b.q})`).join('\n');
+  const ctx=`분석 대상: ${state.session.topic||'(미지정)'} / 시간지평: ${state.session.horizon||'(미지정)'}`;
+  let sys,usr;
+  if(mode==='asis'){
+    sys=`당신은 비즈니스 모델 캔버스 전문가입니다. 아래 사업의 현재(As-Is) BMC 9개 블록을 각각 2~4개의 간결한 한국어 불릿으로 작성하세요. JSON만 출력: {"blocks":{"cs":"","vp":"","ch":"","cr":"","rs":"","kr":"","ka":"","kp":"","cost":""}}`;
+    usr=`${ctx}\n블록 정의:\n${blocks}`;
+  }else{
+    sys=`당신은 비즈니스 모델 캔버스 전문가입니다. 아래 미래 시나리오가 현실이 될 때 BMC 9개 블록이 현재 대비 어떻게 변화해야 하는지 각각 2~4개 한국어 불릿으로 작성하세요. JSON만 출력: {"blocks":{"cs":"","vp":"","ch":"","cr":"","rs":"","kr":"","ka":"","kp":"","cost":""}}`;
+    usr=`${ctx}\n실습 시나리오: ${scText}\n현재(As-Is) 캔버스:\n${BMC.map(b=>`${b.name}: ${(state.canvas.asis&&state.canvas.asis[b.k])||'(미작성)'}`).join('\n')}\n\n블록 정의:\n${blocks}`;
+  }
+  try{ const data=await callClaude(sys,usr,2500); const json=extractJSON((data.content||[]).map(b=>b.text||'').join(''));
+    if(!json||!json.blocks) throw new Error('파싱 실패');
+    state.canvas[mode]=state.canvas[mode]||{};
+    BMC.forEach(b=>{ if(json.blocks[b.k]!=null) state.canvas[mode][b.k]=String(json.blocks[b.k]); });
+    save(); renderCanvasBMC(); if(st) st.textContent='✅ 완료 — 검토·수정하세요';
+  }catch(e){ if(st) st.textContent='⚠ 실패: '+e.message; }
+  finally{ if(btn){ btn.disabled=false; btn.innerHTML=`🤖 ${mode==='asis'?'As-Is':'To-Be'} 캔버스 초안 작성`; } }
+}
+
+/* =================== STEP 8: EXPORT =================== */
 function renderExport(root){
   root.innerHTML = `
   <div class="panel">
