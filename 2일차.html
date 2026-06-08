@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 사업기회 도출 워크숍 — 2일차 · 사업 고도화와 신규 기회</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#1a2129; --panel-2:#222b35; --line:#2e3a47; --text:#e6edf3; --muted:#8b97a3;
+    --accent:#4f9cf9; --ai:#c084fc; --ok:#34c77b; --warn:#f0a93b; --danger:#f06363;
+    --radius:12px; --shadow:0 6px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+    background:radial-gradient(1200px 600px at 80% -10%,#1c2733 0%,var(--bg) 55%); color:var(--text); line-height:1.5; min-height:100vh;}
+  a{color:var(--accent);}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px 18px 90px;}
+  header.top{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:50;background:rgba(15,20,25,.88);backdrop-filter:blur(8px);flex-wrap:wrap;}
+  .logo{font-weight:800;font-size:17px;} .logo .dot{color:var(--accent);}
+  .top .spacer{flex:1;} .top .meta{color:var(--muted);font-size:13px;}
+  .btn{border:1px solid var(--line);background:var(--panel-2);color:var(--text);padding:8px 14px;border-radius:9px;cursor:pointer;font-size:14px;transition:.15s;white-space:nowrap;}
+  .btn:hover{border-color:var(--accent);}
+  .btn.primary{background:linear-gradient(180deg,#4f9cf9,#3d7fd6);border-color:transparent;font-weight:600;}
+  .btn.ai{background:linear-gradient(180deg,#a855f7,#7c3aed);border-color:transparent;font-weight:600;}
+  .btn.ghost{background:transparent;} .btn.sm{padding:5px 10px;font-size:13px;} .btn.tiny{padding:3px 8px;font-size:12px;}
+  .btn.danger{color:var(--danger);} .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .stepper{display:flex;gap:6px;flex-wrap:wrap;margin:20px 0 22px;}
+  .step{display:flex;align-items:center;gap:8px;padding:8px 13px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--muted);cursor:pointer;font-size:12.5px;}
+  .step .num{width:21px;height:21px;border-radius:50%;background:var(--panel-2);display:grid;place-items:center;font-size:11px;font-weight:700;}
+  .step.active{color:var(--text);border-color:var(--accent);background:#16222f;} .step.active .num{background:var(--accent);color:#fff;}
+  .step.done .num{background:var(--ok);color:#fff;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);}
+  .panel+.panel{margin-top:18px;}
+  h2.title{margin:0 0 4px;font-size:22px;} h3.sec{margin:24px 0 10px;font-size:17px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+  .subtitle{color:var(--muted);margin:0 0 18px;font-size:14px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;} .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  @media (max-width:720px){.grid2,.grid3{grid-template-columns:1fr;}}
+  label.fl{display:block;font-size:13px;color:var(--muted);margin:0 0 6px;}
+  input[type=text],input[type=password],select,textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit;}
+  textarea{resize:vertical;min-height:64px;} input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);}
+  .field{margin-bottom:14px;} .hint{font-size:12px;color:var(--muted);margin-top:5px;}
+  .notice{font-size:13px;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);margin-bottom:14px;}
+  .notice.ok{border-color:#1f4d36;background:#0f241a;color:#9be3bf;} .notice.warn{border-color:#5a4320;background:#241c0e;color:#f0c98b;}
+  .notice.ai{border-color:#5b3a7a;background:#1d1430;color:#d8b6ff;}
+  .quad-box{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--panel-2);} .quad-box h4{margin:0 0 6px;font-size:13.5px;}
+  .quad-box ul{margin:0;padding-left:18px;font-size:13px;color:var(--muted);}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;justify-content:space-between;align-items:center;}
+  .toolbar .left,.toolbar .right{display:flex;gap:10px;flex-wrap:wrap;}
+  .spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hidden{display:none !important;} .kbd{font-family:ui-monospace,monospace;background:var(--panel-2);padding:1px 6px;border-radius:5px;border:1px solid var(--line);font-size:12px;}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;}
+  .b-hi{background:var(--danger);color:#1a0606;} .b-mid{background:var(--warn);color:#241c0e;} .b-lo{background:var(--muted);color:#0b0f14;}
+  .item{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--panel-2);margin-bottom:12px;}
+  .item .ihead{display:flex;gap:10px;align-items:center;margin-bottom:8px;}
+  .item .ihead input{flex:1;font-weight:600;}
+  .item .irow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+  @media (max-width:720px){.item .irow{grid-template-columns:1fr;}}
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:100;}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;width:min(520px,92vw);box-shadow:var(--shadow);}
+  .modal h3{margin:0 0 12px;}
+  footer.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:30px;}
+  /* cover */
+  #cover{position:fixed;inset:0;z-index:200;background:#fff;color:#111;display:flex;} #cover.hidden{display:none;}
+  #cover .cv-left{flex:1;padding:6vh 5vw;display:flex;flex-direction:column;}
+  #cover .cv-title{font-size:30px;font-weight:800;color:#7823dc;line-height:1.3;letter-spacing:-.5px;white-space:nowrap;}
+  #cover .cv-sub{margin-top:26px;font-size:20px;font-weight:700;color:#111;} #cover .cv-date{font-size:18px;color:#333;margin-top:2px;}
+  #cover .cv-note{margin-top:26px;background:#f4f4f6;border:1px solid #e4e4ea;border-radius:8px;padding:16px 18px;max-width:640px;color:#444;font-size:13.5px;line-height:1.7;}
+  #cover .cv-note b{color:#7823dc;}
+  #cover .cv-bottom{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  #cover .cv-logo img{height:30px;display:block;} #cover .cv-logo .cv-logo-fallback{font-size:30px;font-weight:500;letter-spacing:7px;color:#111;}
+  #cover .cv-start{background:#7823dc;color:#fff;border:none;border-radius:10px;padding:14px 28px;font-size:17px;font-weight:700;cursor:pointer;}
+  #cover .cv-start:hover{filter:brightness(1.08);}
+  #cover .cv-right{width:42%;background:#fff;border-left:1px solid #eee;position:relative;overflow:hidden;}
+  #cover .cv-bigk{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:128vh;line-height:1;font-weight:600;color:#f0f1f3;user-select:none;font-family:Arial,Helvetica,sans-serif;}
+  @media (max-width:760px){#cover .cv-right{display:none;} #cover .cv-title{font-size:22px;white-space:normal;}}
+</style>
+</head>
+<body>
+<div id="cover">
+  <div class="cv-left">
+    <div class="cv-title">AI로 인한 Disruption 대응<br>사업 고도화와 신규 기회 모색</div>
+    <div class="cv-sub">LG그룹 임원 대상 · Kearney 주관</div>
+    <div class="cv-date">2일차 — 본업 개선과 인접영역 확장</div>
+    <div class="cv-note">
+      본 Tool은 <b>금번 세미나를 위해서만</b> 제작되었습니다.
+      세미나 이후에도 접속은 가능하나, <b>지속적인 유지·보수가 이루어지지 않을 수</b> 있습니다.<br>
+      본 Tool 및 모든 콘텐츠·산출물은 <b>Kearney의 자산</b>이며, 워크숍 진행 외 목적의 무단 사용·배포를 금합니다.
+    </div>
+    <div class="cv-bottom">
+      <div class="cv-logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/58/Kearney_Logo.svg" alt="KEARNEY"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+        <span class="cv-logo-fallback" style="display:none">KEARNEY</span>
+      </div>
+      <button class="cv-start" id="coverStart">시작하기 →</button>
+    </div>
+  </div>
+  <div class="cv-right"><div class="cv-bigk">K</div></div>
+</div>
+
+<header class="top">
+  <div class="logo">2일차<span class="dot"> ·</span> 사업 고도화와 신규 기회</div>
+  <div class="spacer"></div>
+  <div class="meta" id="sessionMeta"></div>
+  <a class="btn sm ghost" href="1일차.html">← 1일차</a>
+  <button class="btn sm ghost" id="btnSettings">⚙ AI 설정</button>
+  <button class="btn sm ghost" id="btnExportAll">저장(JSON)</button>
+</header>
+
+<div class="wrap">
+  <div class="stepper" id="stepper"></div>
+  <div id="view"></div>
+  <footer class="foot">데이터는 이 브라우저에 자동 저장됩니다 · 1일차 결과(JSON)를 업로드해 이어서 진행하세요</footer>
+</div>
+
+<input type="file" id="d1file" accept="application/json" class="hidden" />
+<input type="file" id="importFile" accept="application/json" class="hidden" />
+
+<script>
+/* =========================================================================
+   AI 사업기회 도출 워크숍 — 2일차 (본업 개선 / 인접영역 확장)
+   1일차 Output(JSON)을 업로드해 이어서 진행. 단일 HTML, 오프라인 동작.
+   ========================================================================= */
+const BMC_NAME={cs:'고객 세그먼트',vp:'가치 제안',ch:'채널',cr:'고객 관계',rs:'수익원',kr:'핵심 자원',ka:'핵심 활동',kp:'핵심 파트너십',cost:'비용 구조'};
+
+const DEFAULT_STATE=()=>({
+  v:1,
+  session:{team:'1조',name:'',title:'',topic:''},
+  day1:null,                 // {session,variables,scenario,canvas,oppthreat}
+  actions:[],                // {id,title,area,desc,effect,priority}
+  adjacency:[],              // {id,market,resource,path,synergy,risk}
+  settings:{model:'claude-sonnet-4-6'},
+  step:0,
+});
+const STEPS=[
+  {t:'세션 설정', r:renderSetup},
+  {t:'1일차 결과 업로드', r:renderUpload},
+  {t:'기존사업 개선', r:renderImprove},
+  {t:'인접사업 진출', r:renderAdjacency},
+  {t:'Output 추출', r:renderOutput},
+];
+const LS_KEY='steep_day2_state_v1';
+const LS_APIKEY='steep_anthropic_key';   // 1일차와 공유
+let state=load(); if(state.step>=STEPS.length) state.step=0;
+
+function load(){ try{ const r=localStorage.getItem(LS_KEY); if(r) return Object.assign(DEFAULT_STATE(),JSON.parse(r)); }catch(e){} return DEFAULT_STATE(); }
+function save(){ localStorage.setItem(LS_KEY,JSON.stringify(state)); updateMeta(); }
+function getApiKey(){ return localStorage.getItem(LS_APIKEY)||''; }
+function setApiKey(k){ k?localStorage.setItem(LS_APIKEY,k):localStorage.removeItem(LS_APIKEY); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function esc(s){ return (s??'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function val(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
+function persona(){ const t=state.session.title; return t?`당신은 '${t}' 직책의 LG그룹 임원을 돕는 전략 컨설턴트입니다. 답변은 이 임원의 사업 관점에 맞춥니다. `:`당신은 LG그룹 임원을 돕는 전략 컨설턴트입니다. `; }
+
+/* ---------- chrome ---------- */
+function updateMeta(){ document.getElementById('sessionMeta').textContent=[state.session.team,state.session.name,state.session.title].filter(Boolean).join(' · ')||'참가자 정보 미입력'; }
+function renderStepper(){
+  const el=document.getElementById('stepper');
+  el.innerHTML=STEPS.map((s,i)=>`<div class="step ${i===state.step?'active':(i<state.step?'done':'')}" data-step="${i}"><span class="num">${i<state.step?'✓':i+1}</span>${esc(s.t)}</div>`).join('');
+  el.querySelectorAll('.step').forEach(n=>n.onclick=()=>goto(+n.dataset.step));
+}
+function goto(i){ state.step=Math.max(0,Math.min(STEPS.length-1,i)); save(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+function render(){ renderStepper(); const v=document.getElementById('view'); v.innerHTML=''; STEPS[state.step].r(v); updateMeta(); }
+function navButtons(){ const prev=state.step>0?`<button class="btn ghost" onclick="goto(${state.step-1})">← 이전</button>`:'<span></span>';
+  const next=state.step<STEPS.length-1?`<button class="btn primary" onclick="goto(${state.step+1})">다음 →</button>`:''; return `<div class="toolbar"><div class="left">${prev}</div><div class="right">${next}</div></div>`; }
+
+/* ---------- 1일차 데이터 helper ---------- */
+function d1(){ return state.day1; }
+function scTitles(s){ s=s||{}; return [`${s.xNeg||'X−'} × ${s.yPos||'Y＋'}`,`${s.xPos||'X＋'} × ${s.yPos||'Y＋'}`,`${s.xNeg||'X−'} × ${s.yNeg||'Y−'}`,`${s.xPos||'X＋'} × ${s.yNeg||'Y−'}`]; }
+function selScenarioTitle(){ const s=d1()&&d1().scenario; if(!s||s.selected<0||s.selected==null) return '(미선정)'; return scTitles(s)[s.selected]; }
+function selScenarioText(){ const s=d1()&&d1().scenario; if(!s||s.selected<0||s.selected==null) return '(미선정)'; return `${scTitles(s)[s.selected]} — ${(s.cells&&s.cells[s.selected])||''}`; }
+function otPicks(){ const d=d1(); if(!d||!d.oppthreat) return []; const ot=d.oppthreat;
+  return Object.keys(ot.sel||{}).filter(k=>ot.sel[k]&&ot.sel[k]!=='none').map(k=>({block:BMC_NAME[k]||k, type:ot.sel[k]==='both'?'기회+위협':ot.sel[k]==='opp'?'기회':'위협', content:(d.canvas&&d.canvas.tobe&&d.canvas.tobe[k])||'', rat:(ot.rat&&ot.rat[k])||''})); }
+function day1SummaryText(){
+  const d=d1(); if(!d) return '(1일차 데이터 없음)';
+  const picks=otPicks().map(p=>`- [${p.type}] ${p.block}: ${(p.content||'').replace(/\n/g,' ')}${p.rat?' ('+p.rat+')':''}`).join('\n');
+  return `실습 시나리오: ${selScenarioText()}
+[To-Be 핵심 자원]
+${(d.canvas&&d.canvas.tobe&&d.canvas.tobe.kr)||'(미작성)'}
+[To-Be 가치 제안]
+${(d.canvas&&d.canvas.tobe&&d.canvas.tobe.vp)||'(미작성)'}
+[기회/위협 영역]
+${picks||'(없음)'}
+[1일차 핵심 시사점]
+${(d.oppthreat&&d.oppthreat.insight)||'(없음)'}`;
+}
+
+/* =================== STEP 0: 세션 설정 =================== */
+function renderSetup(root){
+  const s=state.session;
+  const teamOpts=['1조','2조','3조','4조','5조','6조'].map(t=>`<option ${s.team===t?'selected':''}>${t}</option>`).join('');
+  root.innerHTML=`
+  <div class="panel">
+    <h2 class="title">세션 설정 — 참가자 프로필</h2>
+    <p class="subtitle">입력한 <b>직책</b>은 이후 모든 AI 추천/제안에 자동 반영됩니다. 1일차와 동일한 정보를 입력하세요.</p>
+    <div class="grid3">
+      <div class="field"><label class="fl">조 선택</label><select id="f_team">${teamOpts}</select></div>
+      <div class="field"><label class="fl">성함</label><input type="text" id="f_name" value="${esc(s.name)}" placeholder="예: 홍길동"></div>
+      <div class="field"><label class="fl">직책</label><input type="text" id="f_title" value="${esc(s.title)}" placeholder="예: 완성차 OEM 상품기획 상무"></div>
+    </div>
+    <div class="field"><label class="fl">분석 대상 / 사업 맥락 (선택)</label><input type="text" id="f_topic" value="${esc(s.topic)}" placeholder="예: 완성차 OEM의 AI·자율주행 대응"></div>
+    <div class="notice ai">🧭 2일차는 1일차에서 도출한 <b>기회/위협영역</b>을 바탕으로 ① 본업 개선 Action Item과 ② 인접영역 확장 Target을 도출합니다.</div>
+    <div class="toolbar"><div class="left"><button class="btn danger ghost" id="btnReset">세션 초기화</button></div>
+      <div class="right"><button class="btn primary" id="btnStart">저장하고 시작 →</button></div></div>
+  </div>`;
+  const sv=()=>{ s.team=document.getElementById('f_team').value; s.name=val('f_name'); s.title=val('f_title'); s.topic=val('f_topic'); save(); };
+  ['f_team','f_name','f_title','f_topic'].forEach(id=>document.getElementById(id).addEventListener('input',sv));
+  document.getElementById('btnStart').onclick=()=>{ sv(); goto(1); };
+  document.getElementById('btnReset').onclick=()=>{ if(confirm('2일차 데이터를 모두 삭제하고 새로 시작할까요?')){ state=DEFAULT_STATE(); save(); render(); } };
+}
+
+/* =================== STEP 1: 1일차 결과 업로드 =================== */
+function renderUpload(root){
+  const d=d1();
+  root.innerHTML=`
+  <div class="panel">
+    <h2 class="title">1일차 결과 업로드</h2>
+    <p class="subtitle">1일차 <b>Output → 전체 JSON</b>으로 내려받은 파일을 업로드하면, 선정 시나리오·비즈니스 캔버스·기회/위협영역을 불러와 2일차에 자동 반영합니다.</p>
+    <div class="toolbar" style="margin-top:0"><div class="left">
+      <button class="btn primary" id="btnUpload">📂 1일차 JSON 업로드</button>
+    </div><div class="right"><span class="meta" id="upMsg"></span></div></div>
+    <div id="d1box" style="margin-top:14px">${d?day1Box(d):'<div class="notice warn">아직 1일차 데이터가 없습니다. 파일을 업로드하세요. (직접 입력으로도 진행 가능하나 AI 추천 품질이 떨어집니다.)</div>'}</div>
+  </div>
+  ${navButtons()}`;
+  document.getElementById('btnUpload').onclick=()=>document.getElementById('d1file').click();
+}
+function day1Box(d){
+  const ds=d.session||{};
+  const picks=otPicks();
+  return `<div class="notice ok">✅ 1일차 데이터 로드됨 — ${esc([ds.team,ds.name,ds.title].filter(Boolean).join(' · ')||'프로필 미상')}</div>
+  <div class="grid2">
+    <div class="quad-box"><h4>🎯 실습 시나리오</h4><div style="font-size:13px">${esc(selScenarioText()).slice(0,260)}</div></div>
+    <div class="quad-box"><h4>🧩 핵심 자원 (To-Be)</h4><div class="hint" style="white-space:pre-wrap">${esc((d.canvas&&d.canvas.tobe&&d.canvas.tobe.kr)||'(미작성)')}</div></div>
+  </div>
+  <div class="quad-box" style="margin-top:12px"><h4>🟢🔴 기회/위협 영역 (${picks.length})</h4>
+    <ul>${picks.length?picks.map(p=>`<li><b>${esc(p.type)}</b> · ${esc(p.block)} ${p.rat?`<span class="hint">— ${esc(p.rat)}</span>`:''}</li>`).join(''):'<li class="hint">없음</li>'}</ul></div>
+  <div class="quad-box" style="margin-top:12px"><h4>💡 1일차 핵심 시사점</h4><div class="hint" style="white-space:pre-wrap">${esc((d.oppthreat&&d.oppthreat.insight)||'(없음)')}</div></div>`;
+}
+function loadDay1(file){
+  const r=new FileReader();
+  r.onload=()=>{ try{ const j=JSON.parse(r.result);
+    if(!j.scenario && !j.canvas && !j.variables) throw new Error('1일차 형식이 아닙니다');
+    state.day1={ session:j.session||{}, variables:j.variables||[], scenario:j.scenario||{}, canvas:j.canvas||{asis:{},tobe:{}}, oppthreat:j.oppthreat||{sel:{},rat:{},insight:''} };
+    if(j.session){ const s=state.session; if(!s.name&&j.session.name)s.name=j.session.name; if(!s.title&&j.session.title)s.title=j.session.title; if(j.session.team)s.team=j.session.team; if(!s.topic&&j.session.topic)s.topic=j.session.topic; }
+    save(); render(); const m=document.getElementById('upMsg'); if(m) m.textContent='✅ 업로드 완료';
+  }catch(e){ alert('업로드 실패: '+e.message); } };
+  r.readAsText(file);
+}
+
+/* =================== STEP 2: 기존사업 개선 (본업 Action Item) =================== */
+function renderImprove(root){
+  root.innerHTML=`
+  <div class="panel">
+    <h2 class="title">기존사업 개선 — 본업 개선 Action Item</h2>
+    <p class="subtitle">1일차에서 도출한 기회/위협영역과 선정 시나리오를 바탕으로, <b>기존(본업) 사업을 개선</b>하기 위한 실행 과제(Action Item)를 도출합니다.</p>
+    ${d1()?'':'<div class="notice warn">⚠ 1일차 데이터가 없습니다. <b>1일차 결과 업로드</b> 단계를 먼저 진행하세요.</div>'}
+    <div class="quad-box" style="margin-bottom:14px"><h4>📌 1일차 컨텍스트</h4>
+      <div class="hint">시나리오: ${esc(selScenarioTitle())} · 기회/위협 ${otPicks().length}개</div></div>
+    <div class="toolbar" style="margin-top:0"><div class="left">
+      <button class="btn ai" id="btnAI">🤖 본업 개선 Action Item 추천</button>
+      <button class="btn ghost" id="btnAdd">＋ 직접 추가</button>
+    </div><div class="right"><span class="meta" id="aiMsg"></span></div></div>
+    <div id="list" style="margin-top:14px"></div>
+  </div>
+  ${navButtons()}`;
+  document.getElementById('btnAI').onclick=aiActions;
+  document.getElementById('btnAdd').onclick=()=>{ state.actions.push({id:uid(),title:'',area:'',desc:'',effect:'',priority:'중'}); save(); renderActionList(); };
+  renderActionList();
+}
+function renderActionList(){
+  const host=document.getElementById('list'); if(!host) return;
+  if(!state.actions.length){ host.innerHTML='<p class="hint">아직 Action Item이 없습니다. AI 추천 또는 직접 추가로 시작하세요.</p>'; return; }
+  host.innerHTML=state.actions.map((a,i)=>`<div class="item" data-id="${a.id}">
+    <div class="ihead"><span class="badge ${a.priority==='상'?'b-hi':a.priority==='하'?'b-lo':'b-mid'}">${esc(a.priority||'중')}</span>
+      <input type="text" data-f="title" value="${esc(a.title)}" placeholder="과제명 (예: KAM 조직 기반 B2B 자율주행 Fleet 선제 공략)">
+      <select data-f="priority" style="width:90px"><option ${a.priority==='상'?'selected':''}>상</option><option ${a.priority==='중'||!a.priority?'selected':''}>중</option><option ${a.priority==='하'?'selected':''}>하</option></select>
+      <button class="btn tiny danger ghost" data-del>삭제</button></div>
+    <div class="field" style="margin:0"><input type="text" data-f="area" value="${esc(a.area)}" placeholder="관련 영역 / 캔버스 블록 (예: 채널 · 고객 관계)"></div>
+    <div class="irow">
+      <textarea data-f="desc" placeholder="구체 실행 내용">${esc(a.desc)}</textarea>
+      <textarea data-f="effect" placeholder="기대 효과">${esc(a.effect)}</textarea>
+    </div></div>`).join('');
+  host.querySelectorAll('.item').forEach(it=>{ const a=state.actions.find(x=>x.id===it.dataset.id);
+    it.querySelectorAll('[data-f]').forEach(el=>el.addEventListener('input',()=>{ a[el.dataset.f]=el.value; save(); if(el.dataset.f==='priority') renderActionList(); }));
+    it.querySelector('[data-del]').onclick=()=>{ state.actions=state.actions.filter(x=>x.id!==a.id); save(); renderActionList(); }; });
+}
+async function aiActions(){
+  const key=getApiKey(); const msg=document.getElementById('aiMsg'); if(!key){ openSettings(); return; }
+  msg.innerHTML='<span class="spinner"></span> 추천 생성 중…';
+  const sys=`${persona()}1일차에서 도출한 선정 시나리오와 기회/위협영역을 바탕으로, 이 임원의 기존(본업) 사업을 개선하기 위한 Action Item을 4~6개 제안하세요.
+각 항목: title(과제명), area(관련 영역/캔버스 블록), desc(구체 실행 내용 1~2문장), effect(기대효과 1문장), priority(상|중|하). 경영자 관점, 실행지향적, 한국어.
+JSON만: {"items":[{"title":"","area":"","desc":"","effect":"","priority":"상|중|하"}]}`;
+  const usr=`직책: ${state.session.title||'(미입력)'}\n사업: ${state.session.topic||'(미지정)'}\n[1일차 요약]\n${day1SummaryText()}`;
+  try{ const data=await callClaude(sys,usr,2500); const j=extractJSON((data.content||[]).map(b=>b.text||'').join('')); if(!j||!j.items) throw new Error('파싱 실패');
+    j.items.forEach(it=>state.actions.push({id:uid(),title:it.title||'',area:it.area||'',desc:it.desc||'',effect:it.effect||'',priority:/상|중|하/.test(it.priority)?it.priority:'중'}));
+    save(); renderActionList(); msg.textContent=`✅ ${j.items.length}개 추가됨 — 검토·수정하세요`;
+  }catch(e){ msg.textContent='⚠ 실패: '+e.message; }
+}
+
+/* =================== STEP 3: 인접사업 진출 =================== */
+function renderAdjacency(root){
+  root.innerHTML=`
+  <div class="panel">
+    <h2 class="title">인접사업 진출 — 인접영역 확장 Target</h2>
+    <p class="subtitle">1일차 <b>To-Be 비즈니스 캔버스의 '핵심 자원'</b>을 Leverage하여, 선정 시나리오 하에서 진출 가능한 <b>인접시장과 침투 경로</b>를 설계합니다.</p>
+    ${d1()?'':'<div class="notice warn">⚠ 1일차 데이터가 없습니다. <b>1일차 결과 업로드</b> 단계를 먼저 진행하세요.</div>'}
+    <div class="quad-box" style="margin-bottom:14px"><h4>🧩 Leverage할 핵심 자원 (1일차 To-Be)</h4>
+      <div class="hint" style="white-space:pre-wrap">${esc((d1()&&d1().canvas&&d1().canvas.tobe&&d1().canvas.tobe.kr)||'(미작성)')}</div></div>
+    <div class="toolbar" style="margin-top:0"><div class="left">
+      <button class="btn ai" id="btnAI">🤖 인접영역 확장 Target 추천</button>
+      <button class="btn ghost" id="btnAdd">＋ 직접 추가</button>
+    </div><div class="right"><span class="meta" id="aiMsg2"></span></div></div>
+    <div id="list2" style="margin-top:14px"></div>
+  </div>
+  ${navButtons()}`;
+  document.getElementById('btnAI').onclick=aiAdjacency;
+  document.getElementById('btnAdd').onclick=()=>{ state.adjacency.push({id:uid(),market:'',resource:'',path:'',synergy:'',risk:''}); save(); renderAdjList(); };
+  renderAdjList();
+}
+function renderAdjList(){
+  const host=document.getElementById('list2'); if(!host) return;
+  if(!state.adjacency.length){ host.innerHTML='<p class="hint">아직 인접영역 Target이 없습니다. AI 추천 또는 직접 추가로 시작하세요.</p>'; return; }
+  host.innerHTML=state.adjacency.map(a=>`<div class="item" data-id="${a.id}">
+    <div class="ihead"><input type="text" data-f="market" value="${esc(a.market)}" placeholder="인접시장 (예: 자율주행 Fleet 운영·관제 서비스)">
+      <button class="btn tiny danger ghost" data-del>삭제</button></div>
+    <div class="field" style="margin:0"><input type="text" data-f="resource" value="${esc(a.resource)}" placeholder="활용할 핵심 자원 (예: 200여개국 딜러 네트워크, SDV 역량)"></div>
+    <div class="irow">
+      <textarea data-f="path" placeholder="침투 경로 / 진입 방식">${esc(a.path)}</textarea>
+      <textarea data-f="synergy" placeholder="시너지 (본업과의 연결)">${esc(a.synergy)}</textarea>
+    </div>
+    <div class="field" style="margin:8px 0 0"><textarea data-f="risk" placeholder="리스크 / 고려사항">${esc(a.risk)}</textarea></div></div>`).join('');
+  host.querySelectorAll('.item').forEach(it=>{ const a=state.adjacency.find(x=>x.id===it.dataset.id);
+    it.querySelectorAll('[data-f]').forEach(el=>el.addEventListener('input',()=>{ a[el.dataset.f]=el.value; save(); }));
+    it.querySelector('[data-del]').onclick=()=>{ state.adjacency=state.adjacency.filter(x=>x.id!==a.id); save(); renderAdjList(); }; });
+}
+async function aiAdjacency(){
+  const key=getApiKey(); const msg=document.getElementById('aiMsg2'); if(!key){ openSettings(); return; }
+  msg.innerHTML='<span class="spinner"></span> 추천 생성 중…';
+  const sys=`${persona()}1일차 To-Be 비즈니스 캔버스의 '핵심 자원'을 Leverage하여, 선정 시나리오 하에서 진출 가능한 인접시장과 침투 경로를 3~5개 제안하세요.
+각 항목: market(인접시장), resource(활용할 핵심 자원), path(침투 경로/진입 방식 1~2문장), synergy(본업과의 시너지 1문장), risk(리스크 1문장). 경영자 관점, 구체적, 한국어.
+JSON만: {"items":[{"market":"","resource":"","path":"","synergy":"","risk":""}]}`;
+  const usr=`직책: ${state.session.title||'(미입력)'}\n사업: ${state.session.topic||'(미지정)'}\n[1일차 요약]\n${day1SummaryText()}`;
+  try{ const data=await callClaude(sys,usr,2500); const j=extractJSON((data.content||[]).map(b=>b.text||'').join('')); if(!j||!j.items) throw new Error('파싱 실패');
+    j.items.forEach(it=>state.adjacency.push({id:uid(),market:it.market||'',resource:it.resource||'',path:it.path||'',synergy:it.synergy||'',risk:it.risk||''}));
+    save(); renderAdjList(); msg.textContent=`✅ ${j.items.length}개 추가됨 — 검토·수정하세요`;
+  }catch(e){ msg.textContent='⚠ 실패: '+e.message; }
+}
+
+/* =================== STEP 4: Output =================== */
+function renderOutput(root){
+  root.innerHTML=`
+  <div class="panel">
+    <h2 class="title">Output 추출</h2>
+    <p class="subtitle">2일차 결과(본업 개선 Action Item · 인접영역 확장 Target)를 1일차 요약과 함께 다운로드합니다.</p>
+    <div class="grid2">
+      <div class="quad-box"><h4>📄 종합 리포트</h4><div style="margin-top:8px"><button class="btn primary sm" id="exReport">리포트 보기 / 인쇄(PDF)</button></div>
+        <p class="hint">인쇄 대화상자에서 'PDF로 저장' 선택</p></div>
+      <div class="quad-box"><h4>📊 데이터</h4><div style="margin-top:8px"><button class="btn sm" id="exJson">2일차 JSON</button></div></div>
+    </div>
+  </div>
+  ${navButtons()}`;
+  document.getElementById('exReport').onclick=showReport;
+  document.getElementById('exJson').onclick=exportJSON;
+}
+
+/* =================== AI / 유틸 =================== */
+async function callClaude(system,user,maxTokens){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'content-type':'application/json','x-api-key':getApiKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:state.settings.model||'claude-sonnet-4-6',max_tokens:maxTokens||2000,system,messages:[{role:'user',content:user}]})});
+  if(!res.ok){ let m=res.status+' '+res.statusText; try{ const e=await res.json(); if(e.error&&e.error.message) m=e.error.message; }catch(_){} throw new Error(m); }
+  return res.json();
+}
+function extractJSON(t){ if(!t) return null; t=t.trim().replace(/^```(json)?/i,'').replace(/```$/,'').trim(); const s=t.indexOf('{'),e=t.lastIndexOf('}'); if(s>=0&&e>s)t=t.slice(s,e+1); try{ return JSON.parse(t); }catch(_){ return null; } }
+function downloadBlob(b,n){ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=n; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000); }
+function fname(base,ext){ const t=[state.session.team,state.session.name].filter(Boolean).join('_').replace(/[^\w가-힣]+/g,'_').slice(0,24)||'day2'; return `${t}_${base}_${new Date().toISOString().slice(0,10)}.${ext}`; }
+function exportJSON(){ downloadBlob(new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'}),fname('day2_session','json')); }
+
+function showReport(){
+  const s=state.session;
+  const aRows=state.actions.map(a=>`<tr><td>${esc(a.priority||'중')}</td><td><b>${esc(a.title)}</b><br><span class="muted">${esc(a.area)}</span></td><td>${esc(a.desc).replace(/\n/g,'<br>')}</td><td>${esc(a.effect).replace(/\n/g,'<br>')}</td></tr>`).join('');
+  const jRows=state.adjacency.map(a=>`<tr><td><b>${esc(a.market)}</b></td><td>${esc(a.resource).replace(/\n/g,'<br>')}</td><td>${esc(a.path).replace(/\n/g,'<br>')}</td><td>${esc(a.synergy).replace(/\n/g,'<br>')}</td><td>${esc(a.risk).replace(/\n/g,'<br>')}</td></tr>`).join('');
+  const w=window.open('','_blank');
+  const css=`body{font-family:-apple-system,'Malgun Gothic','Noto Sans KR',sans-serif;color:#111;max-width:920px;margin:0 auto;padding:32px;line-height:1.6}
+    h1{font-size:24px;border-bottom:3px solid #7823dc;padding-bottom:8px} h2{font-size:18px;margin-top:26px;color:#1a2a3a;border-left:4px solid #7823dc;padding-left:10px}
+    table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px} th,td{border:1px solid #ccc;padding:6px 8px;text-align:left;vertical-align:top} th{background:#f0f4f8}
+    .muted{color:#666} @media print{.noprint{display:none}}`;
+  const html=`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>2일차 리포트</title><style>${css}</style></head><body>
+    <button class="noprint" onclick="window.print()" style="float:right;padding:8px 16px;cursor:pointer">🖨 인쇄/PDF</button>
+    <h1>AI 사업기회 도출 워크숍 — 2일차 리포트</h1>
+    <p class="muted">${esc(s.team||'')} · ${esc(s.name||'')} · ${esc(s.title||'')} · ${new Date().toLocaleDateString('ko-KR')}</p>
+    <p><b>실습 시나리오(1일차):</b> ${esc(selScenarioTitle())}</p>
+    <h2>1. 기존사업 개선 Action Item</h2>
+    <table><tr><th>우선순위</th><th>과제 / 영역</th><th>실행 내용</th><th>기대 효과</th></tr>${aRows||'<tr><td colspan=4 class="muted">없음</td></tr>'}</table>
+    <h2>2. 인접영역 확장 Target</h2>
+    <table><tr><th>인접시장</th><th>활용 핵심자원</th><th>침투 경로</th><th>시너지</th><th>리스크</th></tr>${jRows||'<tr><td colspan=5 class="muted">없음</td></tr>'}</table>
+    </body></html>`;
+  w.document.write(html); w.document.close();
+}
+
+/* ---------- settings modal ---------- */
+function openSettings(){
+  const cur=getApiKey(); const bg=document.createElement('div'); bg.className='modal-bg';
+  bg.innerHTML=`<div class="modal"><h3>⚙ AI 설정 (Claude API)</h3>
+    <div class="field"><label class="fl">Anthropic API Key</label><input type="password" id="m_key" value="${esc(cur)}" placeholder="sk-ant-...">
+      <div class="hint">키는 이 브라우저에만 저장되며, 1일차와 공유됩니다.</div></div>
+    <div class="field"><label class="fl">모델</label><select id="m_model">
+      <option value="claude-sonnet-4-6">claude-sonnet-4-6 (균형·추천)</option>
+      <option value="claude-opus-4-8">claude-opus-4-8 (최고 성능)</option>
+      <option value="claude-haiku-4-5-20251001">claude-haiku-4-5 (빠름·저비용)</option></select></div>
+    <div class="toolbar"><div class="left"><button class="btn ghost" id="m_clear">키 삭제</button></div>
+      <div class="right"><button class="btn ghost" id="m_cancel">취소</button><button class="btn primary" id="m_save">저장</button></div></div></div>`;
+  document.body.appendChild(bg); document.getElementById('m_model').value=state.settings.model||'claude-sonnet-4-6';
+  const close=()=>bg.remove(); bg.addEventListener('click',e=>{ if(e.target===bg) close(); });
+  document.getElementById('m_cancel').onclick=close;
+  document.getElementById('m_clear').onclick=()=>{ setApiKey(''); close(); };
+  document.getElementById('m_save').onclick=()=>{ setApiKey(document.getElementById('m_key').value.trim()); state.settings.model=document.getElementById('m_model').value; save(); close(); };
+}
+
+/* ---------- boot ---------- */
+document.getElementById('btnSettings').onclick=openSettings;
+document.getElementById('btnExportAll').onclick=exportJSON;
+document.getElementById('coverStart').onclick=()=>document.getElementById('cover').classList.add('hidden');
+document.getElementById('d1file').onchange=e=>{ if(e.target.files[0]) loadDay1(e.target.files[0]); e.target.value=''; };
+render();
+</script>
+</body>
+</html>
