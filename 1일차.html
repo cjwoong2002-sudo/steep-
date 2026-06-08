@@ -1173,7 +1173,7 @@ function renderActIII(root){
       </div>
       ${canvasMode==='compare' ? `
         <div class="toolbar" style="margin:0 0 12px"><div class="left">
-          <button class="btn ai" id="btnCompare">🤖 As-Is↔To-Be 비교·시사점 생성</button>
+          <button class="btn ai" id="btnCompare">🤖 As-Is↔To-Be 핵심 요약·비교</button>
         </div><div class="right"><span class="meta" id="cmpState"></span></div></div>
         <div id="compareView"></div>
       ` : `
@@ -1212,18 +1212,24 @@ function renderActIII(root){
     renderBMC(); renderSidePanel();
   }
 }
+function cmpBlock(k){ const b=state.compare&&state.compare.blocks&&state.compare.blocks[k]; return (b&&typeof b==='object')?b:{}; }
 function renderCompareView(){
   const host=document.getElementById('compareView'); if(!host) return; const cmp=state.compare||{blocks:{},insight:''};
+  const done=cmp.blocks&&Object.keys(cmp.blocks).length;
   host.innerHTML=`
-    <table class="eval"><thead><tr><th style="width:13%">블록</th><th>As-Is (Step 1)</th><th>To-Be (Step 2)</th><th style="width:27%">변화·시사점 (AI)</th></tr></thead><tbody>
-    ${BMC.map(b=>`<tr>
+    <div class="notice">🤖 <b>핵심 요약</b> 보기입니다. 버튼을 누르면 AI가 각 블록의 As-Is·To-Be를 한 줄로 압축하고 핵심 변화만 정리합니다. ${done?'':'<span class="meta">아직 생성 전 — 원문이 표시됩니다.</span>'}</div>
+    <table class="eval" style="font-size:12.5px"><thead><tr><th style="width:13%">블록</th><th style="width:27%">As-Is 핵심</th><th style="width:27%">To-Be 핵심</th><th>변화·시사점</th></tr></thead><tbody>
+    ${BMC.map(b=>{ const c=cmpBlock(b.k);
+      const asis=c.asis||esc(state.canvas.asis[b.k]||'-');
+      const tobe=c.tobe||esc(state.canvas.tobe[b.k]||'-');
+      return `<tr>
       <td><b>${esc(b.name)}</b></td>
-      <td style="white-space:pre-wrap;font-size:13px">${esc(state.canvas.asis[b.k]||'-')}</td>
-      <td style="white-space:pre-wrap;font-size:13px">${esc(state.canvas.tobe[b.k]||'-')}</td>
-      <td style="white-space:pre-wrap;font-size:13px;color:var(--ai)">${esc((cmp.blocks&&cmp.blocks[b.k])||'')}</td></tr>`).join('')}
+      <td style="white-space:pre-wrap">${c.asis?esc(c.asis):asis}</td>
+      <td style="white-space:pre-wrap">${c.tobe?esc(c.tobe):tobe}</td>
+      <td style="white-space:pre-wrap;color:var(--ai)">${esc(c.change||'')}</td></tr>`; }).join('')}
     </tbody></table>
-    <h3 class="sec">종합 비교 시사점</h3>
-    <textarea id="cmpInsight" style="min-height:120px" placeholder="AI가 생성하거나 직접 작성…">${esc(cmp.insight||'')}</textarea>`;
+    <h3 class="sec">종합 시사점 (핵심)</h3>
+    <textarea id="cmpInsight" style="min-height:96px" placeholder="🤖 버튼으로 핵심 시사점을 생성하거나 직접 작성…">${esc(cmp.insight||'')}</textarea>`;
   document.getElementById('cmpInsight').addEventListener('input',e=>{ state.compare.insight=e.target.value; save(); });
 }
 async function aiCompare(){
@@ -1231,18 +1237,18 @@ async function aiCompare(){
   const hasAny=BMC.some(b=>(state.canvas.asis[b.k]||'').trim()||(state.canvas.tobe[b.k]||'').trim());
   if(!hasAny){ alert('Step 1(As-Is)·Step 2(To-Be)를 먼저 작성하세요.'); return; }
   const st=document.getElementById('cmpState'); const btn=document.getElementById('btnCompare');
-  if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span>비교 분석 중…'; }
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span>핵심 요약 중…'; }
   const pairs=BMC.map(b=>`■ ${b.name}\n  As-Is: ${(state.canvas.asis[b.k]||'(미작성)').replace(/\n/g,' ')}\n  To-Be: ${(state.canvas.tobe[b.k]||'(미작성)').replace(/\n/g,' ')}`).join('\n');
   const sel = state.scenario.selected>=0 ? `${scenarioTitles()[state.scenario.selected]} — ${state.scenario.cells[state.scenario.selected]||''}` : '(미선정)';
-  const sys=`${persona()}비즈니스 모델 캔버스 전문가입니다. 같은 사업의 As-Is와 To-Be 캔버스를 블록별로 비교해, 각 블록의 핵심 변화와 그 시사점을 1~2문장으로 요약하고, 마지막에 종합 시사점(전략적 함의)을 1~2문단으로 작성하세요. 한국어, 경영자 관점.
-JSON만 출력: {"blocks":{"cs":"","vp":"","ch":"","cr":"","rs":"","kr":"","ka":"","kp":"","cost":""},"insight":""} (blocks의 각 값은 해당 블록의 변화·시사점)`;
+  const sys=`${persona()}비즈니스 모델 캔버스 전문가입니다. 각 블록에 대해 As-Is와 To-Be를 각각 핵심만 남겨 매우 짧게 요약하고(각 12자 내외, 한 줄), 핵심 변화·시사점도 한 줄(20자 내외)로 압축하세요. 군더더기·문장형 설명 금지, 명사구 위주. 마지막 insight는 전체를 관통하는 핵심 시사점을 3개 이내의 짧은 불릿으로.
+JSON만 출력: {"blocks":{"cs":{"asis":"","tobe":"","change":""},"vp":{...},"ch":{...},"cr":{...},"rs":{...},"kr":{...},"ka":{...},"kp":{...},"cost":{...}},"insight":"• ...\\n• ..."}`;
   const usr=`직책: ${state.session.title||'(미입력)'}\n실습 시나리오: ${sel}\n\n[블록별 As-Is → To-Be]\n${pairs}`;
-  try{ const data=await callClaude(sys,usr,2800); const json=extractJSON((data.content||[]).map(b=>b.text||'').join(''));
+  try{ const data=await callClaude(sys,usr,2500); const json=extractJSON((data.content||[]).map(b=>b.text||'').join(''));
     if(!json) throw new Error('파싱 실패');
     state.compare={ blocks:(json.blocks||{}), insight:(json.insight||'') }; save(); renderCompareView();
-    if(st) st.textContent='✅ 비교·시사점 생성 완료 — 검토·수정하세요';
+    if(st) st.textContent='✅ 핵심 요약 완료 — 검토·수정하세요';
   }catch(e){ if(st) st.textContent='⚠ 실패: '+e.message; }
-  finally{ if(btn){ btn.disabled=false; btn.innerHTML='🤖 As-Is↔To-Be 비교·시사점 생성'; } }
+  finally{ if(btn){ btn.disabled=false; btn.innerHTML='🤖 As-Is↔To-Be 핵심 요약·비교'; } }
 }
 function renderBMC(){
   const host=document.getElementById('bmc'); if(!host) return; const data=state.canvas[canvasMode];
@@ -1439,9 +1445,14 @@ function showReport(){
     ${scenarioTitles().map((t,i)=>`<div class="scn ${sc.selected===i?'sel':''}"><b>시나리오 ${i+1}: ${esc(t)}</b>${sc.selected===i?' ✅ 실습 선정':''}<div>${esc(sc.cells[i]||'(미작성)').replace(/\n/g,'<br>')}</div></div>`).join('')}
 
     <h2>Activity III — 비즈니스 캔버스 (As-Is → To-Be)</h2>
-    <table><tr><th>블록</th><th>As-Is (현재)</th><th>To-Be (미래)</th>${(state.compare&&state.compare.blocks&&Object.keys(state.compare.blocks).length)?'<th>변화·시사점</th>':''}</tr>
-    ${BMC.map(b=>`<tr><td style="width:18%"><b>${b.name}</b></td><td>${esc(state.canvas.asis[b.k]||'-').replace(/\n/g,'<br>')}</td><td>${esc(state.canvas.tobe[b.k]||'-').replace(/\n/g,'<br>')}</td>${(state.compare&&state.compare.blocks&&Object.keys(state.compare.blocks).length)?`<td>${esc((state.compare.blocks[b.k])||'').replace(/\n/g,'<br>')}</td>`:''}</tr>`).join('')}</table>
-    ${(state.compare&&state.compare.insight)?`<h3>As-Is↔To-Be 종합 비교 시사점</h3><p>${esc(state.compare.insight).replace(/\n/g,'<br>')}</p>`:''}
+    ${(()=>{ const done=state.compare&&state.compare.blocks&&Object.keys(state.compare.blocks).length;
+      const cb=k=>{ const b=state.compare&&state.compare.blocks&&state.compare.blocks[k]; return (b&&typeof b==='object')?b:{}; };
+      return `<table><tr><th>블록</th><th>As-Is</th><th>To-Be</th>${done?'<th>변화·시사점</th>':''}</tr>
+      ${BMC.map(b=>{ const c=cb(b.k); return `<tr><td style="width:16%"><b>${b.name}</b></td>
+        <td>${esc(c.asis||state.canvas.asis[b.k]||'-').replace(/\n/g,'<br>')}</td>
+        <td>${esc(c.tobe||state.canvas.tobe[b.k]||'-').replace(/\n/g,'<br>')}</td>
+        ${done?`<td>${esc(c.change||'').replace(/\n/g,'<br>')}</td>`:''}</tr>`; }).join('')}</table>`; })()}
+    ${(state.compare&&state.compare.insight)?`<h3>As-Is↔To-Be 종합 시사점</h3><p>${esc(state.compare.insight).replace(/\n/g,'<br>')}</p>`:''}
 
     <h2>Activity IV — 기회/위협 & 시사점 <span class="muted" style="font-size:13px">(${ot.canvasMode==='tobe'?'To-Be':'As-Is'} 캔버스 기준)</span></h2>
     <table><tr><th>캔버스 블록</th><th>구분</th><th>내용</th><th>Rationale</th></tr>${otRows||'<tr><td colspan=4 class="muted">데이터 없음</td></tr>'}</table>
