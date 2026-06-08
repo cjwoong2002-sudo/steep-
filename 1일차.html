@@ -1193,7 +1193,10 @@ function renderActIII(root){
   document.getElementById('btnShared').onclick=()=>{ sharedViewOn=true; renderActIII(root);
     if(!state.sync.enabled) document.getElementById('shareHint').textContent='실시간 공유가 꺼져 있습니다 — 👥 조 공유에서 켜세요'; };
   if(sharedViewOn){ renderSharedCanvas(document.getElementById('sharedCanvas')); }
-  else { renderBMC(); renderSidePanel(); const b=document.getElementById('btnCanvasAll'); if(b) b.onclick=()=>aiCanvasAll(canvasMode); }
+  else {
+    const b=document.getElementById('btnCanvasAll'); if(b) b.onclick=()=>aiCanvasAll(canvasMode);
+    renderBMC(); renderSidePanel();
+  }
 }
 function renderBMC(){
   const host=document.getElementById('bmc'); if(!host) return; const data=state.canvas[canvasMode];
@@ -1204,8 +1207,9 @@ function renderBMC(){
 }
 /* #9 캔버스 전체(9블록) 한 번에 AI 초안 작성 */
 async function aiCanvasAll(mode){
-  const key=getApiKey(); if(!key){ openSettings(); return; }
+  const key=getApiKey(); if(!key){ alert('먼저 우측 상단 ⚙ AI 설정에서 Claude API 키를 입력하세요.'); openSettings(); return; }
   const st=document.getElementById('canvasAiState'); const btn=document.getElementById('btnCanvasAll');
+  if(st) st.textContent='';
   if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span>9개 블록 초안 작성 중…'; }
   const sel = state.scenario.selected>=0 ? `${scenarioTitles()[state.scenario.selected]} — ${state.scenario.cells[state.scenario.selected]||''}` : '(실습 시나리오 미선정)';
   const blocks = BMC.map(b=>`${b.k}: ${b.name} (${b.q})`).join('\n');
