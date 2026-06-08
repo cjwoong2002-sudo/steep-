@@ -172,6 +172,43 @@
     background:var(--accent); color:#fff; border:none; padding:14px 7px; border-radius:9px 0 0 9px; cursor:pointer; font-weight:700; font-size:12.5px; box-shadow:-4px 0 12px rgba(0,0,0,.3); }
   #exToggle.hidden { display:none; }
   @media (min-width:1280px){ body.drawer-on { padding-right: 372px; } }
+
+  /* opp+threat 공존 = 노란색 계열 (Activity IV) */
+  .bmc .blk.both { background:#2a2710; border-color:#cdb13a; box-shadow:inset 0 0 0 1px #cdb13a; }
+  .ot-seg button.opp.on { background:var(--ok); color:#04130b; font-weight:700; border-color:transparent; }
+  .ot-seg button.threat.on { background:var(--danger); color:#1a0606; font-weight:700; border-color:transparent; }
+
+  /* 좌측 정보 버튼(팝업) */
+  .info-rail { display:flex; flex-direction:column; gap:8px; margin:0 0 16px; align-items:flex-start; }
+  .info-rail .ibtn { background:#13202d; border:1px solid var(--accent); color:var(--accent); border-radius:9px;
+    padding:9px 14px; cursor:pointer; font-size:13.5px; font-weight:600; text-align:left; }
+  .info-rail .ibtn:hover { background:#16222f; }
+  .modal.info { width:min(680px,94vw); }
+  .modal.info .ibody { max-height:70vh; overflow:auto; font-size:14px; color:#cdd7e1; line-height:1.65; }
+  .modal.info .ibody h4 { margin:16px 0 6px; font-size:15px; color:var(--text); }
+  .modal.info .ibody ul { margin:6px 0; padding-left:20px; } .modal.info .ibody li { margin:4px 0; }
+  .modal.info .ibody .qa { border-left:3px solid var(--accent); padding:2px 0 2px 12px; margin:12px 0; }
+  .modal.info .ibody .qa .q { font-weight:700; color:var(--text); }
+  .fw-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:8px 0; }
+  @media (max-width:760px){ .modal.info .ibody .fw-grid{ grid-template-columns:1fr 1fr; } }
+
+  /* 표지(cover) */
+  #cover { position:fixed; inset:0; z-index:200; background:#fff; color:#111; display:flex; }
+  #cover.hidden { display:none; }
+  #cover .cv-left { flex:1; padding:6vh 5vw; display:flex; flex-direction:column; }
+  #cover .cv-title { font-size:38px; font-weight:800; color:#7823dc; line-height:1.25; letter-spacing:-.5px; max-width:620px; }
+  #cover .cv-sub { margin-top:26px; font-size:20px; font-weight:700; color:#111; }
+  #cover .cv-date { font-size:18px; color:#333; margin-top:2px; }
+  #cover .cv-note { margin-top:26px; background:#f4f4f6; border:1px solid #e4e4ea; border-radius:8px; padding:16px 18px; max-width:640px; color:#444; font-size:13.5px; line-height:1.7; }
+  #cover .cv-note b { color:#7823dc; }
+  #cover .cv-bottom { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  #cover .cv-logo { font-size:30px; font-weight:800; letter-spacing:3px; color:#111; }
+  #cover .cv-start { background:#7823dc; color:#fff; border:none; border-radius:10px; padding:14px 28px; font-size:17px; font-weight:700; cursor:pointer; }
+  #cover .cv-start:hover { filter:brightness(1.08); }
+  #cover .cv-right { width:42%; background:repeating-linear-gradient(135deg,#f5f5f7 0 2px,#fff 2px 26px); border-left:1px solid #eee;
+    display:flex; align-items:center; justify-content:center; }
+  #cover .cv-chev { color:#ececf2; font-size:34vh; line-height:1; font-weight:900; user-select:none; }
+  @media (max-width:760px){ #cover .cv-right{ display:none; } #cover .cv-title{ font-size:30px; } }
   @media (max-width:860px){ .bmc { display:flex; flex-direction:column; } }
   .sidepanel { position:sticky; top:70px; border:1px solid var(--line); border-radius:10px; background:#13202d; padding:14px; font-size:13px; }
   .sidepanel h4 { margin:0 0 8px; font-size:13.5px; color:var(--accent); }
@@ -202,6 +239,23 @@
 </style>
 </head>
 <body>
+<div id="cover">
+  <div class="cv-left">
+    <div class="cv-title">AI 사업기회 도출 워크숍<br>STEEP 시나리오 플래닝</div>
+    <div class="cv-sub">LG그룹 임원 대상 · Kearney 주관</div>
+    <div class="cv-date">1일차 — 환경분석을 통한 기회/위협영역 도출</div>
+    <div class="cv-note">
+      본 Tool은 <b>금번 세미나를 위해서만</b> 제작되었습니다.
+      세미나 이후에도 접속은 가능하나, <b>지속적인 유지·보수가 이루어지지 않을 수</b> 있습니다.<br>
+      본 Tool 및 모든 콘텐츠·산출물은 <b>Kearney의 자산</b>이며, 워크숍 진행 외 목적의 무단 사용·배포를 금합니다.
+    </div>
+    <div class="cv-bottom">
+      <div class="cv-logo">KEARNEY</div>
+      <button class="cv-start" id="coverStart">시작하기 →</button>
+    </div>
+  </div>
+  <div class="cv-right"><div class="cv-chev">〉</div></div>
+</div>
 <header class="top">
   <div class="logo">AI 사업기회 도출<span class="dot"> ·</span> STEEP 시나리오</div>
   <div class="spacer"></div>
@@ -322,12 +376,12 @@ const KEARNEY_EXAMPLE = {
   },
   oppthreat: {
     canvasMode:'tobe',
-    sel: { vp:'opp', rs:'opp', cr:'opp', kr:'opp', cost:'threat', kp:'threat' },
+    sel: { vp:'opp', rs:'opp', cr:'opp', kr:'both', cost:'threat', kp:'threat' },
     rat: {
       vp:'가치 제안을 AI 경험으로 재정의 → 프리미엄 신규 수요 창출',
       rs:'수익원을 일시불에서 구독·서비스로 전환',
       cr:'데이터 기반 상시 관계로 락인 강화',
-      kr:'AI/데이터 자산 확보가 새로운 경쟁우위',
+      kr:'AI·데이터 역량은 새로운 경쟁우위(기회)이자, 미확보 시 도태 위험(위협)',
       cost:'AI 인프라·데이터센터 비용 상승 압박',
       kp:'AI칩·클라우드 등 핵심 파트너 의존 리스크',
     },
@@ -466,7 +520,7 @@ function exampleDrawerHTML(step){
   if(step===4){ // Activity IV
     const ot=E.oppthreat; const cv=E.canvas[ot.canvasMode||'tobe'];
     return intro + `<h5>기회/위협 (예시 · To-Be 기준)</h5>`+BMC.map(b=>{ const s=ot.sel[b.k]; if(!s||s==='none') return '';
-      const col=s==='opp'?'var(--ok)':'var(--danger)'; const lbl=s==='opp'?'🟢 기회':'🔴 위협';
+      const col=s==='both'?'#cdb13a':s==='opp'?'var(--ok)':'var(--danger)'; const lbl=s==='both'?'🟡 기회+위협':s==='opp'?'🟢 기회':'🔴 위협';
       return `<div class="ebox" style="border-color:${col}"><b>${b.name}</b> ${lbl}<div style="margin-top:3px">${esc(cv[b.k]||'')}</div><div style="color:var(--muted);margin-top:3px">↳ ${esc(ot.rat[b.k]||'')}</div></div>`; }).join('')
       + `<h5>핵심 시사점</h5><div class="ebox">${esc(ot.insight)}</div>`;
   }
@@ -531,12 +585,78 @@ function frameworkPanel(act){
 }
 
 /* ===================================================================
+   좌측 정보 버튼 + 팝업 (세션설정/Activity I/II)
+   =================================================================== */
+const INFO = {
+  purpose: { label:'🎯 본 Workshop의 목적', html:`
+    <h4>왜 'AI 사업기회 도출'인가</h4>
+    <ul>
+      <li>AI는 산업 생태계의 판도를 바꾸는 <b>파괴적 혁신(Disruption)</b>을 촉발하고 있고, 그 진화 속도는 기존의 예측을 상회합니다.</li>
+      <li>거대한 파도가 올 것은 모두가 알지만, 파편화된 미래의 <b>모든 변수를 정확히 예측하는 것은 불가능</b>에 가깝습니다.</li>
+      <li>중요한 것은 어떤 미래가 오더라도 살아남을 수 있는 <b>'대응력'과 '전략적 유연성'</b>, 즉 <b>전략적 근육</b>을 단련하는 것입니다.</li>
+      <li>본 Workshop은 경영자적 관점에서 임원진이 AI라는 파도에 대응할 <b>Framework를 체득</b>하고, 각자 사업의 <b>기회/위협영역을 식별</b>해 고도화·신규 기회를 모색하는 데 목적이 있습니다.</li>
+    </ul>
+    <p class="meta">* 완결성 높은 시나리오 전략에는 방대한 데이터 분석·정량 검증이 수반됩니다. 금번 Workshop은 방법론 학습을 넘어 <b>전략적 시각을 직접 장착·활용</b>해 보는 데 의의가 있습니다.</p>` },
+  flow: { label:'🗺 Workshop 진행 방식', html:`
+    <h4>운영 원칙</h4>
+    <ul>
+      <li>사업적 맥락을 공유하는 인원끼리 <b>조 편성</b> → 조별 토론 중심으로 진행</li>
+      <li>Kearney는 Framework 소개·예시 시연만, <b>실제 Activity는 조별 토론</b>으로 수행</li>
+      <li>토의 내용을 일일이 받아적는 대신, <b>본 Tool로 기입·정리·취합을 자동화</b>하고 참여자는 토론·고민에 집중</li>
+      <li>각 Activity는 Kearney Example 10분 설명 후 <b>30~40분 실습</b></li>
+    </ul>
+    <h4>1일차 Flow (4h)</h4>
+    <ul>
+      <li><b>Activity I</b> — STEEP Framework 기반 사업환경 분석 → 조별 STEEP 변수 List</li>
+      <li><b>Activity II</b> — 핵심변수 정의 및 시나리오 Planning → 핵심변수·2×2 시나리오 매트릭스</li>
+      <li><b>Activity III</b> — 핵심 시나리오별 사업 영향 도출 → Business Canvas 기반 개인별 영향</li>
+      <li><b>Activity IV</b> — 분과 토의 및 기회/위협영역 도출 → 각자의 기회/위협영역</li>
+    </ul>
+    <p class="meta">* 2일차(본업 개선 Action Item, 인접영역 확장)는 별도 진행 예정입니다.</p>` },
+  steep: { label:'📚 STEEP Framework란?', html:`
+    <h4>STEEP — 거시환경을 5개 렌즈로 스캔</h4>
+    <p>우리가 통제할 수 없는 <b>외생변수</b>를 빠짐없이 도출하기 위한 환경분석 도구입니다.</p>
+    <div class="fw-grid">${STEEP_ORDER.map(k=>`<div class="fw-cell" style="border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--panel-2)"><b style="color:${STEEP[k].hex}">${STEEP[k].name}</b><br>${STEEP[k].desc}</div>`).join('')}</div>
+    <h4>⚡ 왜 'AI'를 특별히 보는가</h4>
+    <p>AI는 STEEP의 한 칸(기술)에 머무는 변수가 아니라, <b>5개 영역 전체에 연쇄적으로 파급되는 범용 외생변수(General Purpose Technology)</b>입니다.</p>
+    <ul>
+      <li><b>기술(T)</b>: 생성형 AI·에이전트·온디바이스 AI의 급속한 성능 향상</li>
+      <li><b>경제(Ec)</b>: 생산성·원가구조 재편, AI 인프라(반도체·전력) 비용, 신규 수익모델</li>
+      <li><b>사회(S)</b>: 일자리·직무 재편, 소비행태·신뢰·프라이버시 인식 변화</li>
+      <li><b>정치(P)</b>: AI 규제·데이터 주권·지정학적 기술패권</li>
+      <li><b>환경(En)</b>: 데이터센터 전력·탄소, AI를 통한 에너지 효율화</li>
+    </ul>
+    <p>그래서 변수를 도출할 때는 <b>"AI가 이 영역에 어떤 변화를 일으킬까?"</b>를 5개 영역마다 질문해, 단일 트렌드가 아닌 <b>연쇄 효과</b>를 함께 포착하는 것이 핵심입니다.</p>` },
+  evalfaq: { label:'❓ 영향도·불확실성 평가 유의사항 (FAQ)', html:`
+    <h4>평가 기준</h4>
+    <ul><li><b>영향도(Impact)</b>: 그 변수가 <b>우리 사업의 성패</b>에 미치는 크기</li>
+        <li><b>불확실성(Uncertainty)</b>: ${TIME_HORIZON} 뒤 전개를 <b>예측하기 어려운 정도</b></li></ul>
+    <div class="qa"><div class="q">Q. 영향이 크면 불확실성도 높게 줘야 하나요?</div>두 축은 <b>독립</b>입니다. '영향은 크지만 거의 확실한' 추세(예: 고령화)는 영향↑·불확실↓로, 시나리오의 <b>공통 전제</b>가 됩니다.</div>
+    <div class="qa"><div class="q">Q. AI 관련 변수는 무조건 높게 줘야 하나요?</div>아닙니다. AI가 <b>내 사업</b>에 주는 실제 영향으로 판단하세요. 다만 AI는 전 영역에 연쇄 파급되므로, 표면적 영향보다 <b>2차·3차 효과</b>까지 고려하면 영향도가 높아지는 경우가 많습니다.</div>
+    <div class="qa"><div class="q">Q. 점수가 사람마다 다르면요?</div>그것이 정상이며 토론의 출발점입니다. 본 Tool은 <b>조원 평가를 실시간 취합</b>해 평균으로 보여줍니다. 편차가 큰 변수일수록 '왜 다르게 보는지'를 논의하세요.</div>
+    <div class="qa"><div class="q">Q. 무엇을 시나리오 축으로 삼나요?</div><b>영향↑ · 불확실↑ (우상단)</b>의 '핵심 불확실성' 중, 서로 <b>독립적인 2개</b>를 골라 2×2 축으로 만듭니다.</div>
+    <div class="qa"><div class="q">Q. 1~5 점수 감각이 안 잡혀요.</div>상대 평가로 접근하세요. 가장 크게 흔들 변수=5, 거의 영향 없음=1. 절대 기준보다 <b>변수 간 순위</b>가 더 중요합니다.</div>` },
+};
+function infoRail(keys){ return `<div class="info-rail">${keys.map(k=>`<button class="ibtn" data-info="${k}">${INFO[k].label}</button>`).join('')}</div>`; }
+function wireInfoRail(root){ root.querySelectorAll('[data-info]').forEach(b=> b.onclick=()=>openInfo(b.dataset.info)); }
+function openInfo(key){
+  const it=INFO[key]; if(!it) return;
+  const bg=document.createElement('div'); bg.className='modal-bg';
+  bg.innerHTML=`<div class="modal info"><h3>${esc(it.label)}</h3><div class="ibody">${it.html}</div>
+    <div class="toolbar"><div class="left"></div><div class="right"><button class="btn primary" id="i_close">닫기</button></div></div></div>`;
+  document.body.appendChild(bg); const close=()=>bg.remove();
+  bg.addEventListener('click',e=>{ if(e.target===bg) close(); });
+  document.getElementById('i_close').onclick=close;
+}
+
+/* ===================================================================
    STEP 0: 세션 설정 (조 + 성함 + 직책)
    =================================================================== */
 function renderSetup(root){
   const s=state.session;
   const teamOpts = ['1조','2조','3조','4조','5조','6조'].map(t=>`<option ${s.team===t?'selected':''}>${t}</option>`).join('');
   root.innerHTML = `
+  ${infoRail(['purpose','flow'])}
   <div class="panel">
     <h2 class="title">세션 설정 — 참가자 프로필</h2>
     <p class="subtitle">조 편성은 사업적 맥락(업종)을 공유하는 단위입니다. 입력한 <b>직책</b>은 이후 모든 AI 추천/제안에 자동 반영됩니다.</p>
@@ -547,14 +667,6 @@ function renderSetup(root){
     </div>
     <div class="field"><label class="fl">분석 대상 / 조 사업 맥락 (선택)</label>
       <input type="text" id="f_topic" value="${esc(s.topic)}" placeholder="예: 가전·디스플레이 사업의 AI 시대 대응"></div>
-    <div class="notice ai">🧭 이 워크숍은 <b>AI라는 파도</b>에 대응하는 전략적 유연성을 기르는 과정입니다. 시간 지평은 <b>${TIME_HORIZON}</b>로 고정됩니다.</div>
-    <div class="notice">진행: <b>세션 설정 → Activity I(STEEP) → II(시나리오) → III(캔버스) → IV(기회/위협) → Output</b>. 각 단계 결과가 다음 단계로 자동 연결됩니다.</div>
-    <div class="notice">📖 <b>Kearney 데모 예시</b>를 불러오면 Activity I~IV가 완성된 샘플로 채워져 시연용으로 활용할 수 있습니다. (조·성함·직책은 유지)</div>
-    <div class="field">
-      <label class="fl">조 공유 방 코드 (차수/세션 구분)</label>
-      <input type="text" id="f_room" value="${esc(state.sync.roomCode||'lg2026')}" placeholder="예: lg2026-1차">
-      <div class="hint">같은 <b>조 + 방 코드</b>를 입력한 참가자끼리 실시간으로 연결됩니다. <b>저장 &amp; 연결</b>을 해야 시작할 수 있습니다.</div>
-    </div>
     <div id="setupSync" class="notice">조 공유에 연결되지 않았습니다.</div>
     <div class="toolbar"><div class="left">
       <button class="btn danger ghost" id="btnReset">세션 초기화</button>
@@ -564,15 +676,15 @@ function renderSetup(root){
       <button class="btn primary" id="btnStart" ${syncConnected()?'':'disabled'}>저장하고 시작 →</button>
     </div></div>
   </div>`;
+  wireInfoRail(root);
   const sv=()=>{ s.team=document.getElementById('f_team').value; s.name=val('f_name'); s.title=val('f_title'); s.topic=val('f_topic'); save(); };
   ['f_team','f_name','f_title','f_topic'].forEach(id=> document.getElementById(id).addEventListener('input',sv));
-  document.getElementById('f_room').addEventListener('input',()=>{ state.sync.roomCode=val('f_room')||'lg2026'; save(); });
   document.getElementById('f_team').addEventListener('change',()=>{ if(state.sync.enabled && getFirebaseConfig()) syncReconnect(); });
   document.getElementById('btnStart').onclick=()=>{ if(!syncConnected()){ alert('먼저 [조 공유 저장 & 연결]을 진행하세요.'); return; } sv(); goto(1); };
   document.getElementById('btnConnect').onclick=async()=>{
     sv();
     if(!getFirebaseConfig()){ alert('Firebase 설정이 없습니다. 헤더 👥 조 공유에서 config를 입력하세요.'); return; }
-    state.sync.enabled=true; state.sync.roomCode=val('f_room')||'lg2026'; save();
+    state.sync.enabled=true; save();
     const btn=document.getElementById('btnConnect'); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>연결 중';
     await syncConnect();
     refreshSetupSync();
@@ -607,7 +719,7 @@ function loadExample(){
 function renderActI(root){
   const hasKey=!!getApiKey();
   root.innerHTML = `
-  ${frameworkPanel('I')}
+  ${infoRail(['steep'])}
   <div class="panel">
     <h2 class="title">Activity I — STEEP 변수 수집</h2>
     <p class="subtitle">${TIME_HORIZON} 내 사업환경에 영향을 줄 변수를 조별 토의로 도출해 입력하세요. 한 줄에 하나씩. (분류는 AI가 정리)</p>
@@ -653,6 +765,7 @@ function renderActI(root){
   document.getElementById('btnMergeVars').onclick=aiMergeTeamVariables;
   document.getElementById('btnAI').onclick=runAIClassify;
   document.getElementById('btnRule').onclick=()=>{ ruleClassify(); save(); renderBoard(); };
+  wireInfoRail(root);
   renderBoard();
 }
 
@@ -767,10 +880,9 @@ async function runAIClassify(){
    =================================================================== */
 function renderActII(root){
   const sc=state.scenario;
-  const crit=scoredVars().filter(v=>v.impact>=3&&v.uncertainty>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty));
-  const opts=crit.map(v=>`<option value="${esc(v.aiName||v.text)}">${esc(v.aiName||v.text)} (I${v.impact}/U${v.uncertainty})</option>`).join('');
+  const crit=aggregatedVars().filter(v=>v.impact>=3&&v.uncertainty>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty));
   root.innerHTML = `
-  ${frameworkPanel('II')}
+  ${infoRail(['evalfaq'])}
   <div class="panel">
     <h2 class="title">Activity II — 핵심변수 & 시나리오</h2>
     <p class="subtitle">변수별 영향도·불확실성을 평가해 핵심변수를 도출하고, 2×2 시나리오를 구성한 뒤 <b>실습할 시나리오 1개</b>를 선정합니다.</p>
@@ -799,17 +911,16 @@ function renderActII(root){
     ${crit.length<2?`<div class="notice warn">⚠ 핵심 불확실성(영향≥3·불확실≥3)이 2개 이상 필요합니다. 현재 ${crit.length}개.</div>`:''}
     <div class="grid2">
       <div>
-        <div class="field"><label class="fl">가로축(X) 핵심 불확실성</label><input list="critList" type="text" id="axisX" value="${esc(sc.axisX)}" placeholder="선택/입력"></div>
+        <div class="field"><label class="fl">가로축(X) 핵심 불확실성</label><select id="axisX"></select></div>
         <div class="grid2"><div class="field"><label class="fl">X − 극단</label><input type="text" id="xNeg" value="${esc(sc.xNeg)}" placeholder="예: 규제 강화"></div>
           <div class="field"><label class="fl">X ＋ 극단</label><input type="text" id="xPos" value="${esc(sc.xPos)}" placeholder="예: 규제 완화"></div></div>
       </div>
       <div>
-        <div class="field"><label class="fl">세로축(Y) 핵심 불확실성</label><input list="critList" type="text" id="axisY" value="${esc(sc.axisY)}" placeholder="선택/입력"></div>
+        <div class="field"><label class="fl">세로축(Y) 핵심 불확실성</label><select id="axisY"></select></div>
         <div class="grid2"><div class="field"><label class="fl">Y − 극단</label><input type="text" id="yNeg" value="${esc(sc.yNeg)}" placeholder="예: 수요 정체"></div>
           <div class="field"><label class="fl">Y ＋ 극단</label><input type="text" id="yPos" value="${esc(sc.yPos)}" placeholder="예: 수요 급증"></div></div>
       </div>
     </div>
-    <datalist id="critList">${opts}</datalist>
 
     <div class="quad-box" style="margin:14px 0">
       <h4>🎙 조 토론 받아쓰기 → 시나리오 자동 생성</h4>
@@ -837,8 +948,10 @@ function renderActII(root){
   renderEvalTable();
   document.getElementById('btnAISuggest').onclick=aiSuggestScores;
   document.getElementById('btnPng').onclick=exportMatrixPNG;
-  const bind=(id,key)=>{ const el=document.getElementById(id); el.addEventListener('input',()=>{ sc[key]=el.value; save(); renderScnGrid(); renderSelBox(); }); };
-  ['axisX','axisY','xPos','xNeg','yPos','yNeg'].forEach(k=>bind(k,k));
+  const bind=(id,key,ev)=>{ const el=document.getElementById(id); el.addEventListener(ev||'input',()=>{ sc[key]=el.value; save(); renderScnGrid(); renderSelBox(); }); };
+  bind('axisX','axisX','change'); bind('axisY','axisY','change');
+  ['xPos','xNeg','yPos','yNeg'].forEach(k=>bind(k,k));
+  refreshAxisSelects();
   document.getElementById('btnGenScn').onclick=aiGenScenarios;
   // 토론 받아쓰기 (STT)
   const tt=document.getElementById('sttText');
@@ -847,6 +960,7 @@ function renderActII(root){
   document.getElementById('btnSTTclear').onclick=()=>{ tt.value=''; sc.discussion=''; save(); if(sttShareOn()) publishDiscussion(''); };
   document.getElementById('btnScnFromTalk').onclick=aiScenarioFromDiscussion;
   updateSTTState();
+  wireInfoRail(root);
   drawMatrix(); renderScnGrid(); renderSelBox();
 }
 /* ---- #4 Web Speech API 받아쓰기 ---- */
@@ -875,13 +989,23 @@ async function aiScenarioFromDiscussion(){
   if(!key){ openSettings(); return; }
   const talk=(document.getElementById('sttText').value||'').trim();
   if(!talk){ alert('받아쓴(또는 입력한) 토론 내용이 없습니다.'); return; }
-  if(!sc.axisX||!sc.axisY){ out.innerHTML=`<div class="notice warn">먼저 X·Y 축을 지정하면 더 정확합니다.</div>`; }
-  out.innerHTML=`<div class="notice ai"><span class="spinner"></span> 토론 내용을 반영해 4개 시나리오 생성 중…</div>`;
-  const sys=`${persona()}시나리오 플래닝 전문가로서, 조의 토론 녹취를 바탕으로 2x2의 4개 사분면 미래 시나리오를 작성하세요(${TIME_HORIZON}). 토론에서 언급된 관점·우려·기대를 최대한 반영하세요. 각 시나리오: (1)임팩트 있는 이름 (2)2~3문장 상황 (3)사업 시사점 1문장. 한국어.
-JSON만: {"cells":["사분면1","사분면2","사분면3","사분면4"]} 순서: 1=(X−,Y+) 2=(X+,Y+) 3=(X−,Y−) 4=(X+,Y−)`;
-  const usr=`분석 대상: ${state.session.topic||'(미지정)'}\n가로축X: ${sc.axisX||'?'} [− ${sc.xNeg||'?'} ~ + ${sc.xPos||'?'}]\n세로축Y: ${sc.axisY||'?'} [− ${sc.yNeg||'?'} ~ + ${sc.yPos||'?'}]\n\n[조 토론 녹취]\n${talk}`;
-  try{ const data=await callClaude(sys,usr,2800); const json=extractJSON((data.content||[]).map(b=>b.text||'').join('')); if(!json||!json.cells) throw new Error('파싱 실패');
-    sc.cells=json.cells.slice(0,4); save(); renderScnGrid(); renderSelBox(); out.innerHTML=`<div class="notice ok">✅ 토론 기반 시나리오 초안 완료. 검토·선정하세요.</div>`;
+  if(!sc.axisX||!sc.axisY){ alert('먼저 가로축(X)·세로축(Y) 핵심 불확실성을 지정한 뒤 토론하세요.'); return; }
+  out.innerHTML=`<div class="notice ai"><span class="spinner"></span> 토론 내용을 반영해 축 양극단 + 4개 시나리오 생성 중…</div>`;
+  const sys=`${persona()}시나리오 플래닝 전문가입니다. 조가 X·Y 두 축(핵심 불확실성)만 정해두고 토론했습니다. 토론 녹취를 바탕으로 (${TIME_HORIZON}):
+1) 각 축의 양극단(+/-)을 구체적 상태로 정의하고,
+2) 그 조합으로 만들어지는 2x2 4개 사분면 각각에 미래 시나리오를 작성하세요.
+각 시나리오: (1)임팩트 있는 이름 (2)2~3문장 상황 (3)사업 시사점 1문장. 토론에서 언급된 관점·우려·기대를 최대한 반영. 한국어.
+JSON만 출력:
+{"poles":{"xNeg":"X− 극단","xPos":"X＋ 극단","yNeg":"Y− 극단","yPos":"Y＋ 극단"},
+ "cells":["사분면1","사분면2","사분면3","사분면4"]}
+사분면 순서: 1=(X−,Y+) 2=(X+,Y+) 3=(X−,Y−) 4=(X+,Y−)`;
+  const usr=`분석 대상: ${state.session.topic||'(미지정)'}\n가로축 X(핵심 불확실성): ${sc.axisX}\n세로축 Y(핵심 불확실성): ${sc.axisY}\n\n[조 토론 녹취]\n${talk}`;
+  try{ const data=await callClaude(sys,usr,3000); const json=extractJSON((data.content||[]).map(b=>b.text||'').join('')); if(!json||!json.cells) throw new Error('파싱 실패');
+    if(json.poles){ sc.xNeg=json.poles.xNeg||sc.xNeg; sc.xPos=json.poles.xPos||sc.xPos; sc.yNeg=json.poles.yNeg||sc.yNeg; sc.yPos=json.poles.yPos||sc.yPos; }
+    sc.cells=json.cells.slice(0,4); save();
+    ['xNeg','xPos','yNeg','yPos'].forEach(k=>{ const el=document.getElementById(k); if(el) el.value=sc[k]||''; });
+    renderScnGrid(); renderSelBox();
+    out.innerHTML=`<div class="notice ok">✅ 토론 기반으로 축 양극단과 4개 시나리오를 작성했습니다. 검토·선정하세요.</div>`;
   }catch(e){ out.innerHTML=`<div class="notice warn">⚠ 실패: ${esc(e.message)}</div>`; }
 }
 
@@ -915,14 +1039,28 @@ async function aiSuggestScores(){
 }
 function clamp(n){ n=Math.round(+n||0); return Math.max(1,Math.min(5,n)); }
 
+/* #6 팀원 평가 취합: 공통 변수별로 본인+조원 점수를 평균 (0점=미평가 제외) */
+function aggregatedVars(){
+  const meId=pid(); const members=Object.values(roomMembers||{});
+  return state.variables.map(v=>{
+    let iSum=0,iN=0,uSum=0,uN=0;
+    if(v.impact>0){ iSum+=v.impact; iN++; } if(v.uncertainty>0){ uSum+=v.uncertainty; uN++; }
+    members.forEach(m=>{ if(m.pid===meId) return; const mv=(m.variables||[]).find(x=> x.id===v.id || (x.text||'').trim()===(v.text||'').trim());
+      if(mv){ if(mv.impact>0){ iSum+=mv.impact; iN++; } if(mv.uncertainty>0){ uSum+=mv.uncertainty; uN++; } } });
+    return {...v, impact: iN?iSum/iN:0, uncertainty: uN?uSum/uN:0, nEval: Math.max(iN,uN)};
+  }).filter(v=> v.impact>0 && v.uncertainty>0);
+}
+function fmtScore(v){ return `영향 ${v.impact.toFixed(1)} / 불확실 ${v.uncertainty.toFixed(1)}${v.nEval>1?` · ${v.nEval}명`:''}`; }
+
 function drawMatrix(){
   const host=document.getElementById('matrixHost'); if(!host) return;
-  const vars=scoredVars(); const W=520,H=480,pad=54;
-  const x=u=>pad+(u-1)/4*(W-pad*2); const y=i=>(H-pad)-(i-1)/4*(H-pad*2); const mid=3;
-  const seen={}; function jit(v){ const k=v.uncertainty+'_'+v.impact; const n=(seen[k]=(seen[k]||0)+1); const a=n*1.6; return {dx:Math.cos(a)*7*(n>1?1:0),dy:Math.sin(a)*7*(n>1?1:0)}; }
+  const vars=aggregatedVars(); const W=520,H=480,pad=54;
+  /* #5 X축=영향도(Impact), Y축=불확실성(Uncertainty) */
+  const x=i=>pad+(i-1)/4*(W-pad*2); const y=u=>(H-pad)-(u-1)/4*(H-pad*2); const mid=3;
+  const seen={}; function jit(v){ const k=v.impact.toFixed(1)+'_'+v.uncertainty.toFixed(1); const n=(seen[k]=(seen[k]||0)+1); const a=n*1.6; return {dx:Math.cos(a)*7*(n>1?1:0),dy:Math.sin(a)*7*(n>1?1:0)}; }
   const pts=vars.map((v,idx)=>{ const j=jit(v); const c=STEEP[v.category]||STEEP.U; return `<g>
-    <circle cx="${x(v.uncertainty)+j.dx}" cy="${y(v.impact)+j.dy}" r="13" fill="${c.hex}" fill-opacity="0.9" stroke="#0b0f14" stroke-width="1.5"></circle>
-    <text x="${x(v.uncertainty)+j.dx}" y="${y(v.impact)+j.dy+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#0b0f14">${idx+1}</text></g>`; }).join('');
+    <circle cx="${x(v.impact)+j.dx}" cy="${y(v.uncertainty)+j.dy}" r="13" fill="${c.hex}" fill-opacity="0.9" stroke="#0b0f14" stroke-width="1.5"></circle>
+    <text x="${x(v.impact)+j.dx}" y="${y(v.uncertainty)+j.dy+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#0b0f14">${idx+1}</text></g>`; }).join('');
   host.innerHTML=`<svg class="matrix" viewBox="0 0 ${W} ${H}" id="matrixSvg" xmlns="http://www.w3.org/2000/svg">
     <rect x="0" y="0" width="${W}" height="${H}" fill="#222b35"></rect>
     <rect x="${x(mid)}" y="${pad}" width="${(W-pad)-x(mid)}" height="${y(mid)-pad}" fill="#4f9cf9" fill-opacity="0.08"></rect>
@@ -930,21 +1068,37 @@ function drawMatrix(){
     <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${H-pad}" stroke="#5a6675" stroke-width="1.5"></line>
     <line x1="${x(mid)}" y1="${pad}" x2="${x(mid)}" y2="${H-pad}" stroke="#3a4654" stroke-dasharray="5 5"></line>
     <line x1="${pad}" y1="${y(mid)}" x2="${W-pad}" y2="${y(mid)}" stroke="#3a4654" stroke-dasharray="5 5"></line>
-    <text x="${W/2}" y="${H-16}" text-anchor="middle" fill="#8b97a3" font-size="13" font-weight="700">불확실성 (Uncertainty) →</text>
-    <text x="18" y="${H/2}" text-anchor="middle" fill="#8b97a3" font-size="13" font-weight="700" transform="rotate(-90 18 ${H/2})">영향도 (Impact) →</text>
+    <text x="${W/2}" y="${H-16}" text-anchor="middle" fill="#8b97a3" font-size="13" font-weight="700">영향도 (Impact) →</text>
+    <text x="18" y="${H/2}" text-anchor="middle" fill="#8b97a3" font-size="13" font-weight="700" transform="rotate(-90 18 ${H/2})">불확실성 (Uncertainty) →</text>
     <text x="${W-pad-6}" y="${pad+16}" text-anchor="end" fill="#4f9cf9" font-size="12" font-weight="700">핵심 불확실성</text>
-    <text x="${pad+6}" y="${pad+16}" fill="#6f7c8a" font-size="11">핵심 동인</text>
-    <text x="${W-pad-6}" y="${H-pad-8}" text-anchor="end" fill="#6f7c8a" font-size="11">모니터링</text>
+    <text x="${pad+6}" y="${pad+16}" fill="#6f7c8a" font-size="11">모니터링</text>
+    <text x="${W-pad-6}" y="${H-pad-8}" text-anchor="end" fill="#6f7c8a" font-size="11">핵심 동인</text>
     <text x="${pad+6}" y="${H-pad-8}" fill="#6f7c8a" font-size="11">부차 요인</text>
     ${pts}</svg>`;
   const b={crit:[],driver:[],monitor:[]};
   vars.forEach((v,idx)=>{ const item={...v,n:idx+1}; const hiI=v.impact>=mid,hiU=v.uncertainty>=mid;
     if(hiI&&hiU)b.crit.push(item); else if(hiI&&!hiU)b.driver.push(item); else if(!hiI&&hiU)b.monitor.push(item); });
-  const li=arr=>arr.length?arr.map(v=>`<li><b>${v.n}.</b> ${esc(v.aiName||v.text)} <span class="meta">(I${v.impact}/U${v.uncertainty})</span></li>`).join(''):'<li class="meta">없음</li>';
-  setHTML('qCritical', b.crit.length?b.crit.sort((a,c)=>(c.impact+c.uncertainty)-(a.impact+a.uncertainty)).map(v=>`<li><b>${v.n}.</b> ${esc(v.aiName||v.text)} <span class="meta">(I${v.impact}/U${v.uncertainty})</span></li>`).join(''):'<li class="meta">평가하면 표시됩니다</li>');
+  const li=arr=>arr.length?arr.map(v=>`<li><b>${v.n}.</b> ${esc(v.aiName||v.text)} <span class="meta">(${fmtScore(v)})</span></li>`).join(''):'<li class="meta">없음</li>';
+  setHTML('qCritical', b.crit.length?b.crit.sort((a,c)=>(c.impact+c.uncertainty)-(a.impact+a.uncertainty)).map(v=>`<li><b>${v.n}.</b> ${esc(v.aiName||v.text)} <span class="meta">(${fmtScore(v)})</span></li>`).join(''):'<li class="meta">평가하면 표시됩니다</li>');
   setHTML('qDriver',li(b.driver)); setHTML('qMonitor',li(b.monitor));
+  refreshAxisSelects(vars);
 }
 function setHTML(id,h){ const e=document.getElementById(id); if(e) e.innerHTML=h; }
+/* #7 축 드롭다운을 native <select>로 즉시 채움 (datalist 지연 제거) */
+function refreshAxisSelects(vars){
+  vars = vars || aggregatedVars();
+  const sc=state.scenario;
+  const sorted=vars.slice().sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty));
+  ['axisX','axisY'].forEach(id=>{
+    const sel=document.getElementById(id); if(!sel) return;
+    const cur = id==='axisX'? sc.axisX : sc.axisY;
+    let opts=`<option value="">— 선택 —</option>`; const seen=new Set();
+    sorted.forEach(v=>{ const name=v.aiName||v.text; if(seen.has(name))return; seen.add(name);
+      const star=(v.impact>=3&&v.uncertainty>=3)?'★ ':''; opts+=`<option value="${esc(name)}" ${cur===name?'selected':''}>${star}${esc(name)} (${fmtScore(v)})</option>`; });
+    if(cur && !seen.has(cur)) opts+=`<option value="${esc(cur)}" selected>${esc(cur)}</option>`;
+    sel.innerHTML=opts;
+  });
+}
 
 function scenarioTitles(){ return scenarioTitlesOf(state.scenario); }
 function renderScnGrid(){
@@ -988,7 +1142,7 @@ function renderActIII(root){
   ${frameworkPanel('III')}
   <div class="panel">
     <h2 class="title">Activity III — 비즈니스 캔버스</h2>
-    <p class="subtitle">현재 사업(As-Is)을 9블록으로 기술하고, 선정 시나리오 미래(To-Be)에서 각 블록이 어떻게 변화할지 구상하세요. 각 블록의 <b>🤖 AI 추천</b>은 직책·시나리오를 반영합니다.</p>
+    <p class="subtitle">현재 사업(As-Is)을 9블록으로 기술하고, 선정 시나리오 미래(To-Be)에서 각 블록이 어떻게 변화할지 구상하세요. <b>🤖 초안 작성</b> 버튼 하나로 9개 블록을 한 번에 채울 수 있습니다(직책·시나리오 반영).</p>
     ${sc.selected<0?`<div class="notice warn">⚠ Activity II에서 <b>실습 시나리오</b>를 먼저 선정하면 To-Be 작성과 AI 추천이 정확해집니다.</div>`:''}
     <div class="toolbar" style="margin:0 0 12px"><div class="left">
       <button class="btn sm ${sharedViewOn?'ghost':'primary'}" id="btnMine">✏ 내 캔버스</button>
@@ -1001,6 +1155,9 @@ function renderActIII(root){
             <div class="tb ${canvasMode==='asis'?'active':''}" data-mode="asis">Step 1 · As-Is (현재)</div>
             <div class="tb ${canvasMode==='tobe'?'active':''}" data-mode="tobe">Step 2 · To-Be (시나리오 반영 미래)</div>
           </div>
+          <div class="toolbar" style="margin:0 0 10px"><div class="left">
+            <button class="btn ai" id="btnCanvasAll">🤖 내 직책·사업 맥락 기반 ${canvasMode==='asis'?'As-Is':'To-Be'} 캔버스 초안 작성</button>
+          </div><div class="right"><span class="meta" id="canvasAiState"></span></div></div>
           <div class="bmc" id="bmc"></div>
         </div>
         <aside><div class="sidepanel" id="sidepanel"></div></aside>
@@ -1021,44 +1178,46 @@ function renderActIII(root){
   document.getElementById('btnShared').onclick=()=>{ sharedViewOn=true; renderActIII(root);
     if(!state.sync.enabled) document.getElementById('shareHint').textContent='실시간 공유가 꺼져 있습니다 — 👥 조 공유에서 켜세요'; };
   if(sharedViewOn){ renderSharedCanvas(document.getElementById('sharedCanvas')); }
-  else { renderBMC(); renderSidePanel(); }
+  else { renderBMC(); renderSidePanel(); const b=document.getElementById('btnCanvasAll'); if(b) b.onclick=()=>aiCanvasAll(canvasMode); }
 }
 function renderBMC(){
   const host=document.getElementById('bmc'); if(!host) return; const data=state.canvas[canvasMode];
   host.innerHTML=BMC.map(b=>`<div class="blk" style="${BMC_POS[b.k]}">
     <h5>${esc(b.name)}</h5><div class="bq">${esc(b.q)}</div>
-    <textarea id="bmc_${b.k}" placeholder="${canvasMode==='tobe'?'시나리오 반영 변화…':'현재 내용…'}">${esc(data[b.k]||'')}</textarea>
-    <button class="btn ai sm ai-mini" data-block="${b.k}">🤖 AI 추천</button></div>`).join('');
+    <textarea id="bmc_${b.k}" placeholder="${canvasMode==='tobe'?'시나리오 반영 변화…':'현재 내용…'}">${esc(data[b.k]||'')}</textarea></div>`).join('');
   host.querySelectorAll('textarea').forEach(t=> t.addEventListener('input',()=>{ state.canvas[canvasMode][t.id.replace('bmc_','')]=t.value; save(); }));
-  host.querySelectorAll('[data-block]').forEach(btn=> btn.onclick=()=>aiCanvas(btn.dataset.block,btn));
+}
+/* #9 캔버스 전체(9블록) 한 번에 AI 초안 작성 */
+async function aiCanvasAll(mode){
+  const key=getApiKey(); if(!key){ openSettings(); return; }
+  const st=document.getElementById('canvasAiState'); const btn=document.getElementById('btnCanvasAll');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="spinner"></span>9개 블록 초안 작성 중…'; }
+  const sel = state.scenario.selected>=0 ? `${scenarioTitles()[state.scenario.selected]} — ${state.scenario.cells[state.scenario.selected]||''}` : '(실습 시나리오 미선정)';
+  const blocks = BMC.map(b=>`${b.k}: ${b.name} (${b.q})`).join('\n');
+  let sys,usr;
+  if(mode==='asis'){
+    sys=`${persona()}비즈니스 모델 캔버스 전문가입니다. 이 임원의 현재(As-Is) 사업에 대해 BMC 9개 블록을 각각 2~4개의 간결한 한국어 불릿으로 작성하세요. JSON만 출력: {"blocks":{"cs":"...","vp":"...","ch":"...","cr":"...","rs":"...","kr":"...","ka":"...","kp":"...","cost":"..."}} (각 값은 줄바꿈으로 구분된 불릿 텍스트)`;
+    usr=`직책: ${state.session.title||'(미입력)'}\n사업 맥락: ${state.session.topic||'(미지정)'}\n블록 정의:\n${blocks}`;
+  }else{
+    sys=`${persona()}비즈니스 모델 캔버스 전문가입니다. 아래 미래 시나리오가 ${TIME_HORIZON} 내 현실이 될 때, 이 임원 사업의 BMC 9개 블록이 현재 대비 어떻게 변화해야 하는지 각각 2~4개 한국어 불릿으로 작성하세요. JSON만 출력: {"blocks":{"cs":"...","vp":"...","ch":"...","cr":"...","rs":"...","kr":"...","ka":"...","kp":"...","cost":"..."}}`;
+    usr=`직책: ${state.session.title||'(미입력)'}\n실습 시나리오: ${sel}\n현재(As-Is) 캔버스:\n${BMC.map(b=>`${b.name}: ${state.canvas.asis[b.k]||'(미작성)'}`).join('\n')}\n\n블록 정의:\n${blocks}`;
+  }
+  try{ const data=await callClaude(sys,usr,2500); const json=extractJSON((data.content||[]).map(b=>b.text||'').join(''));
+    if(!json||!json.blocks) throw new Error('파싱 실패');
+    BMC.forEach(b=>{ if(json.blocks[b.k]!=null) state.canvas[mode][b.k]=String(json.blocks[b.k]); });
+    save(); renderBMC();
+    if(st) st.textContent='✅ 9개 블록 초안 완료 — 검토·수정하세요';
+  }catch(e){ if(st) st.textContent='⚠ 실패: '+e.message; }
+  finally{ if(btn){ btn.disabled=false; btn.innerHTML=`🤖 내 직책·사업 맥락 기반 ${mode==='asis'?'As-Is':'To-Be'} 캔버스 초안 작성`; } }
 }
 function renderSidePanel(){
   const host=document.getElementById('sidepanel'); if(!host) return; const sc=state.scenario;
-  const drivers=scoredVars().filter(v=>v.impact>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty)).slice(0,8);
+  const drivers=aggregatedVars().filter(v=>v.impact>=3).sort((a,b)=>(b.impact+b.uncertainty)-(a.impact+a.uncertainty)).slice(0,8);
   const scn = sc.selected>=0 ? `<div class="scnbox"><b>🎯 실습 시나리오</b><br>${esc(scenarioTitles()[sc.selected])}<div class="hint" style="margin-top:4px">${esc((sc.cells[sc.selected]||'').slice(0,160))}</div></div>` : `<div class="notice warn" style="margin-bottom:10px">실습 시나리오 미선정</div>`;
   host.innerHTML=`<h4>📌 참고 패널</h4>${scn}
     <h4>STEEP 핵심 드라이버</h4>
-    ${drivers.length?drivers.map(v=>`<div class="drv">${v.aiLinked?'<span class="ai-tag">⚡</span> ':''}${esc(v.aiName||v.text)} <span class="meta">(I${v.impact}/U${v.uncertainty})</span></div>`).join(''):'<div class="hint">Activity II에서 변수를 평가하면 표시됩니다.</div>'}`;
+    ${drivers.length?drivers.map(v=>`<div class="drv">${v.aiLinked?'<span class="ai-tag">⚡</span> ':''}${esc(v.aiName||v.text)} <span class="meta">(${fmtScore(v)})</span></div>`).join(''):'<div class="hint">Activity II에서 변수를 평가하면 표시됩니다.</div>'}`;
 }
-async function aiCanvas(blockKey,btn){
-  const key=getApiKey(); if(!key){ openSettings(); return; }
-  const block=BMC.find(b=>b.k===blockKey); const ta=document.getElementById('bmc_'+blockKey);
-  const orig=btn.textContent; btn.disabled=true; btn.innerHTML='<span class="spinner"></span>생성중';
-  const sel = state.scenario.selected>=0 ? `${scenarioTitles()[state.scenario.selected]} — ${state.scenario.cells[state.scenario.selected]||''}` : '(실습 시나리오 미선정)';
-  let sys,usr;
-  if(canvasMode==='asis'){
-    sys=`${persona()}비즈니스 모델 캔버스 전문가입니다. 이 임원의 현재(As-Is) 사업에서 '${block.name}' 블록을 3~5개의 간결한 한국어 불릿으로 제안하세요. 각 불릿 한 줄, 군더더기 없이 불릿만.`;
-    usr=`직책: ${state.session.title||'(미입력)'}\n사업 맥락: ${state.session.topic||'(미지정)'}\n블록: ${block.name} — ${block.q}`;
-  }else{
-    sys=`${persona()}비즈니스 모델 캔버스 전문가입니다. 아래 미래 시나리오가 ${TIME_HORIZON} 내 현실이 될 때, 이 임원 사업의 '${block.name}' 블록이 현재 대비 어떻게 변화해야 하는지 3~5개 한국어 불릿으로 제안하세요. 각 불릿 한 줄, 불릿만.`;
-    usr=`직책: ${state.session.title||'(미입력)'}\n실습 시나리오: ${sel}\n블록: ${block.name} — ${block.q}\n현재(As-Is) 내용: ${state.canvas.asis[blockKey]||'(미작성)'}`;
-  }
-  try{ const data=await callClaude(sys,usr,800); const text=(data.content||[]).map(b=>b.text||'').join('').trim();
-    ta.value=(ta.value.trim()?ta.value.trim()+'\n':'')+text; state.canvas[canvasMode][blockKey]=ta.value; save();
-  }catch(e){ alert('AI 추천 실패: '+e.message); }
-  finally{ btn.disabled=false; btn.textContent=orig; }
-}
-
 /* ===================================================================
    ACTIVITY IV: 기회/위협 도출 + AI 인사이트
    =================================================================== */
@@ -1073,7 +1232,7 @@ function renderActIV(root){
     <div class="toolbar" style="margin:0 0 12px"><div class="left">
       <button class="btn sm ${ot.canvasMode==='asis'?'primary':'ghost'}" data-otm="asis">As-Is 기준</button>
       <button class="btn sm ${ot.canvasMode==='tobe'?'primary':'ghost'}" data-otm="tobe">To-Be 기준</button>
-    </div><div class="right"><span class="meta">🟢 기회 · 🔴 위협 · 클릭 시 순환</span></div></div>
+    </div><div class="right"><span class="meta">🟢 기회 · 🔴 위협 · 🟡 둘 다 (각 버튼 독립 토글)</span></div></div>
     <div class="bmc" id="otCanvas"></div>
     <h3 class="sec">AI 핵심 시사점</h3>
     <div class="toolbar" style="margin-top:0"><div class="left"><button class="btn ai" id="btnInsight">🤖 핵심 시사점 생성</button></div><div class="right"></div></div>
@@ -1086,30 +1245,33 @@ function renderActIV(root){
   document.getElementById('insightTa').addEventListener('input',e=>{ ot.insight=e.target.value; save(); });
   document.getElementById('btnInsight').onclick=aiInsight;
 }
+function otHas(sel,which){ return sel===which||sel==='both'; }
+function otToggle(k,which){ const s=state.oppthreat.sel[k]||'none'; let o=otHas(s,'opp'), t=otHas(s,'threat');
+  if(which==='opp') o=!o; else t=!t; state.oppthreat.sel[k]= (o&&t)?'both':o?'opp':t?'threat':'none'; }
+function otBadge(sel){ return sel==='both'?'🟡':sel==='opp'?'🟢':sel==='threat'?'🔴':''; }
 function renderOTCanvas(){
   const host=document.getElementById('otCanvas'); if(!host) return; const ot=state.oppthreat;
   const data=state.canvas[ot.canvasMode]||{};
   host.innerHTML=BMC.map(b=>{ const sel=ot.sel[b.k]||'none'; const content=data[b.k]||'';
-    return `<div class="blk ${sel==='opp'?'opp':sel==='threat'?'threat':''}" style="${BMC_POS[b.k]}" data-block="${b.k}">
-      <h5>${esc(b.name)} ${sel==='opp'?'🟢':sel==='threat'?'🔴':''}</h5>
+    const cls=sel==='both'?'both':sel==='opp'?'opp':sel==='threat'?'threat':'';
+    return `<div class="blk ${cls}" style="${BMC_POS[b.k]}" data-block="${b.k}">
+      <h5>${esc(b.name)} ${otBadge(sel)}</h5>
       <div class="ot-read">${content?esc(content):'<span style="color:var(--muted)">(Activity III 미작성)</span>'}</div>
       <div class="ot-seg" data-block="${b.k}">
-        <button class="opp ${sel==='opp'?'on':''}" data-t="opp">기회</button>
-        <button class="threat ${sel==='threat'?'on':''}" data-t="threat">위협</button>
+        <button class="opp ${otHas(sel,'opp')?'on':''}" data-t="opp">기회</button>
+        <button class="threat ${otHas(sel,'threat')?'on':''}" data-t="threat">위협</button>
       </div>
-      <textarea class="ot-rat" data-rat="${b.k}" placeholder="Rationale — 왜 기회/위협인가?">${esc(ot.rat[b.k]||'')}</textarea>
+      <textarea class="ot-rat" data-rat="${b.k}" placeholder="Rationale — 왜 기회/위협인가? (둘 다면 양쪽 모두)">${esc(ot.rat[b.k]||'')}</textarea>
     </div>`; }).join('');
-  // 블록 본문 클릭 → 순환(none→opp→threat→none)
-  host.querySelectorAll('.ot-read').forEach(r=> r.onclick=()=>{ const k=r.closest('.blk').dataset.block;
-    const cur=ot.sel[k]||'none'; ot.sel[k]= cur==='none'?'opp':cur==='opp'?'threat':'none'; save(); renderOTCanvas(); });
   host.querySelectorAll('.ot-seg').forEach(seg=> seg.querySelectorAll('button').forEach(btn=> btn.onclick=(e)=>{ e.stopPropagation();
-    const k=seg.dataset.block; ot.sel[k]= (ot.sel[k]===btn.dataset.t)?'none':btn.dataset.t; save(); renderOTCanvas(); }));
+    otToggle(seg.dataset.block, btn.dataset.t); save(); renderOTCanvas(); }));
   host.querySelectorAll('[data-rat]').forEach(t=> t.addEventListener('input',()=>{ ot.rat[t.dataset.rat]=t.value; save(); }));
 }
 async function aiInsight(){
   const key=getApiKey(); if(!key){ openSettings(); return; } const ot=state.oppthreat;
   const wrap=document.getElementById('insightWrap'); const data=state.canvas[ot.canvasMode]||{};
-  const picks=BMC.filter(b=>ot.sel[b.k]&&ot.sel[b.k]!=='none').map(b=>({block:b.name, type:ot.sel[b.k]==='opp'?'기회':'위협', content:data[b.k]||'', rationale:ot.rat[b.k]||''}));
+  const tName=s=>s==='both'?'기회이자 위협':s==='opp'?'기회':'위협';
+  const picks=BMC.filter(b=>ot.sel[b.k]&&ot.sel[b.k]!=='none').map(b=>({block:b.name, type:tName(ot.sel[b.k]), content:data[b.k]||'', rationale:ot.rat[b.k]||''}));
   if(!picks.length){ alert('캔버스 블록에서 기회/위협을 1개 이상 지정하세요.'); return; }
   wrap.innerHTML=`<div class="notice ai"><span class="spinner"></span> AI가 핵심 시사점 생성 중…</div>`;
   const sys=`${persona()}아래는 이 임원의 비즈니스 모델 캔버스에서 지정한 기회/위협 영역입니다. ${TIME_HORIZON} 시계의 사업 핵심 시사점을 1~2문단으로 작성하세요. 경영자 관점, 구체적·실행지향적, 한국어. 서론 없이 본론만.`;
@@ -1203,7 +1365,7 @@ function showReport(){
   const tag=k=>`<span style="background:${STEEP[k].hex};color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px">${STEEP[k].name}</span>`;
   const bmcRows=BMC.map(b=>`<tr><td style="width:22%"><b>${b.name}</b></td><td>${esc((state.canvas.asis[b.k]||'-')).replace(/\n/g,'<br>')}</td><td>${esc((state.canvas.tobe[b.k]||'-')).replace(/\n/g,'<br>')}</td></tr>`).join('');
   const otCv=state.canvas[ot.canvasMode||'tobe']||{};
-  const otRows=BMC.filter(b=>ot.sel[b.k]&&ot.sel[b.k]!=='none').map(b=>{ const sl=ot.sel[b.k]; const lbl=sl==='opp'?'🟢 기회':'🔴 위협';
+  const otRows=BMC.filter(b=>ot.sel[b.k]&&ot.sel[b.k]!=='none').map(b=>{ const sl=ot.sel[b.k]; const lbl=sl==='both'?'🟡 기회+위협':sl==='opp'?'🟢 기회':'🔴 위협';
     return `<tr><td><b>${b.name}</b></td><td>${lbl}</td><td>${esc(otCv[b.k]||'')}</td><td>${esc(ot.rat[b.k]||'')}</td></tr>`; }).join('');
   const w=window.open('','_blank');
   const css=`body{font-family:-apple-system,'Malgun Gothic','Noto Sans KR',sans-serif;color:#111;max-width:920px;margin:0 auto;padding:32px;line-height:1.6}
@@ -1385,6 +1547,7 @@ async function syncPublish(){
 function onRoomUpdate(){
   syncStatus(_syncState==='off'?'off':'connected');
   if(state.step===0) refreshSetupSync();
+  if(state.step===2 && document.getElementById('matrixHost')) drawMatrix(); // 팀 평가 실시간 취합
   if(sharedViewOn && state.step===3){ const host=document.getElementById('sharedCanvas'); if(host) renderSharedCanvas(host); }
 }
 function onDiscussionUpdate(d){
@@ -1449,6 +1612,7 @@ document.getElementById('btnSettings').onclick=openSettings;
 document.getElementById('btnShare').onclick=openShareModal;
 document.getElementById('exToggle').onclick=()=>{ drawerOpen=!drawerOpen; updateExampleDrawer(); };
 document.getElementById('exClose').onclick=()=>{ drawerOpen=false; updateExampleDrawer(); };
+document.getElementById('coverStart').onclick=()=>{ document.getElementById('cover').classList.add('hidden'); };
 document.getElementById('btnExportAll').onclick=exportJSON;
 document.getElementById('btnImport').onclick=()=>document.getElementById('fileInput').click();
 document.getElementById('fileInput').onchange=e=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; };
