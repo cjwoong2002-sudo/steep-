@@ -22,9 +22,20 @@ python run.py --regions all --out roic.xlsx     # 5개 지역 전체
 `seeds/*.txt` 에 넣은 후보군 안에서 정렬합니다. 시드에 없는 대형주는 후보에 못 들어옵니다.
 → `seeds/README.md`
 
-**2. 지금 들어 있는 시드는 검증되지 않았습니다.**
-모델 지식(2026-05 기준)으로 작성한 목록이라 오탈자·상장폐지 종목이 섞여 있을 수 있습니다.
-실행 후 엑셀 **`조회실패` 시트**를 보고 시드 파일을 고쳐 쓰세요. 그게 정상 워크플로입니다.
+**2. 시드의 신뢰도가 지역마다 다릅니다.**
+
+| 지역 | 종목 수 | 출처 |
+|---|---|---|
+| us | 518 | S&P 500 + NASDAQ 100 + DOW + S&P 100 실제 구성종목 (`pytickersymbols`) |
+| jp | 233 | NIKKEI 225 실제 구성종목 + 수기 보완 |
+| eu | 452 | DAX/MDAX/TecDAX/CAC/AEX/BEL20/IBEX/FTSE100/SMI/OMX/EuroStoxx50 실제 구성종목 + 수기 보완 |
+| **kr** | **119** | **수기 목록만 — 미검증** |
+| **cn** | **155** | **수기 목록만 — 미검증** |
+
+`pytickersymbols` 는 한국·중국 지수를 커버하지 않아 kr/cn 은 제 지식으로 쓴 목록 그대로입니다.
+자동 병합된 지역도 스테일 티커가 남아 있습니다(예: Fiserv 는 `FISV`→`FI`, Marsh McLennan 은
+`MRSH`→`MMC` 로 바뀌었는데 번들 데이터가 옛 티커를 갖고 있습니다).
+실행 후 엑셀 **`조회실패` 시트**를 보고 시드 파일을 고치는 게 정상 워크플로입니다.
 
 **3. 이 저장소를 만든 환경은 네트워크가 막혀 있어 실제 수집을 검증하지 못했습니다.**
 계산 로직·엑셀 출력은 오프라인 픽스처로 86개 테스트를 통과했지만, Yahoo 응답의 실제
@@ -178,13 +189,23 @@ NYSE/NASDAQ 정식상장 ADR로 한정(ASML·SAP·NVO·AZN·SHEL 등 — 유럽 
 **첫 실행 권장 순서**
 
 ```bash
-python run.py --regions us --top-mcap 20 --top-roic 10   # 작게 시험
-python run.py --regions us                                # 지역 하나 완주
-python run.py --regions all --out roic.xlsx               # 전체
+# 0. 출력 형식 미리 보기 (네트워크 불필요, 숫자는 전부 가상)
+python scripts/make_layout_sample.py 레이아웃_샘플.xlsx
+
+# 1. 작게 시험 — 계정 매핑이 실제 Yahoo 응답과 맞는지 확인
+python run.py --regions us --top-mcap 20 --top-roic 10
+
+# 2. 지역 하나 완주
+python run.py --regions kr
+
+# 3. 전체
+python run.py --regions all --out roic.xlsx
 ```
 
-5개 지역 전체는 캐시가 비어 있으면 종목당 1~6회 호출 × 약 800종목이라
-`--interval 1.2` 기준 1시간 이상 걸립니다. 캐시가 있으면 재실행은 즉시 끝납니다.
+실행 시작 시 후보 종목 수와 예상 소요시간을 출력합니다. 기본값(`--interval 1.2`) 기준
+5개 지역 전체는 후보 1,477종목 / 약 3,700회 호출 / **약 90분**입니다.
+캐시가 있으면 재실행은 즉시 끝나므로, 중간에 끊겨도 다시 돌리면 이어집니다.
+`--interval` 을 낮추면 빨라지지만 Yahoo IP 차단 위험이 커집니다.
 
 ---
 
@@ -213,7 +234,10 @@ roic_screener/
   cli.py          CLI
   sources/        원본 공시 교차검증 (SEC, DART)
 seeds/            지역별 후보 티커
-scripts/          시드 갱신 스크립트
+scripts/
+  merge_index_seeds.py    지수 구성종목을 시드에 병합 (pytickersymbols, 오프라인)
+  refresh_seeds.py        Wikipedia S&P500 / akshare 로 시드 재생성 (네트워크 필요)
+  make_layout_sample.py   출력 형식 확인용 샘플 xlsx (가상 데이터)
 ```
 
 ---

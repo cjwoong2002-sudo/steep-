@@ -134,3 +134,111 @@
 9503.T    # 간사이전력
 9532.T    # 오사카가스
 9531.T    # 도쿄가스
+
+# ---- 이하 NIKKEI 225 구성종목에서 자동 병합 ----
+# 출처: pytickersymbols (오프라인 번들 데이터). scripts/merge_index_seeds.py 로 재생성.
+1332.T      # Nissui
+1721.T      # Comsys
+1803.T      # Shimizu Corporation
+1808.T      # Haseko
+1963.T      # JGC Corporation
+2002.T      # Nisshin Seifun Group
+2282.T      # Nippon Ham
+2432.T      # DeNA
+2501.T      # Sapporo Breweries
+2768.T      # Sojitz
+3086.T      # J. Front Retailing
+3092.T      # ZOZO Co., Ltd
+3099.T      # Isetan Mitsukoshi Holdings
+3289.T      # Tokyu Land
+3401.T      # Teijin
+3405.T      # Kuraray
+3436.T      # SUMCO
+3697.T      # SHIFT Inc.
+4004.T      # Resonac
+4005.T      # Sumitomo Chemical
+4042.T      # Tosoh
+4043.T      # Tokuyama Corporation
+4061.T      # Denka
+4208.T      # Ube Industries
+4307.T      # Nomura Research Institute
+4324.T      # Dentsu
+4503.T      # Astellas Pharma
+4506.T      # Sumitomo Dainippon Pharma
+4751.T      # CyberAgent
+4755.T      # Rakuten
+4902.T      # Konica Minolta
+5019.T      # Idemitsu Kosan
+5101.T      # Yokohama Rubber Company
+5201.T      # AGC Inc.
+5214.T      # Nippon Electric Glass
+5233.T      # Taiheiyo Cement
+5301.T      # Tokai Carbon
+5406.T      # Kobe Steel
+5631.T      # Japan Steel Works
+5711.T      # Mitsubishi Materials
+5714.T      # Dowa Holdings
+5801.T      # Furukawa Electric
+5802.T      # Sumitomo Electric Industries
+5803.T      # Fujikura
+5831.T      # Shizuoka Financial Group
+6103.T      # Okuma Holdings
+6113.T      # Amada Co
+6302.T      # Sumitomo Heavy Industries
+6361.T      # Ebara Corporation
+6471.T      # NSK Ltd.
+6472.T      # NTN Corporation
+6473.T      # JTEKT
+6504.T      # Fuji Electric
+6506.T      # Yaskawa Electric Corporation
+6526.T      # Socionext
+6674.T      # GS Yuasa
+6701.T      # NEC
+6724.T      # Seiko Epson
+6753.T      # Sharp Corporation
+6770.T      # Alps Alpine
+6952.T      # Casio
+6976.T      # Taiyo Yuden
+6988.T      # Nitto Denko
+7004.T      # Kanadevia
+7012.T      # Kawasaki Heavy Industries
+7013.T      # IHI Corporation
+7186.T      # Bank of Yokohama
+7201.T      # Nissan
+7202.T      # Isuzu
+7205.T      # Hino Motors
+7211.T      # Mitsubishi Motors
+7261.T      # Mazda
+7272.T      # Yamaha Motor Company
+7453.T      # Muji
+7731.T      # Nikon
+7752.T      # Ricoh
+7911.T      # Toppan Printing
+7951.T      # Yamaha Corporation
+8002.T      # Marubeni
+8233.T      # Takashimaya
+8252.T      # Marui
+8253.T      # Credit Saison
+8304.T      # Aozora Bank
+8308.T      # Resona Holdings
+8309.T      # Sumitomo Mitsui Trust Holdings
+8331.T      # Chiba Bank
+8354.T      # Fukuoka Financial Group
+8601.T      # Daiwa Securities Group
+8725.T      # MS&AD Insurance Group
+8795.T      # T&D Holdings
+8801.T      # Mitsui Fudosan
+8804.T      # Tokyo Tatemono
+8830.T      # Sumitomo Realty & Development
+9001.T      # Tobu Railway
+9005.T      # Tokyu Corporation
+9007.T      # Odakyu Electric Railway
+9008.T      # Keio Corporation
+9009.T      # Keisei Electric Railway
+9064.T      # Yamato Transport
+9147.T      # Nippon Express Holdings Inc.
+9201.T      # Japan Airlines
+9202.T      # All Nippon Airways
+9501.T      # Tokyo Electric Power Company
+9502.T      # Chubu Electric Power
+9602.T      # Toho

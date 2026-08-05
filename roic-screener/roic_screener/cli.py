@@ -17,6 +17,7 @@ from .config import ALL_REGIONS, RoicParams, ScreenParams, WINDOW_END, WINDOW_ST
 from .excel import default_filename, write_report
 from .provider import YFinanceProvider
 from .screener import run_screen
+from .universe import load_seeds
 
 
 def _date(s: str) -> dt.date:
@@ -110,8 +111,21 @@ def main(argv: list[str] | None = None) -> int:
         max_retries=args.retries,
     )
 
-    est = sum(1 for _ in regions) * (args.top_mcap * 6 + 150)
-    print(f"지역 {regions} / 예상 API 호출 최대 {est:,}회 — 캐시가 비어 있으면 오래 걸립니다.")
+    # 실제 시드 개수로 호출량과 소요시간을 추정한다. 1시간 넘게 걸릴 수 있어
+    # 시작 전에 규모를 보여주는 게 낫다.
+    seed_dir = Path(args.seed_dir) if args.seed_dir else None
+    try:
+        n_seeds = sum(len(load_seeds(r, seed_dir)) for r in regions)
+    except FileNotFoundError as exc:
+        print(exc, file=sys.stderr)
+        return 2
+    n_full = sum(min(args.top_mcap, len(load_seeds(r, seed_dir))) for r in regions)
+    est_calls = n_seeds + int(n_full * 0.75) * 6  # 2패스는 업종 제외 후 약 3/4만 진행
+    est_min = est_calls * (args.interval + 0.2) / 60
+    print(
+        f"지역 {regions} / 후보 {n_seeds:,}종목 / 예상 API 호출 약 {est_calls:,}회 "
+        f"→ 캐시가 비어 있으면 약 {est_min:.0f}분 (캐시가 있으면 즉시)"
+    )
 
     result = run_screen(
         provider,

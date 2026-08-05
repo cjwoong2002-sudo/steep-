@@ -298,3 +298,193 @@ RYA.IR      # Ryanair
 OMV.VI      # OMV
 VER.VI      # Verbund
 EBS.VI      # Erste Group
+
+# ---- 이하 DAX, MDAX, TecDAX, CAC_40, CAC Mid 60, AEX, BEL 20, IBEX 35, FTSE 100, Switzerland 20, OMX Helsinki 25, OMX Stockholm 30, EURO STOXX 50 구성종목에서 자동 병합 ----
+# 출처: pytickersymbols (오프라인 번들 데이터). scripts/merge_index_seeds.py 로 재생성.
+1U1.DE      # 1&1
+8TRA.DE     # Traton
+AAF.L       # Airtel Africa
+ABB.ST      # ABB
+ABF.L       # Associated British Foods
+ABN.AS      # ABN AMRO
+AC.PA       # Accor
+ACKB.BR     # Ackermans & van Haaren
+ACX.MC      # Acerinox
+ADDT-B.ST   # Addtech
+ADM.L       # Admiral Group
+AED.BR      # Aedifica
+AFX.DE      # Carl Zeiss Meditec
+AGS.BR      # Ageas
+AIR.PA.DE   # Airbus
+AIXA.DE     # Aixtron
+ALW.L       # Alliance Witan
+ANA.MC      # Acciona
+ANE.MC      # Acciona Energía
+AOF.DE      # Atoss
+ASRNL.AS    # ASR Nederland
+AT1.DE      # Aroundtown SA
+AUTO.L      # Autotrader Group
+AZE.BR      # Azelis Group
+AZN.ST      # AstraZeneca
+BAB.L       # Babcock International
+BBOX.L      # Tritax Big Box REIT
+BC8.DE      # Bechtle AG
+BEZ.L       # Beazley plc
+BFSA.DE     # Befesa
+BKG.L       # Berkeley Group Holdings
+BKT.MC      # Bankinter
+BLND.L      # British Land
+BOL.ST      # Boliden AB
+BOSS.DE     # Hugo Boss
+BRBY.L      # Burberry
+BT-A.L      # BT Group
+BTRW.L      # Barratt Redrow
+CABK.MC     # CaixaBank
+CCEP.L      # Coca-Cola Europacific Partners
+CCH.L       # Coca-Cola HBC
+CNA.L       # Centrica
+COFB.BR     # Cofinimmo
+COK.DE      # Cancom
+COL.MC      # Inmobiliaria Colonial
+COP.DE      # CompuGroup Medical
+CTEC.L      # Convatec
+DCC.L       # DCC plc
+DHER.DE     # Delivery Hero
+DIE.BR      # D'Ieteren
+DPLM.L      # Diploma plc
+DTG.DE      # Daimler Truck
+ECV.DE      # Encavis
+EDV.L       # Endeavour Mining
+ELG.DE      # Elmos Semiconductor
+ENG.MC      # Enagás
+ENT.L       # Entain
+EUZ.DE      # Eckert & Ziegler
+EVD.DE      # CTS Eventim
+EVT.DE      # Evotec
+EXO.AS      # Exor
+EZJ.L       # EasyJet
+FCIT.L      # F & C Investment Trust
+FDR.MC      # Fluidra
+FME.DE      # Fresenius Medical Care
+FNTN.DE     # Freenet AG
+FPE3.DE     # Fuchs Petrolub
+FRA.DE      # Fraport
+FRES.L      # Fresnillo plc
+FYB.DE      # Formycon
+G1A.DE      # GEA Group
+GAW.L       # Games Workshop
+GBF.DE      # Bilfinger SE
+GXI.DE      # Gerresheimer
+HAG.DE      # Hensoldt
+HFG.DE      # HelloFresh
+HIAB.HE     # Cargotec
+HIK.L       # Hikma Pharmaceuticals
+HLE.DE      # Hella
+HLMA.L      # Halma plc
+HOT.DE      # Hochtief
+HSX.L       # Hiscox
+HUH1V.HE    # Huhtamäki
+HWDN.L      # Howdens Joinery
+IAG.L       # International Airlines Group
+IAG.MC      # International Airlines Group
+ICG.L       # ICG plc
+IDR.MC      # Indra Sistemas
+IMI.L       # IMI plc
+INDU-C.ST   # IndustrivärdenC
+INF.L       # Informa
+IOS.DE      # Ionos
+JD.L        # JD Sports
+JEN.DE      # Jenoptik
+JUN3.DE     # Jungheinrich
+KALMAR.HE   # KalmarB
+KBX.DE      # Knorr-Bremse
+KCR.HE      # Konecranes
+KEMIRA.HE   # Kemira
+KESKOB.HE   # Kesko
+KGF.L       # Kingfisher plc
+KOJAMO.HE   # Kojamo
+KRN.DE      # Krones
+KTN.DE      # Kontron
+LAND.L      # Landsec
+LEG.DE      # LEG Immobilien
+LGEN.L      # Legal & General
+LIFCO-B.ST  # LifcoB
+LMP.L       # LondonMetric Property
+LOG.MC      # Logista
+LOTB.BR     # Lotus Bakeries
+LXS.DE      # Lanxess AG
+MANTA.HE    # Mandatum
+MAP.MC      # Mapfre
+MELE.BR     # Melexis
+MKS.L       # Marks & Spencer
+MNDI.L      # Mondi
+MNG.L       # M&G
+MONT.BR     # Montea
+MRL.MC      # Merlin Properties
+MRO.L       # Melrose Industries
+MT.AS       # ArcelorMittal
+MTLN.L      # Metlen Energy & Metals
+MTS.MC      # ArcelorMittal
+NA9.DE      # Nagarro
+NDA-FI.HE   # Nordea
+NDA-SE.ST   # Nordea
+NDA.DE      # Aurubis
+NDX1.DE     # Nordex SE
+NTGY.MC     # Naturgy
+NXT.L       # Next plc
+OUT1V.HE    # Outokumpu
+PCT.L       # Polar Capital Technology Trust
+PHNX.L      # Phoenix Group
+PNE3.DE     # PNE AG
+PSH.L       # Pershing Square Holdings
+PSN.L       # Persimmon plc
+PSON.L      # Pearson plc
+PUIG.MC     # Puig
+PUM.DE      # Puma (brand)
+QTCOM.HE    # The Qt Company
+RAA.DE      # Rational AG
+RDC.DE      # Shop Apotheke Europe
+RED.MC      # Redeia Corporación
+ROVI.MC     # Laboratorios Rovi
+RR.L        # Rolls-Royce Holdings
+RRTL.DE     # RTL Group
+RTO.L       # Rentokil Initial
+SAB.MC      # Banco Sabadell
+SAX.DE      # Ströer
+SBRY.L      # Sainsbury's
+SCA-B.ST    # SCA
+SCYR.MC     # Sacyr
+SDF.DE      # K+S
+SDR.L       # Schroders
+SGRO.L      # Segro
+SKA-B.ST    # Skanska
+SLR.MC      # Solaria
+SMHN.DE     # Suss Microtec
+SMT.L       # Scottish Mortgage Investment Trust
+SOF.BR      # Sofina
+STAN.L      # Standard Chartered
+STJ.L       # St. James's Place plc
+STM.DE      # STABILUS SE
+STMPA.PA    # STABILUS SE
+SVT.L       # Severn Trent
+SYENS.BR    # Syensqo
+TEG.DE      # TAG Tegernsee Immobilien und Beteiligung
+TELIA.ST    # Telia Company
+TIETO.HE    # TietoEVRY
+TKA.DE      # ThyssenKrupp
+TLX.DE      # Talanx AG
+TMV.DE      # TeamViewer AG
+TUI1.DE     # TUI Group
+TYRES.HE    # Nokian Tyres
+UNA.AS      # Unilever
+UNI.MC      # Unicaja
+UTDI.DE     # United Internet
+UU.L        # United Utilities
+VALMT.HE    # Valmet
+VNA.DE      # Vonovia
+VOW.DE      # Volkswagen Group
+WAF.DE      # Siltronic
+WCH.DE      # Wacker Chemie AG
+WDP.BR      # WDP
+WEIR.L      # Weir Group
+WRT1V.HE    # Wärtsilä
