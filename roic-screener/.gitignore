@@ -1,0 +1,6 @@
+.cache/
+*.xlsx
+seeds/*.txt.bak
+__pycache__/
+*.pyc
+.pytest_cache/

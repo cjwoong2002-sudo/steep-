@@ -1,0 +1,10 @@
+# 필수
+yfinance>=0.2.60      # 5개 지역 재무·주가 백본 (검증: 1.5.2)
+openpyxl>=3.1         # 엑셀 출력
+pandas>=2.0           # yfinance 의존 (직접 사용은 provider 계층에 한정)
+
+# 선택 — 중국 전종목 시총 순위를 쓰려면 필요 (--akshare)
+# akshare>=1.16
+
+# 선택 — 한국 원본 공시 교차검증용 (sources/dart.py, 무료 API 키 필요)
+# requests>=2.31

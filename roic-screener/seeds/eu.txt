@@ -1,0 +1,300 @@
+# 유럽 시드 — 여러 거래소·통화가 섞여 있다. 시총 랭킹은 USD 환산 후 정렬한다.
+#
+# ★ 매수 제약이 가장 큰 지역이다. 미래에셋증권은 유럽 온라인 매매를 지원하지 않고
+#   오프라인(전화) 주문만 가능한 것으로 알려져 있다(반드시 직접 확인).
+#   NYSE/NASDAQ 정식상장 ADR 이 있는 종목(ASML, SAP, NVO, AZN, SHEL, UL, BUD, DEO 등)만
+#   온라인으로 접근 가능하며, 이는 유럽 고ROIC 상위 30개를 다 채우지 못한다.
+#
+# 회계보고 제약: 유럽 상당수는 반기 보고만 한다. '26 1H 데이터가 없으면
+#   커버 구간이 '24~'25 로 줄어든다 — '기간커버' 컬럼에서 확인할 것.
+
+# ---- Euronext Amsterdam (.AS, EUR) ----
+ASML.AS     # ASML
+PRX.AS      # Prosus
+INGA.AS     # ING
+ADYEN.AS    # Adyen
+HEIA.AS     # Heineken
+PHIA.AS     # Philips
+AD.AS       # Ahold Delhaize
+WKL.AS      # Wolters Kluwer
+REN.AS      # RELX (암스테르담 상장)
+DSFIR.AS    # DSM-Firmenich
+AKZA.AS     # AkzoNobel
+KPN.AS      # KPN
+RAND.AS     # Randstad
+ASM.AS      # ASM International
+BESI.AS     # BE Semiconductor
+UMG.AS      # Universal Music Group
+SHELL.AS    # Shell (암스테르담)
+AGN.AS      # Aegon
+NN.AS       # NN Group
+IMCD.AS     # IMCD
+TKWY.AS     # Just Eat Takeaway
+ARCAD.AS    # Arcadis
+
+# ---- Euronext Paris (.PA, EUR) ----
+MC.PA       # LVMH
+OR.PA       # L'Oreal
+RMS.PA      # Hermes International
+TTE.PA      # TotalEnergies
+SAN.PA      # Sanofi
+AI.PA       # Air Liquide
+SU.PA       # Schneider Electric
+EL.PA       # EssilorLuxottica
+CS.PA       # AXA
+BNP.PA      # BNP Paribas
+SAF.PA      # Safran
+DG.PA       # Vinci
+AIR.PA      # Airbus
+KER.PA      # Kering
+ACA.PA      # Credit Agricole
+GLE.PA      # Societe Generale
+CAP.PA      # Capgemini
+ORA.PA      # Orange
+STLAP.PA    # Stellantis (파리)
+RI.PA       # Pernod Ricard
+BN.PA       # Danone
+VIE.PA      # Veolia
+LR.PA       # Legrand
+PUB.PA      # Publicis Groupe
+ML.PA       # Michelin
+HO.PA       # Thales
+SGO.PA      # Saint-Gobain
+ENGI.PA     # Engie
+EN.PA       # Bouygues
+CA.PA       # Carrefour
+RNO.PA      # Renault
+DSY.PA      # Dassault Systemes
+AM.PA       # Dassault Aviation
+ERF.PA      # Eurofins Scientific
+ALO.PA      # Alstom
+BVI.PA      # Bureau Veritas
+EDEN.PA     # Edenred
+TEP.PA      # Teleperformance
+URW.PA      # Unibail-Rodamco-Westfield
+
+# ---- Xetra (.DE, EUR) ----
+SAP.DE      # SAP
+SIE.DE      # Siemens
+ALV.DE      # Allianz
+DTE.DE      # Deutsche Telekom
+MRK.DE      # Merck KGaA
+MBG.DE      # Mercedes-Benz Group
+BMW.DE      # BMW
+VOW3.DE     # Volkswagen
+BAS.DE      # BASF
+MUV2.DE     # Munich Re
+DB1.DE      # Deutsche Boerse
+RWE.DE      # RWE
+IFX.DE      # Infineon
+DHL.DE      # DHL Group
+ADS.DE      # adidas
+BAYN.DE     # Bayer
+HEN3.DE     # Henkel
+EOAN.DE     # E.ON
+DBK.DE      # Deutsche Bank
+CBK.DE      # Commerzbank
+HNR1.DE     # Hannover Re
+SY1.DE      # Symrise
+BEI.DE      # Beiersdorf
+CON.DE      # Continental
+HEI.DE      # Heidelberg Materials
+FRE.DE      # Fresenius
+ZAL.DE      # Zalando
+P911.DE     # Porsche AG
+PAH3.DE     # Porsche SE
+SHL.DE      # Siemens Healthineers
+ENR.DE      # Siemens Energy
+RHM.DE      # Rheinmetall
+QIA.DE      # Qiagen
+BNR.DE      # Brenntag
+1COV.DE     # Covestro
+SRT3.DE     # Sartorius
+MTX.DE      # MTU Aero Engines
+NEM.DE      # Nemetschek
+G24.DE      # Scout24
+EVK.DE      # Evonik
+KGX.DE      # KION Group
+LHA.DE      # Lufthansa
+
+# ---- SIX Swiss (.SW, CHF) ----
+NESN.SW     # Nestle
+ROG.SW      # Roche
+NOVN.SW     # Novartis
+UBSG.SW     # UBS
+ZURN.SW     # Zurich Insurance
+ABBN.SW     # ABB
+LONN.SW     # Lonza
+SIKA.SW     # Sika
+CFR.SW      # Richemont
+GIVN.SW     # Givaudan
+HOLN.SW     # Holcim
+SREN.SW     # Swiss Re
+ALC.SW      # Alcon
+SCMN.SW     # Swisscom
+GEBN.SW     # Geberit
+SOON.SW     # Sonova
+SLHN.SW     # Swiss Life
+PGHN.SW     # Partners Group
+STMN.SW     # Straumann
+KNIN.SW     # Kuehne + Nagel
+SGSN.SW     # SGS
+UHR.SW      # Swatch Group
+LOGN.SW     # Logitech
+BAER.SW     # Julius Baer
+
+# ---- London (.L, GBp 대부분) ----
+AZN.L       # AstraZeneca
+SHEL.L      # Shell (런던)
+ULVR.L      # Unilever
+HSBA.L      # HSBC
+RIO.L       # Rio Tinto
+BP.L        # BP
+GSK.L       # GSK
+REL.L       # RELX
+BATS.L      # British American Tobacco
+DGE.L       # Diageo
+LSEG.L      # London Stock Exchange Group
+NG.L        # National Grid
+RKT.L       # Reckitt Benckiser
+CPG.L       # Compass Group
+BA.L        # BAE Systems
+GLEN.L      # Glencore
+AAL.L       # Anglo American
+VOD.L       # Vodafone
+PRU.L       # Prudential
+LLOY.L      # Lloyds Banking
+BARC.L      # Barclays
+NWG.L       # NatWest
+TSCO.L      # Tesco
+IMB.L       # Imperial Brands
+SGE.L       # Sage Group
+EXPN.L      # Experian
+SSE.L       # SSE
+AHT.L       # Ashtead
+IHG.L       # InterContinental Hotels
+WTB.L       # Whitbread
+HLN.L       # Haleon
+SN.L        # Smith & Nephew
+ITRK.L      # Intertek
+CRDA.L      # Croda
+BNZL.L      # Bunzl
+RMV.L       # Rightmove
+AV.L        # Aviva
+SPX.L       # Spirax Group
+ANTO.L      # Antofagasta
+III.L       # 3i Group
+SMIN.L      # Smiths Group
+
+# ---- Borsa Italiana (.MI, EUR) ----
+ENEL.MI     # Enel
+ISP.MI      # Intesa Sanpaolo
+UCG.MI      # UniCredit
+ENI.MI      # Eni
+STLAM.MI    # Stellantis (밀라노)
+RACE.MI     # Ferrari
+G.MI        # Generali
+PRY.MI      # Prysmian
+TRN.MI      # Terna
+SRG.MI      # Snam
+MONC.MI     # Moncler
+CPR.MI      # Davide Campari
+LDO.MI      # Leonardo
+MB.MI       # Mediobanca
+REC.MI      # Recordati
+
+# ---- BME Madrid (.MC, EUR) ----
+ITX.MC      # Inditex
+IBE.MC      # Iberdrola
+SAN.MC      # Banco Santander
+BBVA.MC     # BBVA
+AENA.MC     # Aena
+FER.MC      # Ferrovial
+TEF.MC      # Telefonica
+REP.MC      # Repsol
+AMS.MC      # Amadeus IT
+CLNX.MC     # Cellnex
+ELE.MC      # Endesa
+ACS.MC      # ACS
+GRF.MC      # Grifols
+
+# ---- Nasdaq Copenhagen (.CO, DKK) ----
+NOVO-B.CO   # Novo Nordisk
+NZYM-B.CO   # Novonesis
+DSV.CO      # DSV
+ORSTED.CO   # Orsted
+CARL-B.CO   # Carlsberg
+VWS.CO      # Vestas Wind Systems
+COLO-B.CO   # Coloplast
+GMAB.CO     # Genmab
+DEMANT.CO   # Demant
+PNDORA.CO   # Pandora
+TRYG.CO     # Tryg
+AMBU-B.CO   # Ambu
+
+# ---- Nasdaq Stockholm (.ST, SEK) ----
+ATCO-A.ST   # Atlas Copco
+INVE-B.ST   # Investor AB
+VOLV-B.ST   # Volvo
+ASSA-B.ST   # Assa Abloy
+SAND.ST     # Sandvik
+HEXA-B.ST   # Hexagon
+EQT.ST      # EQT AB
+EPI-A.ST    # Epiroc
+ERIC-B.ST   # Ericsson
+SEB-A.ST    # SEB
+SWED-A.ST   # Swedbank
+SHB-A.ST    # Handelsbanken
+ESSITY-B.ST # Essity
+SKF-B.ST    # SKF
+ALFA.ST     # Alfa Laval
+TEL2-B.ST   # Tele2
+EVO.ST      # Evolution AB
+NIBE-B.ST   # NIBE Industrier
+SAAB-B.ST   # Saab
+HM-B.ST     # H&M
+
+# ---- Nasdaq Helsinki (.HE, EUR) ----
+NESTE.HE    # Neste
+NOKIA.HE    # Nokia
+SAMPO.HE    # Sampo
+KNEBV.HE    # KONE
+UPM.HE      # UPM-Kymmene
+FORTUM.HE   # Fortum
+STERV.HE    # Stora Enso
+ORNBV.HE    # Orion
+ELISA.HE    # Elisa
+METSO.HE    # Metso
+
+# ---- Oslo Bors (.OL, NOK) ----
+EQNR.OL     # Equinor
+DNB.OL      # DNB Bank
+TEL.OL      # Telenor
+MOWI.OL     # Mowi
+NHY.OL      # Norsk Hydro
+YAR.OL      # Yara International
+AKRBP.OL    # Aker BP
+ORK.OL      # Orkla
+KOG.OL      # Kongsberg Gruppen
+TOM.OL      # Tomra Systems
+SUBC.OL     # Subsea 7
+
+# ---- Euronext Brussels (.BR, EUR) ----
+ABI.BR      # Anheuser-Busch InBev
+KBC.BR      # KBC Group
+UCB.BR      # UCB
+SOLB.BR     # Solvay
+ARGX.BR     # argenx
+UMI.BR      # Umicore
+GBLB.BR     # Groupe Bruxelles Lambert
+ELI.BR      # Elia Group
+
+# ---- Euronext Lisbon (.LS, EUR) / Dublin (.IR) / Wien (.VI) ----
+EDP.LS      # EDP
+GALP.LS     # Galp Energia
+JMT.LS      # Jeronimo Martins
+KRZ.IR      # Kerry Group
+RYA.IR      # Ryanair
+OMV.VI      # OMV
+VER.VI      # Verbund
+EBS.VI      # Erste Group

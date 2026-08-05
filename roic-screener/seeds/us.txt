@@ -1,0 +1,165 @@
+# 미국 (NYSE/NASDAQ) 시드 — 미국 본토 기업만. 외국기업 ADR(TSM, NVO, SAP, TM, SONY 등)은
+# 해당 지역 파일에서 본주로 다루므로 여기 넣지 않는다(이중 계상 방지).
+# 금융주도 포함한다 — "시총 상위 100"의 의미를 지키기 위해서다. 랭킹 후 업종 제외된다.
+AAPL      # Apple
+MSFT      # Microsoft
+NVDA      # NVIDIA
+GOOGL     # Alphabet
+AMZN      # Amazon
+META      # Meta Platforms
+AVGO      # Broadcom
+TSLA      # Tesla
+BRK-B     # Berkshire Hathaway
+LLY       # Eli Lilly
+JPM       # JPMorgan Chase
+WMT       # Walmart
+V         # Visa
+MA        # Mastercard
+XOM       # Exxon Mobil
+UNH       # UnitedHealth
+ORCL      # Oracle
+COST      # Costco
+PG        # Procter & Gamble
+JNJ       # Johnson & Johnson
+HD        # Home Depot
+ABBV      # AbbVie
+NFLX      # Netflix
+BAC       # Bank of America
+KO        # Coca-Cola
+MRK       # Merck & Co
+CVX       # Chevron
+AMD       # AMD
+PEP       # PepsiCo
+CRM       # Salesforce
+TMO       # Thermo Fisher
+ADBE      # Adobe
+LIN       # Linde
+ACN       # Accenture
+MCD       # McDonald's
+CSCO      # Cisco
+ABT       # Abbott
+WFC       # Wells Fargo
+GE        # GE Aerospace
+IBM       # IBM
+NOW       # ServiceNow
+PM        # Philip Morris
+TXN       # Texas Instruments
+QCOM      # Qualcomm
+DIS       # Disney
+CAT       # Caterpillar
+VZ        # Verizon
+INTU      # Intuit
+AMGN      # Amgen
+DHR       # Danaher
+NEE       # NextEra Energy
+RTX       # RTX
+PFE       # Pfizer
+SPGI      # S&P Global
+GS        # Goldman Sachs
+UNP       # Union Pacific
+LOW       # Lowe's
+AXP       # American Express
+T         # AT&T
+HON       # Honeywell
+ISRG      # Intuitive Surgical
+COP       # ConocoPhillips
+MS        # Morgan Stanley
+BLK       # BlackRock
+ETN       # Eaton
+PGR       # Progressive
+BKNG      # Booking Holdings
+VRTX      # Vertex Pharmaceuticals
+SYK       # Stryker
+LMT       # Lockheed Martin
+TJX       # TJX
+C         # Citigroup
+MU        # Micron
+ADP       # ADP
+BSX       # Boston Scientific
+MDT       # Medtronic
+PANW      # Palo Alto Networks
+REGN      # Regeneron
+GILD      # Gilead
+SCHW      # Charles Schwab
+MMC       # Marsh & McLennan
+CB        # Chubb
+ADI       # Analog Devices
+KLAC      # KLA
+PLD       # Prologis
+SO        # Southern Company
+LRCX      # Lam Research
+DE        # Deere
+CI        # Cigna
+ELV       # Elevance Health
+MO        # Altria
+ZTS       # Zoetis
+DUK       # Duke Energy
+SHW       # Sherwin-Williams
+ICE       # ICE
+APH       # Amphenol
+PYPL      # PayPal
+SNPS      # Synopsys
+CDNS      # Cadence
+EQIX      # Equinix
+CME       # CME Group
+ITW       # Illinois Tool Works
+WM        # Waste Management
+MCO       # Moody's
+AON       # Aon
+PNC       # PNC Financial
+USB       # U.S. Bancorp
+MSI       # Motorola Solutions
+CL        # Colgate-Palmolive
+EOG       # EOG Resources
+NOC       # Northrop Grumman
+GD        # General Dynamics
+FDX       # FedEx
+CSX       # CSX
+TGT       # Target
+EMR       # Emerson Electric
+MAR       # Marriott
+SLB       # SLB
+HCA       # HCA Healthcare
+ORLY      # O'Reilly Automotive
+APD       # Air Products
+NSC       # Norfolk Southern
+TT        # Trane Technologies
+ECL       # Ecolab
+FCX       # Freeport-McMoRan
+PCAR      # PACCAR
+CMG       # Chipotle
+ROP       # Roper Technologies
+AJG       # Arthur J. Gallagher
+PSA       # Public Storage
+AZO       # AutoZone
+ADSK      # Autodesk
+TFC       # Truist Financial
+AFL       # Aflac
+MET       # MetLife
+TRV       # Travelers
+KMB       # Kimberly-Clark
+F         # Ford
+GM        # General Motors
+DAL       # Delta Air Lines
+UBER      # Uber
+ABNB      # Airbnb
+PLTR      # Palantir
+CRWD      # CrowdStrike
+ANET      # Arista Networks
+WDAY      # Workday
+DDOG      # Datadog
+MRVL      # Marvell
+FTNT      # Fortinet
+ON        # ON Semiconductor
+MCHP      # Microchip
+NXPI      # NXP Semiconductors (네덜란드 본사지만 나스닥 단독상장)
+KKR       # KKR
+APO       # Apollo Global
+COIN      # Coinbase
+VRT       # Vertiv
+DASH      # DoorDash
+MMM       # 3M
+UPS       # UPS
+NKE       # Nike
+SBUX      # Starbucks
+LVS       # Las Vegas Sands
