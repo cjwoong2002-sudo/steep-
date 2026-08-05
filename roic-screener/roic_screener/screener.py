@@ -17,7 +17,7 @@ from .config import DIVIDEND_WHT, REGIONS, ScreenParams
 from .exclusions import sector_exclusion_reason
 from .fx import FxRates
 from .prices import PriceStats, price_stats
-from .provider import CompanyRaw, FetchError, Provider
+from .provider import CompanyRaw, FetchError, Provider, describe_fetch_error
 from .roic import RoicResult, compute_roic
 from .universe import exchange_label, load_cn_universe_from_akshare, load_seeds
 
@@ -124,7 +124,7 @@ def run_screen(
             try:
                 raw = provider.fetch_quote(tk)
             except Exception as exc:  # noqa: BLE001
-                result.errors.append(FetchError(tk, "quote", str(exc)))
+                result.errors.append(FetchError(tk, "quote", describe_fetch_error(exc)))
                 continue
             if raw.market_cap is None:
                 result.errors.append(
@@ -180,8 +180,9 @@ def run_screen(
             try:
                 raw = provider.fetch(r.ticker)
             except Exception as exc:  # noqa: BLE001
-                result.errors.append(FetchError(r.ticker, "full", str(exc)))
-                r.excluded_reason = f"재무 수집 실패: {exc}"
+                detail = describe_fetch_error(exc)
+                result.errors.append(FetchError(r.ticker, "full", detail))
+                r.excluded_reason = f"재무 수집 실패: {detail}"
                 result.excluded.append(r)
                 continue
 

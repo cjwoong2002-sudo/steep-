@@ -57,6 +57,37 @@ class FetchError:
     message: str
 
 
+# 재시도가 무의미한 실패 — 티커가 존재하지 않거나 상장폐지된 경우.
+# 지수 구성종목 번들 데이터에는 티커가 바뀐 종목이 남아 있어서
+# (예: Fiserv FISV→FI, BNY Mellon BK) 실행마다 수십 건 발생한다.
+PERMANENT_FAILURE_MARKERS = (
+    "404",
+    "quote not found",
+    "not found",
+    "no data found",
+    "delisted",
+    "no price data",
+    "symbol may be delisted",
+)
+
+
+def is_permanent_failure(exc: BaseException) -> bool:
+    msg = str(exc).lower()
+    return any(marker in msg for marker in PERMANENT_FAILURE_MARKERS)
+
+
+def describe_fetch_error(exc: BaseException) -> str:
+    """'조회실패' 시트에 넣을 사람이 읽을 수 있는 사유.
+
+    Yahoo 404 는 원문이 JSON 덩어리라 그대로 넣으면 시트를 못 읽는다.
+    사용자가 해야 할 조치(시드 수정)를 바로 알 수 있게 바꿔 쓴다.
+    """
+    if is_permanent_failure(exc):
+        return "종목 없음 — 티커 변경·상장폐지 추정. seeds 파일에서 수정 필요"
+    msg = " ".join(str(exc).split())
+    return msg if len(msg) <= 300 else msg[:300] + " …"
+
+
 class Provider(Protocol):
     def fetch_quote(self, ticker: str) -> CompanyRaw: ...
     def fetch(self, ticker: str) -> CompanyRaw: ...
@@ -193,6 +224,11 @@ class YFinanceProvider:
                 return fn()
             except Exception as exc:  # noqa: BLE001 - 래퍼가 던지는 예외 종류가 다양하다
                 last = exc
+                if is_permanent_failure(exc):
+                    # 티커가 없는 건 재시도해도 절대 안 된다. 스테일 티커가 수십 개면
+                    # 백오프까지 합쳐 수 분을 그냥 버리게 된다.
+                    log.info("%s: 종목 없음 — 재시도 생략", label)
+                    break
                 backoff = 2**attempt
                 log.warning("%s 실패 (%d/%d): %s — %ds 후 재시도",
                             label, attempt + 1, self.max_retries, exc, backoff)

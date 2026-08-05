@@ -301,7 +301,7 @@ FER         # Ferrovial
 FFIV        # F5, Inc.
 FICO        # FICO
 FIS         # FIS
-FISV        # Fiserv
+FI          # Fiserv (구 FISV — 2024년 티커 변경)
 FITB        # Fifth Third Bancorp
 FIX         # Comfort Systems USA
 FOX         # Fox Corporation
@@ -392,7 +392,6 @@ MOS         # The Mosaic Company
 MPC         # Marathon Petroleum
 MPWR        # Monolithic Power Systems
 MRNA        # Moderna
-MRSH        # Marsh McLennan
 MSCI        # MSCI
 MSTR        # MicroStrategy
 MTB         # M&T Bank
